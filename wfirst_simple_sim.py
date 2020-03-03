@@ -692,7 +692,7 @@ def main(argv):
 
     wcs, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size)
     PSF = getPSF(PSF_model)
-    
+
 
     if rank==0:
         t0 = time.time()
@@ -793,14 +793,14 @@ def main(argv):
         print(time.time()-t0)
 
     if rank==0:
-        dirr=version
+        dirr='v1_3'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
     return None
 
 def sub(argv):
     num = 907169
-    dirr=version
+    dirr='v1_3'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
@@ -812,26 +812,18 @@ def sub(argv):
 
 
 if __name__ == "__main__":
-    
-    val=input('main or sub?: ')
-    ver=input('version of sim?: ')
 
-    if str(val)=='sub':
-        version=str(ver)
-        sub(sys.argv)
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
 
-    if str(val)=='main':
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-        size = comm.Get_size()
+    if rank==0:
+        cat = init_gal('radec_sub.fits', 'Simulated_WFIRST+LSST_photometry_catalog_CANDELSbased.fits')
+    else:
+        cat = fio.FITS('truth.fits')[-1]
 
-        if rank==0:
-            cat = init_gal('radec_sub.fits', 'Simulated_WFIRST+LSST_photometry_catalog_CANDELSbased.fits')
-        else:
-            cat = fio.FITS('truth.fits')[-1]
-
-        version=str(ver)
-        main(sys.argv)
+    #sub(sys.argv)
+    main(sys.argv)
 
 
 
