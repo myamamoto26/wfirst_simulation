@@ -481,11 +481,6 @@ def residual_bias(res_tot, gal_num):
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
     print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
-    for iteration in range(5):
-        for k in range(gal_num):
-            res_tot[iteration]['g1'][k] = const_g1[k]
-            res_tot[iteration]['g2'][k] = const_g2[k]
-
     return R11, R22, R12, R21
 
 def residual_bias_correction(a, b, c, d, e, gal_num):
@@ -713,13 +708,13 @@ def main(argv):
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.05)
-                g1=0
-                g2=0.05
+                gal_model = gal_model.shear(g1=0.05,g2=0)
+                g1=0.05
+                g2=0
             else:
-                gal_model = gal_model.shear(g1=0,g2=-0.05)
-                g1=0
-                g2=-0.05
+                gal_model = gal_model.shear(g1=-0.05,g2=0)
+                g1=-0.05
+                g2=0
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
@@ -793,14 +788,14 @@ def main(argv):
         print(time.time()-t0)
 
     if rank==0:
-        dirr='v1_3'
+        dirr='v1_2'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
     return None
 
 def sub(argv):
     num = 907169
-    dirr='v1_3'
+    dirr='v1_2'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
