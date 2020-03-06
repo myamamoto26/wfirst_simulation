@@ -500,7 +500,7 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
     snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
     snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
     snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
-    print(snr_min, snr_max, snr_binslist)
+    #print(snr_min, snr_max, snr_binslist)
     if snr_binslist[10] != snr_max:
         print("raise an error.")
 
@@ -616,6 +616,7 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
         m4,b4=params[0]
         m4err,b4err=np.sqrt(np.diagonal(params[1]))
         
+        # corrected
         m1_val += [m1]
         m1_err += [m1err]
         b1_val += [b1]
@@ -625,6 +626,7 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
         b2_val += [b2]
         b2_err += [b2err]
         
+        # not corrected
         m3_val += [m3]
         m3_err += [m3err]
         b3_val += [b3]
@@ -634,22 +636,50 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
         b4_val += [b4]
         b4_err += [b4err]
 
+    print(m1,b1)
+    print(m1_val, b1_val)
     print('corrected m, b: ')
-    print("m1="+str("%6.4f"% np.mean(m1))+"+-"+str("%6.4f"% np.mean(m1err)), "b1="+str("%6.6f"% np.mean(b1))+"+-"+str("%6.6f"% np.mean(b1err)))
-    print("m2="+str("%6.4f"% np.mean(m2))+"+-"+str("%6.4f"% np.mean(m2err)), "b2="+str("%6.6f"% np.mean(b1))+"+-"+str("%6.6f"% np.mean(b1err)))
+    print("m1="+str("%6.4f"% np.mean(m1_val))+"+-"+str("%6.4f"% np.mean(m1_err)), "b1="+str("%6.6f"% np.mean(b1_val))+"+-"+str("%6.6f"% np.mean(b1_err)))
+    print("m2="+str("%6.4f"% np.mean(m2_val))+"+-"+str("%6.4f"% np.mean(m2_err)), "b2="+str("%6.6f"% np.mean(b2_val))+"+-"+str("%6.6f"% np.mean(b2_err)))
+
+    values=[m1_val,b1_val,m2_val,b2_val,m3_val,b3_val,m4_val,b4_val]
+    errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
+    return values, errors
+
+def plot_combined(g1values,g1errors,g2values,g2errors):
+
+    m1_val=g1values[0]
+    b1_val=g1values[1]
+    m2_val=g2values[2]
+    b2_val=g2values[3]
+    m3_val=g1values[4]
+    b3_val=g1values[5]
+    m4_val=g2values[6]
+    b4_val=g2values[7]
+
+    m1_err=g1errors[0]
+    b1_err=g1errors[1]
+    m2_err=g2errors[2]
+    b2_err=g2errors[3]
+    m3_err=g1errors[4]
+    b3_err=g1errors[5]
+    m4_err=g2errors[6]
+    b4_err=g2errors[7]
 
     fig, ax3 = plt.subplots(figsize=(8,6))
     bins_loc = [(snr_binslist[x]+snr_binslist[x+1])/2 for x in range(10)]
 
-    ax3.scatter(bins_loc, m1_val, c='b', label='m1 w/ response correction')
-    ax3.scatter(bins_loc, m2_val, c='r',  label='m2 w/ response correction')
+    ax3.scatter(bins_loc, m1_val, c='b', marker='o', label='m1 w/ response correction')
+    ax3.scatter(bins_loc, m2_val, c='r', marker='^',  label='m2 w/ response correction')
     ax3.errorbar(bins_loc, m1_val, c='b', yerr=m1_err, fmt='o')
-    ax3.errorbar(bins_loc, m2_val, c='r', yerr=m2_err, fmt='o')
+    ax3.errorbar(bins_loc, m2_val, c='r', yerr=m2_err, fmt='^')
 
-    ax3.scatter(bins_loc, m3_val, c='r', marker='^', label='m1 w/o response correction')
+    
+    ax3.scatter(bins_loc, m3_val, c='b', marker='o', label='m1 w/o response correction')
     ax3.scatter(bins_loc, m4_val, c='r', marker='^', label='m2 w/o response correction')
-    ax3.errorbar(bins_loc, m3_val, c='r', yerr=m3_err, fmt='^')
+    ax3.errorbar(bins_loc, m3_val, c='b', yerr=m3_err, fmt='o')
     ax3.errorbar(bins_loc, m4_val, c='r', yerr=m4_err, fmt='^')
+    
 
     ax3.legend(fontsize=9)
     ax3.set_xlabel("log(SNR)", fontsize=18)
@@ -801,13 +831,26 @@ def sub(argv):
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
     d=fio.FITS(dirr+'_sim_3.fits')[-1].read()
     e=fio.FITS(dirr+'_sim_4.fits')[-1].read()
+
+    dirr2='v1_3'
+    f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
+    g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
+    h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
+    i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
+    j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
     #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
 
-    residual_bias_correction(a,b,c,d,e,num)
+
+    g1values,g1errors = residual_bias_correction([a,b,c,d,e],num)
+    g2values,g2errors = residual_bias_correction([f,g,h,i,j],num)
+
+    plot_combined(g1values, g1errors, g2values, g2errors)
+    return 
 
 
 if __name__ == "__main__":
 
+    """
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
@@ -817,9 +860,10 @@ if __name__ == "__main__":
     else:
         cat = fio.FITS('truth.fits')[-1]
 
-    #sub(sys.argv)
     main(sys.argv)
+    """
 
+    sub(sys.argv)
 
 
 
