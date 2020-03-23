@@ -22,7 +22,7 @@ from past.builtins import basestring
 from builtins import object
 from past.utils import old_div
 import numpy as np
-import healpy as hp
+#import healpy as hp
 import sys, os, io
 import math
 import logging
@@ -35,14 +35,14 @@ import galsim.config.process as process
 import galsim.des as des
 import ngmix
 import fitsio as fio
-import pickle as pickle
-import pickletools
+#import pickle as pickle
+#import pickletools
 from astropy.time import Time
 from mpi4py import MPI
 #from mpi_pool import MPIPool
-import cProfile, pstats
-import glob
-import shutil
+#import cProfile, pstats
+#import glob
+#import shutil
 from ngmix.jacobian import Jacobian
 from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
 from ngmix.galsimfit import GalsimRunner,GalsimSimple,GalsimTemplateFluxFitter
@@ -246,7 +246,8 @@ def add_poisson_noise(rng, im, sky_image, phot=False):
     return im
 
 ## metacal shapemeasurement
-def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
+#def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
+def get_exp_list(gal, psf, sky_stamp, psf2=None):
 
     if psf2 is None:
         psf2 = psf
@@ -330,7 +331,7 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
             flux = 10.
         return flux
 
-    truth = cat
+    #truth = cat
     #res = np.zeros(len(gals), dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
 
     metacal_pars={'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
@@ -348,19 +349,21 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
     """
 
     #for i in range(len(gals)):
-    t = truth[i]
-    obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    #t = truth[i]
+    #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
+    obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
+    #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
 
     iteration=0
     for key in metacal_keys:
         res_tot[iteration]['ind'][i]                       = i
-        res_tot[iteration]['ra'][i]                        = t['ra']
-        res_tot[iteration]['dec'][i]                       = t['dec']
+        #res_tot[iteration]['ra'][i]                        = t['ra']
+        #res_tot[iteration]['dec'][i]                       = t['dec']
         res_tot[iteration]['g1'][i]                        = g1
         res_tot[iteration]['g2'][i]                        = g2
-        res_tot[iteration]['int_e1'][i]                    = t['int_e1']
-        res_tot[iteration]['int_e2'][i]                    = t['int_e2']
+        #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
+        #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
 
         res_tot[iteration]['snr'][i]                       = res_[key]['s2n_r']
         res_tot[iteration]['flux'][i]                      = res_[key]['flux']
@@ -644,9 +647,9 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
 
     values=[m1_val,b1_val,m2_val,b2_val,m3_val,b3_val,m4_val,b4_val]
     errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
-    return values, errors
+    return values, errors, snr_binslist
 
-def plot_combined(g1values,g1errors,g2values,g2errors):
+def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 
     m1_val=g1values[0]
     b1_val=g1values[1]
@@ -669,15 +672,15 @@ def plot_combined(g1values,g1errors,g2values,g2errors):
     fig, ax3 = plt.subplots(figsize=(8,6))
     bins_loc = [(snr_binslist[x]+snr_binslist[x+1])/2 for x in range(10)]
 
-    ax3.scatter(bins_loc, m1_val, c='b', marker='o', label='m1 w/ response correction')
-    ax3.scatter(bins_loc, m2_val, c='r', marker='^',  label='m2 w/ response correction')
-    ax3.errorbar(bins_loc, m1_val, c='b', yerr=m1_err, fmt='o')
-    ax3.errorbar(bins_loc, m2_val, c='r', yerr=m2_err, fmt='^')
+    ax3.scatter(bins_loc, m1_val, c='b', marker='.', label='m1 w/ response correction')
+    ax3.scatter(bins_loc, m2_val, c='r', marker='.',  label='m2 w/ response correction')
+    ax3.errorbar(bins_loc, m1_val, c='b', yerr=m1_err, fmt='.')
+    ax3.errorbar(bins_loc, m2_val, c='r', yerr=m2_err, fmt='.')
 
     
-    ax3.scatter(bins_loc, m3_val, c='b', marker='o', label='m1 w/o response correction')
+    ax3.scatter(bins_loc, m3_val, c='b', marker='^', label='m1 w/o response correction')
     ax3.scatter(bins_loc, m4_val, c='r', marker='^', label='m2 w/o response correction')
-    ax3.errorbar(bins_loc, m3_val, c='b', yerr=m3_err, fmt='o')
+    ax3.errorbar(bins_loc, m3_val, c='b', yerr=m3_err, fmt='^')
     ax3.errorbar(bins_loc, m4_val, c='r', yerr=m4_err, fmt='^')
     
 
@@ -703,24 +706,30 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 907169
+    gal_num = 3000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
     #wfirst.pixel_scale=0.011
 
-    res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    res_1p = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    res_1m = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    res_2p = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    res_2m = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    #res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    #res_1p = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    #res_1m = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    #res_2p = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    #res_2m = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+
+    # when using more galaxies than the length of truth file. 
+    res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    res_1p = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    res_1m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    res_2p = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
+    res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
     wcs, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size)
     PSF = getPSF(PSF_model)
 
 
-    if rank==0:
-        t0 = time.time()
+    t0 = time.time()
     for i_gal in range(gal_num):
         if i_gal%size != rank: 
             continue
@@ -733,7 +742,7 @@ def main(argv):
         gal_model = None
 
         if galaxy_model == "Gaussian":
-            tot_mag = cat[i_gal]['H158']
+            tot_mag = np.random.choice(cat)
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
@@ -818,7 +827,7 @@ def main(argv):
         print(time.time()-t0)
 
     if rank==0:
-        dirr='v1_2'
+        dirr='v1_4'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
     return None
@@ -841,29 +850,31 @@ def sub(argv):
     #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
 
 
-    g1values,g1errors = residual_bias_correction([a,b,c,d,e],num)
-    g2values,g2errors = residual_bias_correction([f,g,h,i,j],num)
+    g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e,num)
+    g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
 
-    plot_combined(g1values, g1errors, g2values, g2errors)
+    plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
     return 
 
 
 if __name__ == "__main__":
 
-    """
+    t0 = time.time()
+    
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    if rank==0:
-        cat = init_gal('radec_sub.fits', 'Simulated_WFIRST+LSST_photometry_catalog_CANDELSbased.fits')
-    else:
-        cat = fio.FITS('truth.fits')[-1]
+    #if rank==0:
+    #    cat = init_gal('radec_sub.fits', 'Simulated_WFIRST+LSST_photometry_catalog_CANDELSbased.fits')
+        ## do not create truth catalog. just draw random magnitudes from the second fits file. -> increase the number of galaxies. 
+    #comm.Barrier()    
+    cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
+    
 
-    sub(sys.argv)
+    #sub(sys.argv)
 
 
 
