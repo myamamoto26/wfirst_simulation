@@ -365,11 +365,11 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
         #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
         #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
 
-        res_tot[iteration]['snr'][i]                       = res_[key]['s2n_r']
-        res_tot[iteration]['flux'][i]                      = res_[key]['flux']
-        res_tot[iteration]['e1'][i]                        = res_[key]['pars'][2]
-        res_tot[iteration]['e2'][i]                        = res_[key]['pars'][3]
-        res_tot[iteration]['hlr'][i]                       = res_[key]['pars'][4]
+        res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+        res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+        res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+        res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+        res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
         iteration+=1
 
     return res_tot
@@ -706,7 +706,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 5000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
     #wfirst.pixel_scale=0.011
