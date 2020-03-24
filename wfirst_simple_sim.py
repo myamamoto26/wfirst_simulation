@@ -835,8 +835,8 @@ def main(argv):
     return None
 
 def sub(argv):
-    num = 907169
-    dirr='v1_2'
+    num = 5000000
+    dirr='v1_4'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
@@ -853,14 +853,15 @@ def sub(argv):
 
 
     g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e,num)
-    g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
+    #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
 
-    plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
+    #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
     return 
 
 
 if __name__ == "__main__":
 
+    """
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -874,9 +875,10 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
+    """
     
 
-    #sub(sys.argv)
+    sub(sys.argv)
 
 
 
