@@ -843,12 +843,12 @@ def sub(argv):
     d=fio.FITS(dirr+'_sim_3.fits')[-1].read()
     e=fio.FITS(dirr+'_sim_4.fits')[-1].read()
 
-    dirr2='v1_3'
-    f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
-    g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
-    h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
-    i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
-    j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
+    #dirr2='v1_3'
+    #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
+    #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
+    #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
+    #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
+    #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
     #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
 
 
