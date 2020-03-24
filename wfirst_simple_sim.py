@@ -822,14 +822,16 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
+        dirr='v1_4'
+        for i in range(5):
+            fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
+            
+    if rank==0:
         bias = residual_bias(res_tot, gal_num)
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
-    if rank==0:
-        dirr='v1_4'
-        for i in range(5):
-            fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
+    
     return None
 
 def sub(argv):
