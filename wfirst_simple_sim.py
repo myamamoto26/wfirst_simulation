@@ -861,7 +861,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -875,10 +875,10 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
+    
     
 
-    sub(sys.argv)
+    #sub(sys.argv)
 
 
 
