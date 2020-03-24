@@ -791,7 +791,7 @@ def main(argv):
 
         #gal_stamp = galsim.Image(b, wcs=wcs)
         gal_model.drawImage(image=gal_stamp)
-        st_model.drawImage(image=psf_stam, method='no_pixel')
+        st_model.drawImage(image=psf_stamp, method='no_pixel')
 
         im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
         gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
