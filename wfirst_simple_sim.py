@@ -747,13 +747,13 @@ def main(argv):
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.05)
+                gal_model = gal_model.shear(g1=0,g2=0.02)
                 g1=0
-                g2=0.05
+                g2=0.02
             else:
-                gal_model = gal_model.shear(g1=0,g2=-0.05)
+                gal_model = gal_model.shear(g1=0,g2=-0.02)
                 g1=0
-                g2=-0.05
+                g2=-0.02
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
@@ -796,6 +796,10 @@ def main(argv):
         im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
         gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
         gal_stamp -= sky_image
+
+        sigma=wfirst.read_noise
+        read_noise = galsim.GaussianNoise(rng, sigma=sigma)
+        gal_stamp.addNoise(read_noise)
         #print(gal_stamp.array)
 
         #gals.append(gal_stamp)
