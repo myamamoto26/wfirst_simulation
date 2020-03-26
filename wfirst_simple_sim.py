@@ -735,7 +735,7 @@ def main(argv):
             continue
 
         if i_gal % 100 == 0:
-            print('object number, ', i_gal)
+            print('rank', rank, 'object number, ', i_gal)
         gals = []
         psfs = []
         
