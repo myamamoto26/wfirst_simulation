@@ -868,21 +868,21 @@ if __name__ == "__main__":
     
     t0 = time.time()
     
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    size = comm.Get_size()
+    #comm = MPI.COMM_WORLD
+    #rank = comm.Get_rank()
+    #size = comm.Get_size()
 
     #if rank==0:
     #    cat = init_gal('radec_sub.fits', 'Simulated_WFIRST+LSST_photometry_catalog_CANDELSbased.fits')
         ## do not create truth catalog. just draw random magnitudes from the second fits file. -> increase the number of galaxies. 
     #comm.Barrier()    
-    cat = fio.FITS('truth_mag.fits')[-1].read()
+    #cat = fio.FITS('truth_mag.fits')[-1].read()
 
-    main(sys.argv)
+    #main(sys.argv)
     
     
 
-    #sub(sys.argv)
+    sub(sys.argv)
 
 
 
