@@ -793,12 +793,13 @@ def main(argv):
         gal_model.drawImage(image=gal_stamp)
         st_model.drawImage(image=psf_stamp)
 
-        im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
-        gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
-        gal_stamp -= sky_image
-
         sigma=wfirst.read_noise
         read_noise = galsim.GaussianNoise(rng, sigma=sigma)
+
+        im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
+        gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
+        sky_image.addNoise(read_noise)
+        gal_stamp -= sky_image
         gal_stamp.addNoise(read_noise)
         #print(gal_stamp.array)
 
@@ -826,7 +827,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_4'
+        dirr='v1_6'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -840,7 +841,7 @@ def main(argv):
 
 def sub(argv):
     num = 5000000
-    dirr='v1_4'
+    dirr='v1_6'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
@@ -868,21 +869,19 @@ if __name__ == "__main__":
     
     t0 = time.time()
     
-    #comm = MPI.COMM_WORLD
-    #rank = comm.Get_rank()
-    #size = comm.Get_size()
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
 
     #if rank==0:
     #    cat = init_gal('radec_sub.fits', 'Simulated_WFIRST+LSST_photometry_catalog_CANDELSbased.fits')
         ## do not create truth catalog. just draw random magnitudes from the second fits file. -> increase the number of galaxies. 
     #comm.Barrier()    
-    #cat = fio.FITS('truth_mag.fits')[-1].read()
+    cat = fio.FITS('truth_mag.fits')[-1].read()
 
-    #main(sys.argv)
+    main(sys.argv)
     
-    
-
-    sub(sys.argv)
+    #sub(sys.argv)
 
 
 
