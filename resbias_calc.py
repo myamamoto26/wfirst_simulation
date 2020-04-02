@@ -15,7 +15,7 @@ import fitsio as fio
 
 def h5read(filename):
 
-    f=h5py.File(filename,mode='r')
+    f=h5py.File(filename+'.h5',mode='r')
     return f
 
 fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
@@ -23,17 +23,26 @@ fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_
         '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
         '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5']
 
-len1=0
-len2=0
-len3=0
-len4=0
-len5=0
+len1=[]
+len2=[]
+len3=[]
+len4=[]
+len5=[]
 for j in range(4):
     len1 += len(h5read(fileset[j])['/catalog/metacal/unsheared/R11'][:])
     len2 += len(h5read(fileset[j])['/catalog/metacal/sheared_1p/e_1'][:])
     len3 += len(h5read(fileset[j])['/catalog/metacal/sheared_1m/e_1'][:])
     len4 += len(h5read(fileset[j])['/catalog/metacal/sheared_2p/e_1'][:])
     len5 += len(h5read(fileset[j])['/catalog/metacal/sheared_2m/e_1'][:])
+    
+print(len1, len2, len3, len4, len5)
+
+'''
+fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
+        '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
+        '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
+        '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5']
+
     
 start = 0
 for j in range(4):
@@ -51,20 +60,33 @@ for j in range(4):
     else:
         for col in new.dtype.names:
             new[col][start:start+len(new_['R11'][:])] += new_[col]
+        for col in new1p.dtype.names:
             new1p[col][start:start+len(new_['R11'][:])] += new1p_[col]
             new1m[col][start:start+len(new_['R11'][:])] += new1m_[col]
             new2p[col][start:start+len(new_['R11'][:])] += new2p_[col]
             new2m[col][start:start+len(new_['R11'][:])] += new2m_[col]
     start+=len(new_['R11'][:])
-
-
-print(new['R11'], len(new['R11']))
+'''
 
 '''
 def h5read(filename):
 
     f=h5py.File(filename+'.h5',mode='r')
     return f
+
+def find_length(fileset):
+    len1=[]
+    len2=[]
+    len3=[]
+    len4=[]
+    len5=[]
+    for j in range(4):
+        len1 += [len(h5read(fileset[j])['/catalog/metacal/unsheared/R11'][:])]
+        len2 += [len(h5read(fileset[j])['/catalog/metacal/sheared_1p/e_1'][:])]
+        len3 += [len(h5read(fileset[j])['/catalog/metacal/sheared_1m/e_1'][:])]
+        len4 += [len(h5read(fileset[j])['/catalog/metacal/sheared_2p/e_1'][:])]
+        len5 += [len(h5read(fileset[j])['/catalog/metacal/sheared_2m/e_1'][:])]
+    return len1, len2, len3, len4, len5
 
 def combine_data(file1, file2, file3, file4):
 
@@ -74,10 +96,9 @@ def combine_data(file1, file2, file3, file4):
     shear_2p = [h5read(file1)['/catalog/metacal/sheared_2p'], h5read(file2)['/catalog/metacal/sheared_2p'], h5read(file3)['/catalog/metacal/sheared_2p'], h5read(file4)['/catalog/metacal/sheared_2p']]
     shear_2m = [h5read(file1)['/catalog/metacal/sheared_2m'], h5read(file2)['/catalog/metacal/sheared_2m'], h5read(file3)['/catalog/metacal/sheared_2m'], h5read(file4)['/catalog/metacal/sheared_2m']]
 
-    newe1=None
 
     for i in range(4):
-        if newe1 == None:
+        if i==0:
             newe1 = unsheared[i]['e_1'][:]
             newe2 = unsheared[i]['e_2'][:]
             new1pe1 = sheared_1p[i]['e_1'][:]
@@ -88,6 +109,7 @@ def combine_data(file1, file2, file3, file4):
             new2pe2 = sheared_2p[i]['e_2'][:]
             new2me1 = sheared_2m[i]['e_1'][:]
             new2me2 = sheared_2m[i]['e_2'][:]
+            newsnr = unsheared[i]['snr'][:]
         else:
             newe1 = np.append(newe1, unsheared[i]['e_1'][:])
             newe2 = np.append(newe2, unsheared[i]['e_2'][:])
@@ -99,21 +121,21 @@ def combine_data(file1, file2, file3, file4):
             new2pe2 = np.append(new2pe2, sheared_2p[i]['e_2'][:])
             new2me1 = np.append(new2me1, sheared_2m[i]['e_1'][:])
             new2me2 = np.append(new2me2, sheared_2m[i]['e_2'][:])
+            newsnr = np.append(newsnr, unsheared[i]['snr'][:])
 
-    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2
+    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr
 
+def make_g1g2(len1, len2, len3, len4, len5):
 
 
 def residual_bias(res_tot, gal_num):
     g = 0.01
 
-    new = res_tot[0]
-    new1p = res_tot[1]
-    new1m = res_tot[2]
-    new2p = res_tot[3]
-    new2m = res_tot[4]
+    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
+                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
+                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
+                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5')
 
-    print(len(new1p["e1"]))
     #old = old[old['ra']!=0]
     #new = new[new['ra']!=0]
     #new1p = new1p[new1p['ra']!=0]
@@ -121,22 +143,22 @@ def residual_bias(res_tot, gal_num):
     #new2p = new2p[new2p['ra']!=0]
     #new2m = new2m[new2m['ra']!=0]
 
-    R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-    R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-    R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+    R11 = (new1pe1 - new1me1)/(2*g)
+    R22 = (new2pe2 - new2me2)/(2*g)
+    R12 = (new2pe1 - new2me1)/(2*g)
+    R21 = (new1pe2 - new1me2)/(2*g)
 
     avg_R11 = np.mean(R11)
     avg_R22 = np.mean(R22)
     avg_R12 = np.mean(R12)
     avg_R21 = np.mean(R21)
 
-    g1 = new['e1']/avg_R11
-    g2 = new['e2']/avg_R22
+    #g1 = new['e1']/avg_R11
+    #g2 = new['e2']/avg_R22
 
     ## some statistics
     print("Mean shear response: ")
-    N=len(new1p['e1'])
+    N=len(new1pe1)
     print(N)
     print("<R11> = "+str("%6.4f"% avg_R11)+"+-"+str("%6.4f"% (np.std(R11)/np.sqrt(N))))
     print("<R22> = "+str("%6.4f"% avg_R22)+"+-"+str("%6.4f"% (np.std(R22)/np.sqrt(N))))
@@ -163,6 +185,8 @@ def residual_bias(res_tot, gal_num):
     return R11, R22, R12, R21
 
 def residual_bias_correction(a, b, c, d, e, f, g, h, i, j, gal_num):
+
+
     g = 0.01
     newe1 = a
     new1p = b
@@ -324,4 +348,15 @@ def residual_bias_correction(a, b, c, d, e, f, g, h, i, j, gal_num):
     values=[m1_val,b1_val,m2_val,b2_val,m3_val,b3_val,m4_val,b4_val]
     errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
     return values, errors, snr_binslist
+
+
+
+
+
+fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
+        '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
+        '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
+        '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5']
+len1, len2, len3, len4, len5 = find_length(fileset)
+residual_bias_correction(len1,len2,len3,len4,len5)
 '''
