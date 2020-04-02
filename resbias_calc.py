@@ -92,10 +92,10 @@ def find_length(fileset):
 def combine_data(file1, file2, file3, file4):
 
     unsheared = [h5read(file1)['/catalog/metacal/unsheared'], h5read(file2)['/catalog/metacal/unsheared'], h5read(file3)['/catalog/metacal/unsheared'], h5read(file4)['/catalog/metacal/unsheared']]
-    shear_1p = [h5read(file1)['/catalog/metacal/sheared_1p'], h5read(file2)['/catalog/metacal/sheared_1p'], h5read(file3)['/catalog/metacal/sheared_1p'], h5read(file4)['/catalog/metacal/sheared_1p']]
-    shear_1m = [h5read(file1)['/catalog/metacal/sheared_1m'], h5read(file2)['/catalog/metacal/sheared_1m'], h5read(file3)['/catalog/metacal/sheared_1m'], h5read(file4)['/catalog/metacal/sheared_1m']]
-    shear_2p = [h5read(file1)['/catalog/metacal/sheared_2p'], h5read(file2)['/catalog/metacal/sheared_2p'], h5read(file3)['/catalog/metacal/sheared_2p'], h5read(file4)['/catalog/metacal/sheared_2p']]
-    shear_2m = [h5read(file1)['/catalog/metacal/sheared_2m'], h5read(file2)['/catalog/metacal/sheared_2m'], h5read(file3)['/catalog/metacal/sheared_2m'], h5read(file4)['/catalog/metacal/sheared_2m']]
+    sheared_1p = [h5read(file1)['/catalog/metacal/sheared_1p'], h5read(file2)['/catalog/metacal/sheared_1p'], h5read(file3)['/catalog/metacal/sheared_1p'], h5read(file4)['/catalog/metacal/sheared_1p']]
+    sheared_1m = [h5read(file1)['/catalog/metacal/sheared_1m'], h5read(file2)['/catalog/metacal/sheared_1m'], h5read(file3)['/catalog/metacal/sheared_1m'], h5read(file4)['/catalog/metacal/sheared_1m']]
+    sheared_2p = [h5read(file1)['/catalog/metacal/sheared_2p'], h5read(file2)['/catalog/metacal/sheared_2p'], h5read(file3)['/catalog/metacal/sheared_2p'], h5read(file4)['/catalog/metacal/sheared_2p']]
+    sheared_2m = [h5read(file1)['/catalog/metacal/sheared_2m'], h5read(file2)['/catalog/metacal/sheared_2m'], h5read(file3)['/catalog/metacal/sheared_2m'], h5read(file4)['/catalog/metacal/sheared_2m']]
 
 
     for i in range(4):
