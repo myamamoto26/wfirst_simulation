@@ -133,8 +133,8 @@ def combine_data(file1, file2, file3, file4):
     g23=-0.02*np.ones_like(unsheared[2]['e_1'][:])
     g24=0.02*np.ones_like(unsheared[3]['e_1'][:])
 
-    g1 = np.concatenate(g11,g12,g13,g14)
-    g2 = np.concatenate(g21,g22,g23,g24)
+    g1 = np.concatenate((g11,g12,g13,g14))
+    g2 = np.concatenate((g21,g22,g23,g24))
     return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
 
 
