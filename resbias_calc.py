@@ -115,6 +115,10 @@ def combine_data(file1, file2, file3, file4):
             newflags = unsheared[i]['flags'][:]
             newT = unsheared[i]['T'][:]
             newmcalT = unsheared[i]['mcal_psf_T'][:]
+            new1psnr = sheared_1p[i]['snr'][:]
+            new1msnr = sheared_1m[i]['snr'][:]
+            new2psnr = sheared_2p[i]['snr'][:]
+            new2msnr = sheared_2m[i]['snr'][:]
         else:
             newe1 = np.append(newe1, unsheared[i]['e_1'][:])
             newe2 = np.append(newe2, unsheared[i]['e_2'][:])
@@ -130,6 +134,10 @@ def combine_data(file1, file2, file3, file4):
             newflags = np.append(newflags, unsheared[i]['flags'][:])
             newT = np.append(newT, unsheared[i]['T'][:])
             newmcalT = np.append(newmcalT, unsheared[i]['mcal_psf_T'][:])
+            new1psnr = np.append(new1psnr, sheared_1p[i]['snr'][:])
+            new1msnr = np.append(new1msnr, sheared_1m[i]['snr'][:])
+            new2psnr = np.append(new2psnr, sheared_2p[i]['snr'][:])
+            new2msnr = np.append(new2msnr, sheared_2m[i]['snr'][:])
 
     g11=-0.02*np.ones_like(unsheared[0]['e_1'][:])
     g12=0.02*np.ones_like(unsheared[1]['e_1'][:])
@@ -158,10 +166,14 @@ def combine_data(file1, file2, file3, file4):
     new2me1 = new2me1[mask]
     new2me2 = new2me2[mask]
     newsnr = newsnr[mask]
+    new1psnr = new1psnr[mask]
+    new1msnr = new1msnr[mask]
+    new2psnr = new2psnr[mask]
+    new2msnr = new2msnr[mask]
     g1 = g1[mask]
     g2 = g2[mask]
 
-    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
+    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, new1psnr, new1msnr, new2psnr, new2msnr, g1, g2
 
 
 def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, g1, g2):
@@ -210,10 +222,10 @@ def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new
 
 def residual_bias_correction(len1, len2, len3, len4, len5):
 
-    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2 = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
-                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
-                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
-                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5')
+    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, new1psnr, new1msnr, new2psnr, new2msnr, g1, g2 = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
+                                                                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
+                                                                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
+                                                                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5')
 
     #test 
     if len(newe1)!=len(new2me2):
@@ -223,13 +235,12 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
 
     R11, R22, R12, R21 = residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, g1, g2)
 
-    exit()
     avg_R11 = np.mean(R11)
     avg_R22 = np.mean(R22)
 
     snr_binn = 10
-    snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
-    snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
+    snr_min = np.log(10) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
+    snr_max = np.log(1000) #np.max(new['hlr']) #np.log(max(new['snr']))
     snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
     #print(snr_min, snr_max, snr_binslist)
     if snr_binslist[10] != snr_max:
@@ -275,10 +286,10 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
     R12_serr = []
     R21_serr = []
     for i in range(10):
-        mask_1p = (np.log(new1p['snr']) >= snr_binslist[i]) & (np.log(new1p['snr']) < snr_binslist[i+1])
-        mask_1m = (np.log(new1m['snr']) >= snr_binslist[i]) & (np.log(new1m['snr']) < snr_binslist[i+1])
-        mask_2p = (np.log(new2p['snr']) >= snr_binslist[i]) & (np.log(new2p['snr']) < snr_binslist[i+1])
-        mask_2m = (np.log(new2m['snr']) >= snr_binslist[i]) & (np.log(new2m['snr']) < snr_binslist[i+1])
+        mask_1p = (np.log(new1psnr) >= snr_binslist[i]) & (np.log(new1psnr) < snr_binslist[i+1])
+        mask_1m = (np.log(new1msnr) >= snr_binslist[i]) & (np.log(new1msnr) < snr_binslist[i+1])
+        mask_2p = (np.log(new2psnr) >= snr_binslist[i]) & (np.log(new2psnr) < snr_binslist[i+1])
+        mask_2m = (np.log(new2msnr) >= snr_binslist[i]) & (np.log(new2msnr) < snr_binslist[i+1])
         
         #mask_1p = (new1p['hlr'] >= snr_binslist[i]) & (new1p['hlr'] < snr_binslist[i+1])
         #mask_1m = (new1m['hlr'] >= snr_binslist[i]) & (new1m['hlr'] < snr_binslist[i+1])
@@ -287,10 +298,10 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
             
         #print("how many objects fall in each bin. ", len(mask_1p), len(mask_1m), len(mask_2p), len(mask_2m))
         
-        R11_s += [(np.mean(new['e1'][mask_1p]) - np.mean(new['e1'][mask_1m]))/(2*g)]
-        R22_s += [(np.mean(new['e2'][mask_2p]) - np.mean(new['e2'][mask_2m]))/(2*g)]
-        R12_s += [(np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)]
-        R21_s += [(np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)]
+        R11_s += [(np.mean(newe1[mask_1p]) - np.mean(newe1[mask_1m]))/(2*g)]
+        R22_s += [(np.mean(newe2[mask_2p]) - np.mean(newe2[mask_2m]))/(2*g)]
+        R12_s += [(np.mean(newe1[mask_2p]) - np.mean(newe1[mask_2m]))/(2*g)]
+        R21_s += [(np.mean(newe2[mask_1p]) - np.mean(newe2[mask_1m]))/(2*g)]
 
     #print("to check if there is no nan or inf", R11_s, R11_g)
     #print(R11_s)
@@ -310,7 +321,6 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
         
         
     ## get the m&b values for each bin
-    from scipy.optimize import curve_fit
     def func(x,m,b):
       return (1+m)*x+b
     m1_val = []
@@ -330,20 +340,20 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
     b4_val =[]
     b4_err = []
     for p in range(10):
-        mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
+        mask = (np.log(newsnr) >= snr_binslist[p]) & (np.log(newsnr) < snr_binslist[p+1])
         #mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
 
-        params = curve_fit(func,new['g1'][mask],new['e1'][mask]/tot_R11[p],p0=(0.,0.))
+        params = curve_fit(func,g1[mask],newe1[mask]/tot_R11[p],p0=(0.,0.))
         m1,b1=params[0]
         m1err,b1err=np.sqrt(np.diagonal(params[1]))
-        params = curve_fit(func,new['g2'][mask],new['e2'][mask]/tot_R22[p],p0=(0.,0.))
+        params = curve_fit(func,g2[mask],newe2[mask]/tot_R22[p],p0=(0.,0.))
         m2,b2=params[0]
         m2err,b2err=np.sqrt(np.diagonal(params[1]))
         
-        params = curve_fit(func,new['g1'][mask],new['e1'][mask]/R11_g[p],p0=(0.,0.))
+        params = curve_fit(func,g1[mask],newe1[mask]/R11_g[p],p0=(0.,0.))
         m3,b3=params[0]
         m3err,b3err=np.sqrt(np.diagonal(params[1]))
-        params = curve_fit(func,new['g2'][mask],new['e2'][mask]/R22_g[p],p0=(0.,0.))
+        params = curve_fit(func,g2[mask],newe2[mask]/R22_g[p],p0=(0.,0.))
         m4,b4=params[0]
         m4err,b4err=np.sqrt(np.diagonal(params[1]))
         
