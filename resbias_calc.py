@@ -158,6 +158,8 @@ def combine_data(file1, file2, file3, file4):
     new2me1 = new2me1[mask]
     new2me2 = new2me2[mask]
     newsnr = newsnr[mask]
+    g1 = g1[mask]
+    g2 = g2[mask]
 
     return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
 
