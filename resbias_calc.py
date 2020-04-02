@@ -13,6 +13,7 @@ from astropy.io import fits
 from astropy.table import Table, vstack
 import fitsio as fio
 
+'''
 def h5read(filename):
 
     f=h5py.File(filename,mode='r')
@@ -37,7 +38,7 @@ for j in range(4):
     
 print(len1, len2, len3, len4, len5)
 
-'''
+
 fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
         '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
         '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
@@ -68,7 +69,7 @@ for j in range(4):
     start+=len(new_['R11'][:])
 '''
 
-'''
+
 def h5read(filename):
 
     f=h5py.File(filename+'.h5',mode='r')
@@ -123,18 +124,22 @@ def combine_data(file1, file2, file3, file4):
             new2me2 = np.append(new2me2, sheared_2m[i]['e_2'][:])
             newsnr = np.append(newsnr, unsheared[i]['snr'][:])
 
-    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr
+    g11=-0.02*np.ones_like(unsheared[0]['e_1'][:])
+    g12=0.02*np.ones_like(unsheared[1]['e_1'][:])
+    g13=np.zeros_like(unsheared[2]['e_1'][:])
+    g14=np.zeros_like(unsheared[3]['e_1'][:])
+    g21=np.zeros_like(unsheared[0]['e_1'][:])
+    g22=np.zeros_like(unsheared[1]['e_1'][:])
+    g23=-0.02*np.ones_like(unsheared[2]['e_1'][:])
+    g24=0.02*np.ones_like(unsheared[3]['e_1'][:])
 
-def make_g1g2(len1, len2, len3, len4, len5):
+    g1 = np.concatenate(g11,g12,g13,g14)
+    g2 = np.concatenate(g21,g22,g23,g24)
+    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
 
 
-def residual_bias(res_tot, gal_num):
+def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, g1, g2):
     g = 0.01
-
-    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
-                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
-                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
-                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5')
 
     #old = old[old['ra']!=0]
     #new = new[new['ra']!=0]
@@ -169,33 +174,38 @@ def residual_bias(res_tot, gal_num):
     def func(x,m,b):
       return (1+m)*x+b
 
-    #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
-    params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
-    m5,b5=params2[0]
-    m5err,b5err=np.sqrt(np.diagonal(params2[1]))
-    #params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
-    params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
-    m6,b6=params2[0]
-    m6err,b6err=np.sqrt(np.diagonal(params2[1]))
+    for i in range(2):
+        #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
+        params2 = curve_fit(func,g1,newe1/avg_R11,p0=(0.,0.))
+        m5,b5=params2[0]
+        m5err,b5err=np.sqrt(np.diagonal(params2[1]))
+        #params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
+        params2 = curve_fit(func,g2,newe2/avg_R22,p0=(0.,0.))
+        m6,b6=params2[0]
+        m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
-    print("before correction: ")
-    print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-    print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+        print("before correction: ")
+        print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
+        print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
     return R11, R22, R12, R21
 
-def residual_bias_correction(a, b, c, d, e, f, g, h, i, j, gal_num):
+def residual_bias_correction(len1, len2, len3, len4, len5):
 
+    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2 = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
+                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
+                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
+                                                                                                                '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5')
+
+    #test 
+    if len(newe1)!=len(new2me2):
+        print("ERROR!!")
 
     g = 0.01
-    newe1 = a
-    new1p = b
-    new1m = c
-    new2p = d
-    new2m = e
 
-    R11, R22, R12, R21 = residual_bias([a,b,c,d,e], gal_num)
+    R11, R22, R12, R21 = residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, g1, g2)
 
+    exit()
     avg_R11 = np.mean(R11)
     avg_R22 = np.mean(R22)
 
@@ -221,7 +231,7 @@ def residual_bias_correction(a, b, c, d, e, f, g, h, i, j, gal_num):
         bin_R12 = []
         bin_R21 = []
         for b in range(len(R11)):
-            if (np.log(new['snr'][b]) >= snr_binslist[a]) and (np.log(new['snr'][b]) < snr_binslist[a+1]):
+            if (np.log(newsnr[b]) >= snr_binslist[a]) and (np.log(newsnr[b]) < snr_binslist[a+1]):
             #if (new['hlr'][b] >= snr_binslist[a]) and (new['hlr'][b] < snr_binslist[a+1]):
                 bin_R11 += [R11[b]]
                 bin_R22 += [R22[b]]
@@ -359,4 +369,3 @@ fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_
         '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5']
 len1, len2, len3, len4, len5 = find_length(fileset)
 residual_bias_correction(len1,len2,len3,len4,len5)
-'''
