@@ -138,7 +138,7 @@ def combine_data(file1, file2, file3, file4):
     return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
 
 
-def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, g1, g2):
+def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, g1, g2):
     g = 0.01
 
     #old = old[old['ra']!=0]
