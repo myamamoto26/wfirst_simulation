@@ -12,6 +12,7 @@ from astropy.utils.data import download_file
 from astropy.io import fits
 from astropy.table import Table, vstack
 import fitsio as fio
+from scipy.optimize import curve_fit
 
 '''
 def h5read(filename):
