@@ -135,7 +135,7 @@ def combine_data(file1, file2, file3, file4):
 
     g1 = np.concatenate((g11,g12,g13,g14))
     g2 = np.concatenate((g21,g22,g23,g24))
-    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
+    return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
 
 
 def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, g1, g2):
@@ -192,7 +192,7 @@ def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, ne
 
 def residual_bias_correction(len1, len2, len3, len4, len5):
 
-    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2 = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
+    newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2 = combine_data('/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
                                                                                                                 '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g10.02.h5', 
                                                                                                                 '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g2-0.02.h5', 
                                                                                                                 '/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g20.02.h5')
@@ -203,7 +203,7 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
 
     g = 0.01
 
-    R11, R22, R12, R21 = residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2m, new2pe1, new2pe2, new2me1, new2me2, g1, g2)
+    R11, R22, R12, R21 = residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, g1, g2)
 
     exit()
     avg_R11 = np.mean(R11)
