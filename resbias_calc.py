@@ -112,6 +112,9 @@ def combine_data(file1, file2, file3, file4):
             new2me1 = sheared_2m[i]['e_1'][:]
             new2me2 = sheared_2m[i]['e_2'][:]
             newsnr = unsheared[i]['snr'][:]
+            newflags = unsheared[i]['flags'][:]
+            newT = unsheared[i]['T'][:]
+            newmcalT = unsheared[i]['mcal_psf_T'][:]
         else:
             newe1 = np.append(newe1, unsheared[i]['e_1'][:])
             newe2 = np.append(newe2, unsheared[i]['e_2'][:])
@@ -124,6 +127,9 @@ def combine_data(file1, file2, file3, file4):
             new2me1 = np.append(new2me1, sheared_2m[i]['e_1'][:])
             new2me2 = np.append(new2me2, sheared_2m[i]['e_2'][:])
             newsnr = np.append(newsnr, unsheared[i]['snr'][:])
+            newflags = np.append(newflags, unsheared[i]['flags'][:])
+            newT = np.append(newT, unsheared[i]['T'][:])
+            newmcalT = np.append(newmcalT, unsheared[i]['mcal_psf_T'][:])
 
     g11=-0.02*np.ones_like(unsheared[0]['e_1'][:])
     g12=0.02*np.ones_like(unsheared[1]['e_1'][:])
@@ -136,18 +142,28 @@ def combine_data(file1, file2, file3, file4):
 
     g1 = np.concatenate((g11,g12,g13,g14))
     g2 = np.concatenate((g21,g22,g23,g24))
+
+    # make selections
+    # flags==0, 0<snr<1000, T/mcal_psf_T>0.5
+    mask =  (newflags == 0) & (newsnr > 0) & (newsnr < 1000) & (newT/mcal_psf_T > 0.5) 
+
+    newe1 = newe1[mask]
+    newe2 = newe2[mask]
+    new1pe1 = new1pe1[mask]
+    new1pe2 = new1pe2[mask]
+    new1me1 = new1me1[mask]
+    new1me2 = new1me2[mask]
+    new2pe1 = new2pe1[mask]
+    new2pe2 = new2pe2[mask]
+    new2me1 = new2me1[mask]
+    new2me2 = new2me2[mask]
+    newsnr = newsnr[mask]
+
     return newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, newsnr, g1, g2
 
 
 def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new2pe2, new2me1, new2me2, g1, g2):
     g = 0.01
-
-    #old = old[old['ra']!=0]
-    #new = new[new['ra']!=0]
-    #new1p = new1p[new1p['ra']!=0]
-    #new1m = new1m[new1m['ra']!=0]
-    #new2p = new2p[new2p['ra']!=0]
-    #new2m = new2m[new2m['ra']!=0]
 
     R11 = (new1pe1 - new1me1)/(2*g)
     R22 = (new2pe2 - new2me2)/(2*g)
@@ -174,20 +190,19 @@ def residual_bias(newe1, newe2, new1pe1, new1pe2, new1me1, new1me2, new2pe1, new
 
     def func(x,m,b):
       return (1+m)*x+b
+      
+    #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
+    params2 = curve_fit(func,g1,newe1/avg_R11,p0=(0.,0.))
+    m5,b5=params2[0]
+    m5err,b5err=np.sqrt(np.diagonal(params2[1]))
+    #params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
+    params2 = curve_fit(func,g2,newe2/avg_R22,p0=(0.,0.))
+    m6,b6=params2[0]
+    m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
-    for i in range(2):
-        #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
-        params2 = curve_fit(func,g1,newe1/avg_R11,p0=(0.,0.))
-        m5,b5=params2[0]
-        m5err,b5err=np.sqrt(np.diagonal(params2[1]))
-        #params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
-        params2 = curve_fit(func,g2,newe2/avg_R22,p0=(0.,0.))
-        m6,b6=params2[0]
-        m6err,b6err=np.sqrt(np.diagonal(params2[1]))
-
-        print("before correction: ")
-        print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-        print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+    print("before correction: ")
+    print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
+    print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
     return R11, R22, R12, R21
 
