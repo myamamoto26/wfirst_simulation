@@ -15,7 +15,7 @@ import fitsio as fio
 
 def h5read(filename):
 
-    f=h5py.File(filename+'.h5',mode='r')
+    f=h5py.File(filename,mode='r')
     return f
 
 fileset=['/net/oit-nas-fe13.dscr.duke.local/phy-lsst/DES-Y3-Sims/desy3_combined_mcal_cat_g1-0.02.h5',
