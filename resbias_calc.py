@@ -72,7 +72,7 @@ for j in range(4):
 
 def h5read(filename):
 
-    f=h5py.File(filename+'.h5',mode='r')
+    f=h5py.File(filename,mode='r')
     return f
 
 def find_length(fileset):
