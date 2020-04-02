@@ -377,8 +377,9 @@ def residual_bias_correction(len1, len2, len3, len4, len5):
         b4_val += [b4]
         b4_err += [b4err]
 
-    print(m1,b1)
-    print(m1_val, b1_val)
+    #print(m1,b1)
+    print(tot_R11)
+    print('m1: ',m1_val, 'm2: ', m2_val)
     print('corrected m, b: ')
     print("m1="+str("%6.4f"% np.mean(m1_val))+"+-"+str("%6.4f"% np.mean(m1_err)), "b1="+str("%6.6f"% np.mean(b1_val))+"+-"+str("%6.6f"% np.mean(b1_err)))
     print("m2="+str("%6.4f"% np.mean(m2_val))+"+-"+str("%6.4f"% np.mean(m2_err)), "b2="+str("%6.6f"% np.mean(b2_val))+"+-"+str("%6.6f"% np.mean(b2_err)))
