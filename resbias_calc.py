@@ -145,7 +145,7 @@ def combine_data(file1, file2, file3, file4):
 
     # make selections
     # flags==0, 0<snr<1000, T/mcal_psf_T>0.5
-    mask =  (newflags == 0) & (newsnr > 0) & (newsnr < 1000) & (newT/mcal_psf_T > 0.5) 
+    mask =  (newflags == 0) & (newsnr > 0) & (newsnr < 1000) & (newT/newmcalT > 0.5) 
 
     newe1 = newe1[mask]
     newe2 = newe2[mask]
