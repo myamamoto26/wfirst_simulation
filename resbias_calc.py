@@ -29,11 +29,11 @@ len3=[]
 len4=[]
 len5=[]
 for j in range(4):
-    len1 += len(h5read(fileset[j])['/catalog/metacal/unsheared/R11'][:])
-    len2 += len(h5read(fileset[j])['/catalog/metacal/sheared_1p/e_1'][:])
-    len3 += len(h5read(fileset[j])['/catalog/metacal/sheared_1m/e_1'][:])
-    len4 += len(h5read(fileset[j])['/catalog/metacal/sheared_2p/e_1'][:])
-    len5 += len(h5read(fileset[j])['/catalog/metacal/sheared_2m/e_1'][:])
+    len1 += [len(h5read(fileset[j])['/catalog/metacal/unsheared/R11'][:])]
+    len2 += [len(h5read(fileset[j])['/catalog/metacal/sheared_1p/e_1'][:])]
+    len3 += [len(h5read(fileset[j])['/catalog/metacal/sheared_1m/e_1'][:])]
+    len4 += [len(h5read(fileset[j])['/catalog/metacal/sheared_2p/e_1'][:])]
+    len5 += [len(h5read(fileset[j])['/catalog/metacal/sheared_2m/e_1'][:])]
     
 print(len1, len2, len3, len4, len5)
 
