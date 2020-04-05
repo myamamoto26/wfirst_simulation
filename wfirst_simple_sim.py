@@ -797,7 +797,7 @@ def main(argv):
         read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
         im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
-        sky_image.addNoise(read_noise)
+        im.addNoise(read_noise)
         gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
         gal_stamp -= sky_image
         gal_stamp.addNoise(read_noise)
