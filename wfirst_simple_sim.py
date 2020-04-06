@@ -799,7 +799,7 @@ def main(argv):
         im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
         #im.addNoise(read_noise)
         gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
-        sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
+        #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
 
         gal_stamp -= sky_image
         #print(gal_stamp.array)
