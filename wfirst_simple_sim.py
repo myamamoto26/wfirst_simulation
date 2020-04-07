@@ -215,7 +215,7 @@ def add_background(im,  sky_level, b, thermal_backgrounds=None, filter_='H158', 
     # This image is in units of e-/pix. Finally we add the expected thermal backgrounds in this
     # band. These are provided in e-/pix/s, so we have to multiply by the exposure time.
     if thermal_backgrounds is None:
-        sky_stamp += wfirst.thermal_backgrounds[filter_]*wfirst.exptime
+        sky_stamp += 2*wfirst.thermal_backgrounds[filter_]*wfirst.exptime
     else:
         sky_stamp += thermal_backgrounds*wfirst.exptime
 
@@ -828,7 +828,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_7'
+        dirr='v1_9'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
