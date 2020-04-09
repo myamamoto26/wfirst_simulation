@@ -747,13 +747,13 @@ def main(argv):
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.05,g2=0)
-                g1=0.05
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=0.05)
+                g1=0
+                g2=0.05
             else:
-                gal_model = gal_model.shear(g1=-0.05,g2=0)
-                g1=-0.05
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=-0.05)
+                g1=0
+                g2=-0.05
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
@@ -828,7 +828,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_10'
+        dirr='v1_11'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -867,7 +867,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -881,9 +881,9 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
