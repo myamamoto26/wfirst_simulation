@@ -30,10 +30,12 @@ def plot_3points(num, dirr1, dirr2):
     print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.plot(g002, e002, marker='o')
-    ax1.plot(g005, e005, marker='o')
-    ax1.set_xlabel('g1')
-    ax1.set_ylabel('e1')
+    ax1.plot(g002, e002, marker='o', label='g1=+0.02')
+    ax1.plot(g005, e005, marker='o', label='g1=+0.05')
+    ax1.set_xlabel('g1', fontsize=16)
+    ax1.set_ylabel('e1', fontsize=16)
+    ax1.legend(fontsize=9)
+    ax1.tick_params(labelsize=12)
     plt.savefig('metacal_3points.png')
 
 
