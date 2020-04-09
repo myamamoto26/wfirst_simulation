@@ -17,13 +17,15 @@ def readinfiles(dirr):
 def plot_3points(num, dirr1, dirr2):
 
     unsheared1, sheared1p1, sheared1m1, sheared2p1, sheared2m1 = readinfiles(dirr1)
-    unsheared2, sheared1p2, sheared1m2, sheared2p2, sheared2m2 = readinfiles(dirr1)
+    unsheared2, sheared1p2, sheared1m2, sheared2p2, sheared2m2 = readinfiles(dirr2)
 
+    mask1 = (sheared1p1['g1'] == 0.02)
     g002=[-0.01, 0, 0.01]
-    e002=[np.mean(sheared1m1['e1']), np.mean(unsheared1['e1']), np.mean(sheared1p1['e1'])]
+    e002=[np.mean(sheared1m1['e1'][mask1]), np.mean(unsheared1['e1'][mask1]), np.mean(sheared1p1['e1'][mask1])]
 
+    mask2 = (sheared1p2['g1'] == 0.05)
     g005=[-0.01, 0, 0.01]
-    e005=[np.mean(sheared1m2['e1']), np.mean(unsheared2['e1']), np.mean(sheared1p2['e1'])]
+    e005=[np.mean(sheared1m2['e1'][mask2]), np.mean(unsheared2['e1'][mask2]), np.mean(sheared1p2['e1'][mask2])]
 
     print(e002, e005)
 
