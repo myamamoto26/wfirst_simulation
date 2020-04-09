@@ -2,6 +2,7 @@ import numpy as np
 import math
 import os
 from matplotlib import pyplot as plt
+import fitsio as fio
 
 
 def readinfiles(dirr):
