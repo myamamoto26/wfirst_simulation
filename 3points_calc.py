@@ -22,13 +22,13 @@ def plot_3points(num, dirr1, dirr2):
     g002=[-0.01, 0, 0.01]
     e002=[np.mean(sheared1m1['e1']), np.mean(unsheared1['e1']), np.mean(sheared1p1['e1'])]
 
-    g005=[-0.1, 0, 0.01]
+    g005=[-0.01, 0, 0.01]
     e005=[np.mean(sheared1m2['e1']), np.mean(unsheared2['e1']), np.mean(sheared1p2['e1'])]
 
 
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.plot(g002, e002, 'bo')
-    ax1.plot(g005, e005, 'go')
+    ax1.plot(g002, e002)
+    ax1.plot(g005, e005)
     plt.savefig('metacal_3points.png')
 
 
