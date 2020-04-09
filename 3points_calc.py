@@ -25,6 +25,7 @@ def plot_3points(num, dirr1, dirr2):
     g005=[-0.01, 0, 0.01]
     e005=[np.mean(sheared1m2['e1']), np.mean(unsheared2['e1']), np.mean(sheared1p2['e1'])]
 
+    print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.plot(g002, e002)
