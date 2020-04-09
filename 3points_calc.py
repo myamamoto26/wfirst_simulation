@@ -25,13 +25,15 @@ def plot_3points(num, dirr1, dirr2):
 
     mask2 = (sheared1p2['g1'] == 0.05)
     g005=[-0.01, 0, 0.01]
-    e005=[np.mean(sheared1m2['e1'][mask2]), np.mean(unsheared2['e1'][mask2]), np.mean(sheared1p2['e1'][mask2])]
+    e005=[np.mean(sheared1m2['e1'][mask2])-0.03, np.mean(unsheared2['e1'][mask2])-0.03, np.mean(sheared1p2['e1'][mask2])-0.03]
 
     print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.plot(g002, e002)
-    ax1.plot(g005, e005)
+    ax1.plot(g002, e002, marker='o')
+    ax1.plot(g005, e005, marker='o')
+    ax1.set_xlabel('g1')
+    ax1.set_ylabel('e1')
     plt.savefig('metacal_3points.png')
 
 
