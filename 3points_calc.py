@@ -45,17 +45,17 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.plot(g002, e002, marker='o', label='g1=+0.02')
-    ax1.errorbar(g002, e002, yerr=e002err, fmt='o')
+    ax1.plot(g002, e002, marker='o', c='b' label='g1=+0.02')
+    ax1.errorbar(g002, e002, yerr=e002err, c='b', fmt='o')
 
-    ax1.plot(g005, e005, marker='o', label='g1=+0.05')
-    ax1.errorbar(g005, e005, yerr=e005err, fmt='o')
+    ax1.plot(g005, e005, marker='o', c='g', label='g1=+0.05')
+    ax1.errorbar(g005, e005, yerr=e005err, c='g', fmt='o')
 
-    ax1.plot(g2002, e2002, marker='o', label='g2=+0.02')
-    ax1.errorbar(g2002, e2002, yerr=e2002err, fmt='o')
+    ax1.plot(g2002, e2002, marker='o',c='r', label='g2=+0.02')
+    ax1.errorbar(g2002, e2002, yerr=e2002err, c='r', fmt='o')
 
-    ax1.plot(g2005, e2005, marker='o', label='g2=+0.05')
-    ax1.errorbar(g2005, e2005, yerr=e2005err, fmt='o')
+    ax1.plot(g2005, e2005, marker='o', c='o', label='g2=+0.05')
+    ax1.errorbar(g2005, e2005, yerr=e2005err, c='o', fmt='o')
 
     ax1.set_xlabel('g', fontsize=16)
     ax1.set_ylabel('e', fontsize=16)
