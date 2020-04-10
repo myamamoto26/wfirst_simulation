@@ -14,10 +14,12 @@ def readinfiles(dirr):
 
     return a, b, c, d, e
 
-def plot_3points(num, dirr1, dirr2):
+def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     unsheared1, sheared1p1, sheared1m1, sheared2p1, sheared2m1 = readinfiles(dirr1)
     unsheared2, sheared1p2, sheared1m2, sheared2p2, sheared2m2 = readinfiles(dirr2)
+    unsheared3, sheared1p3, sheared1m3, sheared2p3, sheared2m3 = readinfiles(dirr3)
+    unsheared4, sheared1p4, sheared1m4, sheared2p4, sheared2m4 = readinfiles(dirr4)
 
     mask1 = (sheared1p1['g1'] == 0.02)
     g002=[-0.01, 0, 0.01]
@@ -27,14 +29,25 @@ def plot_3points(num, dirr1, dirr2):
     g005=[-0.01, 0, 0.01]
     e005=[np.mean(sheared1m2['e1'][mask2])-0.03, np.mean(unsheared2['e1'][mask2])-0.03, np.mean(sheared1p2['e1'][mask2])-0.03]
 
+    mask3 = (sheared2p3['g2'] == 0.02)
+    g2002=[-0.01, 0, 0.01]
+    e2002=[np.mean(sheared2m3['e2'][mask3]), np.mean(unsheared3['e2'][mask3]), np.mean(sheared2p3['e2'][mask3])]
+
+    mask4 = (sheared2p4['g2'] == 0.05)
+    g2005=[-0.01, 0, 0.01]
+    e2005=[np.mean(sheared2m4['e2'][mask4])-0.03, np.mean(unsheared4['e2'][mask4])-0.03, np.mean(sheared2p4['e2'][mask4])-0.03]
+
+
     print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.plot(g002, e002, marker='o', label='g1=+0.02')
     ax1.plot(g005, e005, marker='o', label='g1=+0.05')
-    ax1.set_xlabel('g1', fontsize=16)
-    ax1.set_ylabel('e1', fontsize=16)
-    ax1.legend(fontsize=9)
+    ax1.plot(g2002, e2002, marker='o', label='g2=+0.02')
+    ax1.plot(g2005, e2005, marker='o', label='g2=+0.05')
+    ax1.set_xlabel('g', fontsize=16)
+    ax1.set_ylabel('e', fontsize=16)
+    ax1.legend(fontsize=11)
     ax1.tick_params(labelsize=12)
     plt.savefig('metacal_3points.png')
 
@@ -42,4 +55,6 @@ def plot_3points(num, dirr1, dirr2):
 num = 5000000
 dirr1='v1_6' # g1=+-0.02
 dirr2='v1_10' # g1=+-0.05
-plot_3points(num, dirr1, dirr2)
+dirr3='v1_7'
+dirr4='v1_11'
+plot_3points(num, dirr1, dirr2, dirr3, dirr4)
