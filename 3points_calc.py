@@ -24,27 +24,39 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     mask1 = (sheared1p1['g1'] == 0.02)
     g002=[-0.01, 0, 0.01]
     e002=[np.mean(sheared1m1['e1'][mask1]), np.mean(unsheared1['e1'][mask1]), np.mean(sheared1p1['e1'][mask1])]
+    e002err=[np.std(sheared1m1['e1'][mask1])/np.sqrt(len(sheared1m1['e1'][mask1])), np.std(unsheared1['e1'][mask1])/np.sqrt(len(unsheared1['e1'][mask1])), np.std(sheared1p1['e1'][mask1])/np.sqrt(len(sheared1p1['e1'][mask1]))]
 
     mask2 = (sheared1p2['g1'] == 0.05)
     g005=[-0.01, 0, 0.01]
     e005=[np.mean(sheared1m2['e1'][mask2])-0.03, np.mean(unsheared2['e1'][mask2])-0.03, np.mean(sheared1p2['e1'][mask2])-0.03]
+    e005err=[np.std(sheared1m2['e1'][mask2])/np.sqrt(len(sheared1m2['e1'][mask2])), np.std(unsheared2['e1'][mask2])/np.sqrt(len(unsheared2['e1'][mask2])), np.std(sheared1p2['e1'][mask2])/np.sqrt(len(sheared1p2['e1'][mask2]))]
 
     mask3 = (sheared2p3['g2'] == 0.02)
     g2002=[-0.01, 0, 0.01]
     e2002=[np.mean(sheared2m3['e2'][mask3]), np.mean(unsheared3['e2'][mask3]), np.mean(sheared2p3['e2'][mask3])]
+    e2002err=[np.std(sheared2m3['e2'][mask3])/np.sqrt(len(sheared2m3['e2'][mask3])), np.std(unsheared3['e2'][mask3])/np.sqrt(len(unsheared3['e2'][mask3])), np.std(sheared2p3['e2'][mask3])/np.sqrt(len(sheared2p3['e2'][mask3]))]
 
     mask4 = (sheared2p4['g2'] == 0.05)
     g2005=[-0.01, 0, 0.01]
     e2005=[np.mean(sheared2m4['e2'][mask4])-0.03, np.mean(unsheared4['e2'][mask4])-0.03, np.mean(sheared2p4['e2'][mask4])-0.03]
+    e2005err=[np.std(sheared2m4['e2'][mask4])/np.sqrt(len(sheared2m4['e2'][mask4])), np.std(unsheared4['e2'][mask4])/np.sqrt(len(unsheared4['e2'][mask4])), np.std(sheared2p4['e2'][mask4])/np.sqrt(len(sheared2p4['e2'][mask4]))]
 
 
     print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.plot(g002, e002, marker='o', label='g1=+0.02')
+    ax1.errorbar(g002, e002, yerr=e002err, fmt='o')
+
     ax1.plot(g005, e005, marker='o', label='g1=+0.05')
+    ax1.errorbar(g005, e005, yerr=e005err, fmt='o')
+
     ax1.plot(g2002, e2002, marker='o', label='g2=+0.02')
+    ax1.errorbar(g2002, e2002, yerr=e2002err, fmt='o')
+
     ax1.plot(g2005, e2005, marker='o', label='g2=+0.05')
+    ax1.errorbar(g2005, e2005, yerr=e2005err, fmt='o')
+
     ax1.set_xlabel('g', fontsize=16)
     ax1.set_ylabel('e', fontsize=16)
     ax1.legend(fontsize=11)
