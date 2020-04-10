@@ -842,7 +842,7 @@ def main(argv):
 
 def sub(argv):
     num = 5000000
-    dirr='v1_10'
+    dirr='v1_11'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
