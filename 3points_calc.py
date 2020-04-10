@@ -54,8 +54,8 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     ax1.plot(g2002, e2002, marker='o',c='r', label='g2=+0.02')
     ax1.errorbar(g2002, e2002, yerr=e2002err, c='r', fmt='o')
 
-    ax1.plot(g2005, e2005, marker='o', c='o', label='g2=+0.05')
-    ax1.errorbar(g2005, e2005, yerr=e2005err, c='o', fmt='o')
+    ax1.plot(g2005, e2005, marker='o', c='m', label='g2=+0.05')
+    ax1.errorbar(g2005, e2005, yerr=e2005err, c='m', fmt='o')
 
     ax1.set_xlabel('g', fontsize=16)
     ax1.set_ylabel('e', fontsize=16)
