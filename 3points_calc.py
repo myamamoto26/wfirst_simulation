@@ -45,7 +45,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     print(e002, e005)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.plot(g002, e002, marker='o', c='b' label='g1=+0.02')
+    ax1.plot(g002, e002, marker='o', c='b', label='g1=+0.02')
     ax1.errorbar(g002, e002, yerr=e002err, c='b', fmt='o')
 
     ax1.plot(g005, e005, marker='o', c='g', label='g1=+0.05')
