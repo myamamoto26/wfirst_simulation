@@ -67,6 +67,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     ax1.set_xlabel('g', fontsize=16)
     ax1.set_ylabel('delta e', fontsize=16)
+    ax1.set_ylim(-0.02,0.01)
     ax1.legend(fontsize=11)
     ax1.tick_params(labelsize=12)
     plt.savefig('metacal_3points_delta.png')
