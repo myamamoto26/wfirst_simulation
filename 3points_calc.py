@@ -50,7 +50,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.scatter(g002, deltae1, label='g1')
     ax1.scatter(g2002, deltae2, label='g2')
-    ax1.hlines(y=0, xmin=-0.01, xmax=0.01, linestyles='dashed')
+    ax1.hlines(y=0, xmin=-0.002, xmax=0.002, linestyles='dashed')
     """
     ax1.plot(g002, e002, marker='o', c='b', label='g1=+0.02')
     ax1.errorbar(g002, e002, yerr=e002err, c='b', fmt='o')
