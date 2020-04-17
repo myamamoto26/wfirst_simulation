@@ -82,10 +82,20 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     linefit2 = func(g_x,m2,n2)
     quadfit2 = quadratic_function(g_x,a2,b2,c2)
 
-    print(chisquare(e002, f_exp=linefit1), chisquare(e002, f_exp=quadfit1))
-    print(chisquare(e005, f_exp=linefit2), chisquare(e005, f_exp=quadfit2))
+    chiline1=0
+    chiquad1=0
+    chilin2=0
+    chiquad2=0
+    for j in range(3):
+        chilin1 += ((e002[j] - linefit1[j])**2)/linefit1[j]
+        chiquad1 += ((e002[j] - quadfit1[j])**2)/quadfit1[j]
+        chilin2 += ((e005[j] - linefit2[j])**2)/linefit2[j]
+        chiquad2 += ((e005[j] - quadfit2[j])**2)/quadfit2[j]
+    print(chilin1, chilin2, chiquad1, chiquad2)
+    #print(chisquare(e002, f_exp=linefit1), chisquare(e002, f_exp=quadfit1))
+    #print(chisquare(e005, f_exp=linefit2), chisquare(e005, f_exp=quadfit2))
     
-
+    """
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.scatter(g002, e002, label='g1=+-0.02')
     ax1.errorbar(g002, e002, yerr=e002err, fmt='o')
@@ -100,7 +110,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     #ax1.errorbar(g2002, deltae2, yerr=deltae2_err, fmt='o')
     #ax1.hlines(y=deltae1[1], xmin=-0.01, xmax=0.01, linestyles='dashed')
     #ax1.hlines(y=deltae2[1], xmin=-0.01, xmax=0.01, linestyles='solid')
-    """
+    
     ax1.plot(g002, e002, marker='o', c='b', label='g1=+0.02')
     ax1.errorbar(g002, e002, yerr=e002err, c='b', fmt='o')
 
@@ -112,7 +122,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     ax1.plot(g2005, e2005, marker='o', c='m', label='g2=+0.05')
     ax1.errorbar(g2005, e2005, yerr=e2005err, c='m', fmt='o')
-    """
+    
 
     ax1.set_xlabel('g', fontsize=16)
     ax1.set_ylabel('e', fontsize=16)
@@ -120,6 +130,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     ax1.legend(fontsize=11)
     ax1.tick_params(labelsize=10)
     plt.savefig('metacal_3points_fit.png')
+    """
 
 
 num = 5000000
