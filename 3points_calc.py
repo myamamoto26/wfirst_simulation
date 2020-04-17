@@ -54,11 +54,11 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     from scipy.optimize import curve_fit
     def func(x,m,n):
-      return (1+m)*x+n
+        return (1+m)*x+n
 
     def quadratic_function(x,a,b,c):    
-    B = (a*(x**2.0)) + (b*x) + c
-    return B
+        B = (a*(x**2.0)) + (b*x) + c
+        return B
 
     # line and quadratic fit for e1, +-0.02
     params = curve_fit(func,g002,e002,p0=(0.,0.))
