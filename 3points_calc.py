@@ -45,12 +45,16 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     deltae1 = [e005[i]-e002[i] for i in range(3)]
     deltae2 = [e2005[i]-e2002[i] for i in range(3)]
+    deltae1_err = [e002err[i]-e005err[i] for i in range(3)]
+    deltae2_err = [e2002err[i]-e2005err[i] for i in range(3)]
 
     print(deltae1, deltae2)
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.scatter(g002, deltae1, label='g1')
+    ax1.errorbar(g002, deltae1, yerr=deltae1_err, fmt='o')
     ax1.scatter(g2002, deltae2, label='g2')
+    ax1.errorbar(g2002, deltae2, yerr=deltae2_err, fmt='o')
     ax1.hlines(y=deltae1[1], xmin=-0.01, xmax=0.01, linestyles='dashed')
     ax1.hlines(y=deltae2[1], xmin=-0.01, xmax=0.01, linestyles='solid')
     """
