@@ -51,13 +51,44 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     print(deltae1, deltae2)
     print(deltae1_err, deltae2_err)
 
+
+    from scipy.optimize import curve_fit
+    def func(x,m,n):
+      return (1+m)*x+n
+
+    def quadratic_function(x,a,b,c):    
+    B = (a*(x**2.0)) + (b*x) + c
+    return B
+
+    # line and quadratic fit for e1, +-0.02
+    params = curve_fit(func,g002,e002,p0=(0.,0.))
+    m1,n1=params[0]
+    params2 = curve_fit(quadratic_function,g002,e002,p0=(0.,0.))
+    a1,b1,c1=params2[0]
+
+    # same for e1, +-0.05
+    params = curve_fit(func,g005,e005,p0=(0.,0.))
+    m2,n2=params[0]
+    params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.))
+    a2,b2,c2=params2[0]
+
+
+    x = np.linspace(-0.01, 0.01, 100)
+
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.scatter(g002, deltae1, label='g1')
-    ax1.errorbar(g002, deltae1, yerr=deltae1_err, fmt='o')
-    ax1.scatter(g2002, deltae2, label='g2')
-    ax1.errorbar(g2002, deltae2, yerr=deltae2_err, fmt='o')
-    ax1.hlines(y=deltae1[1], xmin=-0.01, xmax=0.01, linestyles='dashed')
-    ax1.hlines(y=deltae2[1], xmin=-0.01, xmax=0.01, linestyles='solid')
+    ax1.scatter(g002, e002, label='g1=+-0.02')
+    ax1.errorbar(g002, e002, yerr=e002_err, fmt='o')
+    ax1.plot(x, func(x, m1, n1))
+    ax1.plot(x, quadratic_function(x, a1, b1, c1))
+
+    ax1.scatter(g005, e005, label='g1=+-0.05')
+    ax1.errorbar(g005, e005, yerr=e005_err, fmt='o')
+    ax1.plot(x, func(x, m2, n2))
+    ax1.plot(x, quadratic_function(x, a2, b2, c2))
+    #ax1.scatter(g2002, deltae2, label='g2')
+    #ax1.errorbar(g2002, deltae2, yerr=deltae2_err, fmt='o')
+    #ax1.hlines(y=deltae1[1], xmin=-0.01, xmax=0.01, linestyles='dashed')
+    #ax1.hlines(y=deltae2[1], xmin=-0.01, xmax=0.01, linestyles='solid')
     """
     ax1.plot(g002, e002, marker='o', c='b', label='g1=+0.02')
     ax1.errorbar(g002, e002, yerr=e002err, c='b', fmt='o')
@@ -73,11 +104,11 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     """
 
     ax1.set_xlabel('g', fontsize=16)
-    ax1.set_ylabel(r'$\delta e$', fontsize=14)
-    ax1.set_ylim(-0.0012,-0.0010)
+    ax1.set_ylabel('e', fontsize=16)
+    #ax1.set_ylim(-0.0012,-0.0010)
     ax1.legend(fontsize=11)
     ax1.tick_params(labelsize=10)
-    plt.savefig('metacal_3points_delta.png')
+    plt.savefig('metacal_3points_fit.png')
 
 
 num = 5000000
