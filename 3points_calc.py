@@ -63,13 +63,13 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     # line and quadratic fit for e1, +-0.02
     params = curve_fit(func,g002,e002,p0=(0.,0.))
     m1,n1=params[0]
-    params2 = curve_fit(quadratic_function,g002,e002,p0=(0.,0.))
+    params2 = curve_fit(quadratic_function,g002,e002,p0=(0.,0.,0.))
     a1,b1,c1=params2[0]
 
     # same for e1, +-0.05
     params = curve_fit(func,g005,e005,p0=(0.,0.))
     m2,n2=params[0]
-    params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.))
+    params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.,0.))
     a2,b2,c2=params2[0]
 
 
