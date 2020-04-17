@@ -88,10 +88,10 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     chilin2=0
     chiquad2=0
     for j in range(3):
-        chilin1 += ((e002[j] - linefit1[j])**2)/inv(np.cov(e002))
-        chiquad1 += ((e002[j] - quadfit1[j])**2)/inv(np.cov(e002))
-        chilin2 += ((e005[j] - linefit2[j])**2)/inv(np.cov(e005))
-        chiquad2 += ((e005[j] - quadfit2[j])**2)/inv(np.cov(e005))
+        chilin1 += ((e002[j] - linefit1[j])**2)/inv(np.cov(e002, linefit1))
+        chiquad1 += ((e002[j] - quadfit1[j])**2)/inv(np.cov(e002, quadfit1))
+        chilin2 += ((e005[j] - linefit2[j])**2)/inv(np.cov(e005, linefit2))
+        chiquad2 += ((e005[j] - quadfit2[j])**2)/inv(np.cov(e005, quadfit2))
     print(chilin1, chilin2, chiquad1, chiquad2)
     #print(chisquare(e002, f_exp=linefit1), chisquare(e002, f_exp=quadfit1))
     #print(chisquare(e005, f_exp=linefit2), chisquare(e005, f_exp=quadfit2))
