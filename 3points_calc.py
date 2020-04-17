@@ -73,8 +73,9 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.,0.))
     a2,b2,c2=params2[0]
 
-    """
+    
     x = np.linspace(-0.01, 0.01, 100)
+    """
     linefit1 = func(g002,m1,n1)
     quadfit1 =  quadratic_function(g002,a1,b1,c1)
     linefit2 = func(g005,m2,n2)
