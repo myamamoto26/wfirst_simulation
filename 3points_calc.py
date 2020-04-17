@@ -73,7 +73,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.,0.))
     a2,b2,c2=params2[0]
 
-
+    """
     x = np.linspace(-0.01, 0.01, 100)
     linefit1 = func(g002,m1,n1)
     quadfit1 =  quadratic_function(g002,a1,b1,c1)
@@ -82,6 +82,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     print(chisquare(e002, f_exp=linefit1), chisquare(e002, f_exp=quadfit1))
     print(chisquare(e005, f_exp=linefit2), chisquare(e005, f_exp=quadfit2))
+    """
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.scatter(g002, e002, label='g1=+-0.02')
