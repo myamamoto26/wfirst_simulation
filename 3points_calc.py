@@ -48,8 +48,8 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     deltae1_err = [e002err[i]-e005err[i] for i in range(3)]
     deltae2_err = [e2002err[i]-e2005err[i] for i in range(3)]
 
-    print(deltae1, deltae2)
-    print(deltae1_err, deltae2_err)
+    #print(deltae1, deltae2)
+    #print(deltae1_err, deltae2_err)
 
 
     from scipy.optimize import curve_fit
@@ -75,15 +75,16 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
 
     
     x = np.linspace(-0.01, 0.01, 100)
-    """
-    linefit1 = func(g002,m1,n1)
-    quadfit1 =  quadratic_function(g002,a1,b1,c1)
-    linefit2 = func(g005,m2,n2)
-    quadfit2 = quadratic_function(g005,a2,b2,c2)
+    g_x = np.array([-0.01,0,0.01])
+    
+    linefit1 = func(g_x,m1,n1)
+    quadfit1 =  quadratic_function(g_x,a1,b1,c1)
+    linefit2 = func(g_x,m2,n2)
+    quadfit2 = quadratic_function(g_x,a2,b2,c2)
 
     print(chisquare(e002, f_exp=linefit1), chisquare(e002, f_exp=quadfit1))
     print(chisquare(e005, f_exp=linefit2), chisquare(e005, f_exp=quadfit2))
-    """
+    
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.scatter(g002, e002, label='g1=+-0.02')
