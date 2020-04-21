@@ -68,13 +68,13 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     params2 = curve_fit(quadratic_function,g002,e002,p0=(-1.,1.,0.), sigma=e002err)
     a1,b1,c1=params2[0]
 
+    print(params[1])
+
     # same for e1, +-0.05
     params = curve_fit(func,g005,e005,p0=(0.,0.), sigma=e005err)
     m2,n2=params[0]
     params2 = curve_fit(quadratic_function,g005,e005,p0=(-1.,1.,0.), sigma=e005err)
     a2,b2,c2=params2[0]
-
-    print(a1,b1,c1)
 
     
     x = np.linspace(-0.01, 0.01, 100)
