@@ -63,7 +63,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
         return B
 
     # line and quadratic fit for e1, +-0.02
-    params = curve_fit(func,g002,e002,p0=(0.,0.), sigma=e002err)
+    params = curve_fit(func,g002,e002,p0=(0.,0.))
     m1,n1=params[0]
     params2 = curve_fit(quadratic_function,g002,e002,p0=(-1.,1.,0.), sigma=e002err)
     a1,b1,c1=params2[0]
