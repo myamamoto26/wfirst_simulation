@@ -63,15 +63,15 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
         return B
 
     # line and quadratic fit for e1, +-0.02
-    params = curve_fit(func,g002,e002,p0=(0.,0.))
+    params = curve_fit(func,g002,e002,p0=(0.,0.), sigma=e002err)
     m1,n1=params[0]
-    params2 = curve_fit(quadratic_function,g002,e002,p0=(0.,0.,0.))
+    params2 = curve_fit(quadratic_function,g002,e002,p0=(0.,0.,0.), sigma=e002err)
     a1,b1,c1=params2[0]
 
     # same for e1, +-0.05
-    params = curve_fit(func,g005,e005,p0=(0.,0.))
+    params = curve_fit(func,g005,e005,p0=(0.,0.), sigma=e005err)
     m2,n2=params[0]
-    params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.,0.))
+    params2 = curve_fit(quadratic_function,g005,e005,p0=(0.,0.,0.), sigma=e005err)
     a2,b2,c2=params2[0]
 
     
@@ -88,10 +88,10 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     chilin2=0
     chiquad2=0
     for j in range(3):
-        chilin1 += ((e002[j] - linefit1[j])**2)/inv(np.cov(e002, linefit1))
-        chiquad1 += ((e002[j] - quadfit1[j])**2)/inv(np.cov(e002, quadfit1))
-        chilin2 += ((e005[j] - linefit2[j])**2)/inv(np.cov(e005, linefit2))
-        chiquad2 += ((e005[j] - quadfit2[j])**2)/inv(np.cov(e005, quadfit2))
+        chilin1 += ((e002[j] - linefit1[j])**2)/(e002err[j]**2)
+        chiquad1 += ((e002[j] - quadfit1[j])**2)/(e002err[j]**2)
+        chilin2 += ((e005[j] - linefit2[j])**2)/(e005err[j]**2)
+        chiquad2 += ((e005[j] - quadfit2[j])**2)/(e005err[j]**2)
     print(chilin1, chilin2, chiquad1, chiquad2)
     #print(chisquare(e002, f_exp=linefit1), chisquare(e002, f_exp=quadfit1))
     #print(chisquare(e005, f_exp=linefit2), chisquare(e005, f_exp=quadfit2))
