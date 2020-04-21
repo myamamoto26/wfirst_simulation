@@ -85,7 +85,7 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     linefit2 = func(g_x,m2,n2)
     quadfit2 = quadratic_function(g_x,a2,b2,c2)
 
-    print(e002, linefit1)
+    print(e002, linefit1, e002err)
 
     chilin1=0
     chiquad1=0
