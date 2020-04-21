@@ -22,12 +22,12 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4):
     unsheared3, sheared1p3, sheared1m3, sheared2p3, sheared2m3 = readinfiles(dirr3)
     unsheared4, sheared1p4, sheared1m4, sheared2p4, sheared2m4 = readinfiles(dirr4)
 
-    mask1 = (sheared1p1['g1'] == 0.02)
+    mask1 = (sheared1p1['g1'] == -0.02)
     g002=[-0.01, 0, 0.01]
     e002=[np.mean(sheared1m1['e1'][mask1]), np.mean(unsheared1['e1'][mask1]), np.mean(sheared1p1['e1'][mask1])]
     e002err=[np.std(sheared1m1['e1'][mask1])/np.sqrt(len(sheared1m1['e1'][mask1])), np.std(unsheared1['e1'][mask1])/np.sqrt(len(unsheared1['e1'][mask1])), np.std(sheared1p1['e1'][mask1])/np.sqrt(len(sheared1p1['e1'][mask1]))]
 
-    mask2 = (sheared1p2['g1'] == 0.05)
+    mask2 = (sheared1p2['g1'] == -0.05)
     g005=[-0.01, 0, 0.01]
     e005=[np.mean(sheared1m2['e1'][mask2])-0.03, np.mean(unsheared2['e1'][mask2])-0.03, np.mean(sheared1p2['e1'][mask2])-0.03]
     e005err=[np.std(sheared1m2['e1'][mask2])/np.sqrt(len(sheared1m2['e1'][mask2])), np.std(unsheared2['e1'][mask2])/np.sqrt(len(unsheared2['e1'][mask2])), np.std(sheared1p2['e1'][mask2])/np.sqrt(len(sheared1p2['e1'][mask2]))]
