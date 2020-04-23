@@ -381,23 +381,25 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
         B = (a*(x**2.0)) + (b*x) + c
         return B
 
-    # line and quadratic fit for e1, +-0.02
-    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,1.,1.), sigma=m1biaserr)
+    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,0.,0.), sigma=m1biaserr)
     a1,b1,c1=params2[0]
-    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,1.,1.), sigma=m2biaserr)
+    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,0.,0.), sigma=m2biaserr)
     a2,b2,c2=params2[0]
 
     x=np.linspace(0,0.11,100)
     g_x=np.array([0.0,0.02,0.05,0.1])
+    """
     quadfit1 =  quadratic_function(g_x,a1,b1,c1)
     quadfit2 =  quadratic_function(g_x,a2,b2,c2)
 
+    
     chiquad1=0
     chiquad2=0
     for j in range(4):
         chiquad1 += ((m1bias[j] - quadfit1[j])**2)/(m1biaserr[j]**2)
         chiquad2 += ((m2bias[j] - quadfit2[j])**2)/(m2biaserr[j]**2)
     print(chiquad1, chiquad2)
+    """
 
 
     fig, ax1 = plt.subplots(figsize=(8,6))
