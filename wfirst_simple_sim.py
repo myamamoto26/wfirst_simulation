@@ -203,13 +203,13 @@ def for_wcs(dither_i, sca, filter_, stamp_size):
                                                         galsim.PositionI(old_div(wfirst.n_pix,2),
                                                                         old_div(wfirst.n_pix,2))), 
                                             date=date)
-    sky_level *= (1.0 + wfirst.stray_light_fraction)*(wfirst.pixel_scale)**2 # adds stray light and converts to photons/cm^2
+    sky_level *= (1.0 + wfirst.stray_light_fraction)*(wfirst.pixel_scale/4)**2 # adds stray light and converts to photons/cm^2
     sky_level *= stamp_size*stamp_size
 
     return WCS, sky_level
 
 def add_background(im,  sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False):
-    sky_stamp = galsim.Image(bounds=b, scale=wfirst.pixel_scale)
+    sky_stamp = galsim.Image(bounds=b, scale=wfirst.pixel_scale/4)
     #local_wcs.makeSkyImage(sky_stamp, sky_level)
 
     # This image is in units of e-/pix. Finally we add the expected thermal backgrounds in this
@@ -291,13 +291,13 @@ def get_exp_list(gal, psf, sky_stamp, psf2=None):
 
 
 def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_e=None):
-    pix_range = old_div(galsim.wfirst.pixel_scale,10.)
+    pix_range = old_div(galsim.wfirst.pixel_scale/4,10.)
     e_range = 0.1
     fdev = 1.
     def pixe_guess(n):
         return 2.*n*np.random.random() - n
 
-    cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
+    cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale/4, galsim.wfirst.pixel_scale/4)
     gp = ngmix.priors.GPriorBA(0.3)
     hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
     fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
@@ -747,17 +747,17 @@ def main(argv):
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.1)
-                g1=0
-                g2=0.1
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
+                g2=0
             else:
-                gal_model = gal_model.shear(g1=0,g2=-0.1)
-                g1=0
-                g2=-0.1
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=-0.02
+                g2=0
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
-        stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
+        stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale/4)), stamp_size)
         if stamp_size_factor == 0:
             stamp_size_factor = 1
 
@@ -784,8 +784,8 @@ def main(argv):
 
 
         ## use pixel scale for now. 
-        gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-        psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+        gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale/4)
+        psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale/4)
         st_model = galsim.DeltaFunction(flux=1.)
         st_model = galsim.Convolve(st_model, PSF)
 
@@ -828,7 +828,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_14'
+        dirr='v1_15'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -842,7 +842,7 @@ def main(argv):
 
 def sub(argv):
     num = 5000000
-    dirr='v1_14'
+    dirr='v2_1'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
@@ -867,7 +867,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -881,10 +881,10 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
