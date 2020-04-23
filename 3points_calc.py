@@ -360,12 +360,18 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
 
 def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
     num = 5000000
-    values1, errors1 = residual_bias_correction(readinfiles(dirr1), num)
-    values2, errors2 = residual_bias_correction(readinfiles(dirr2), num)
-    values3, errors3 = residual_bias_correction(readinfiles(dirr3), num)
-    values4, errors4 = residual_bias_correction(readinfiles(dirr4), num)
-    values5, errors5 = residual_bias_correction(readinfiles(dirr5), num)
-    values6, errors6 = residual_bias_correction(readinfiles(dirr6), num)
+    a,b,c,d,e = readinfiles(dirr1)
+    values1, errors1 = residual_bias_correction(a,b,c,d,e,num)
+    a,b,c,d,e = readinfiles(dirr2)
+    values2, errors2 = residual_bias_correction(a,b,c,d,e,num)
+    a,b,c,d,e = readinfiles(dirr3)
+    values3, errors3 = residual_bias_correction(a,b,c,d,e,num)
+    a,b,c,d,e = readinfiles(dirr4)
+    values4, errors4 = residual_bias_correction(a,b,c,d,e,num)
+    a,b,c,d,e = readinfiles(dirr5)
+    values5, errors5 = residual_bias_correction(a,b,c,d,e,num)
+    a,b,c,d,e = readinfiles(dirr6)
+    values6, errors6 = residual_bias_correction(a,b,c,d,e,num)
 
     app_shear = [-0.1, -0.05, -0.02, 0.02, 0.05, 0.1]
     m1bias = [np.mean(values1[0]), np.mean(values3[0]), np.mean(values5[0])]
