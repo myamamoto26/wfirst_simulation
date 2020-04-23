@@ -376,6 +376,7 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
     m2bias = [0.0, np.mean(values2[2]), np.mean(values4[2]), np.mean(values6[2])]
     m2biaserr = [0.0, np.mean(errors2[2]), np.mean(errors4[2]), np.mean(errors6[2])]
 
+    print(m1bias, m1biaserr, m2bias, m2biaserr)
 
     def quadratic_function(x,a,b,c):    
         B = (a*(x**2.0)) + (b*x) + c
@@ -385,6 +386,8 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
     a1,b1,c1=params2[0]
     params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,1.,0.), sigma=m2biaserr)
     a2,b2,c2=params2[0]
+
+    print(a1,b1,c1,a2,b2,c2)
 
     x=np.linspace(0,0.11,100)
     g_x=np.array([0.0,0.02,0.05,0.1])
