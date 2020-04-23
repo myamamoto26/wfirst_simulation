@@ -378,9 +378,9 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
 
     fig, ax1 = plt.subplots(figsize=(8,6))
     ax1.scatter(app_shear, m1bias, label='m1')
-    ax1.errorbar(app_shear, m1bias, yerr=m1biaserr, format='o')
+    ax1.errorbar(app_shear, m1bias, yerr=m1biaserr, fmt='o')
     ax1.scatter(app_shear, m2bias, label='m2')
-    ax1.errorbar(app_shear, m2bias, yerr=m2biaserr, format='o')
+    ax1.errorbar(app_shear, m2bias, yerr=m2biaserr, fmt='o')
     ax1.set_xlabel('Applied Shear, g', fontsize=15)
     ax1.set_ylabel('Multicative Bias, m', fontsize=15)
     plt.legend(fontsize=14)
