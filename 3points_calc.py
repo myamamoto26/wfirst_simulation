@@ -381,9 +381,9 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
         B = (a*(x**2.0)) + (b*x) + c
         return B
 
-    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,0.,0.), sigma=m1biaserr)
+    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,1.,0.), sigma=m1biaserr)
     a1,b1,c1=params2[0]
-    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,0.,0.), sigma=m2biaserr)
+    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,1.,0.), sigma=m2biaserr)
     a2,b2,c2=params2[0]
 
     x=np.linspace(0,0.11,100)
