@@ -370,13 +370,39 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
     a,b,c,d,e = readinfiles(dirr6)
     values6, errors6 = residual_bias_correction(a,b,c,d,e,num)
 
-    app_shear = [0.02, 0.05, 0.1]
-    m1bias = [np.mean(values1[0]), np.mean(values3[0]), np.mean(values5[0])]
-    m1biaserr = [np.mean(errors1[0]), np.mean(errors3[0]), np.mean(errors5[0])]
-    m2bias = [np.mean(values2[2]), np.mean(values4[2]), np.mean(values6[2])]
-    m2biaserr = [np.mean(errors2[2]), np.mean(errors4[2]), np.mean(errors6[2])]
+    app_shear = [0.0, 0.02, 0.05, 0.1]
+    m1bias = [0.0, np.mean(values1[0]), np.mean(values3[0]), np.mean(values5[0])]
+    m1biaserr = [0.0, np.mean(errors1[0]), np.mean(errors3[0]), np.mean(errors5[0])]
+    m2bias = [0.0, np.mean(values2[2]), np.mean(values4[2]), np.mean(values6[2])]
+    m2biaserr = [0.0, np.mean(errors2[2]), np.mean(errors4[2]), np.mean(errors6[2])]
+
+
+    def quadratic_function(x,a,b,c):    
+        B = (a*(x**2.0)) + (b*x) + c
+        return B
+
+    # line and quadratic fit for e1, +-0.02
+    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,1.,1.), sigma=m1biaserr)
+    a1,b1,c1=params2[0]
+    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,1.,1.), sigma=m2biaserr)
+    a2,b2,c2=params2[0]
+
+    x=np.linspace(0,0.11,100)
+    g_x=np.array([0.0,0.02,0.05,0.1])
+    quadfit1 =  quadratic_function(g_x,a1,b1,c1)
+    quadfit2 =  quadratic_function(g_x,a2,b2,c2)
+
+    chiquad1=0
+    chiquad2=0
+    for j in range(4):
+        chiquad1 += ((m1bias[j] - quadfit1[j])**2)/(m1biaserr[j]**2)
+        chiquad2 += ((m2bias[j] - quadfit2[j])**2)/(m2biaserr[j]**2)
+    print(chiquad1, chiquad2)
+
 
     fig, ax1 = plt.subplots(figsize=(8,6))
+    ax1.plot(x, quadratic_function(x,a1,b1,c1), label='m1 fit')
+    ax1.plot(x, quadratic_function(x,a2,b2,c2), label='m2 fit')
     ax1.scatter(app_shear, m1bias, label='m1')
     ax1.errorbar(app_shear, m1bias, yerr=m1biaserr, fmt='o')
     ax1.scatter(app_shear, m2bias, label='m2')
