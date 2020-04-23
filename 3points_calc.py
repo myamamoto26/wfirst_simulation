@@ -367,9 +367,9 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
     values6, errors6 = residual_bias_correction(readinfiles(dirr6))
 
     app_shear = [-0.1, -0.05, -0.02, 0.02, 0.05, 0.1]
-    m1bias = [np.mean(values1[0]), np.mean(values3[0]), [np.mean(values5[0])]
+    m1bias = [np.mean(values1[0]), np.mean(values3[0]), np.mean(values5[0])]
     m1biaserr = [np.mean(errors1[0]), np.mean(errors3[0]), np.mean(errors5[0])]
-    m2bias = [np.mean(values2[2]), np.mean(values4[2]), [np.mean(values6[2])]
+    m2bias = [np.mean(values2[2]), np.mean(values4[2]), np.mean(values6[2])]
     m2biaserr = [np.mean(errors2[2]), np.mean(errors4[2]), np.mean(errors6[2])]
 
     fig, ax1 = plt.subplots(figsize=(8,6))
