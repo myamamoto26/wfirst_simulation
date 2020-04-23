@@ -355,7 +355,8 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
     errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
     return values, errors
 
-def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
+def plot_biasvsg(): #plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
+    """
     num = 5000000
     a,b,c,d,e = readinfiles(dirr1)
     values1, errors1 = residual_bias_correction(a,b,c,d,e,num)
@@ -377,14 +378,19 @@ def plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
     m2biaserr = [0.0, np.mean(errors2[2]), np.mean(errors4[2]), np.mean(errors6[2])]
 
     print(m1bias, m1biaserr, m2bias, m2biaserr)
+    """
+    m1bias=[0.0, 0.0003124289086868646, 0.002313367869113381, 0.009868147896306807] 
+    m1biaserr=[0.0, 0.0016598373416071397, 0.0006651350089345204, 0.0003322886865324702] 
+    m2bias=[0.0, 0.0004701823534491243, 0.0021517509385070156, 0.009858253887871397] 
+    m2biaserr=[0.0, 0.0016598153199582956, 0.0006634344851378142, 0.0003331124433298035]
 
     def quadratic_function(x,a,b,c):    
         B = (a*(x**2.0)) + (b*x) + c
         return B
 
-    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,1.,0.), sigma=m1biaserr)
+    params2 = curve_fit(quadratic_function,app_shear,m1bias,p0=(1.,1.,0.))#, sigma=m1biaserr)
     a1,b1,c1=params2[0]
-    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,1.,0.), sigma=m2biaserr)
+    params2 = curve_fit(quadratic_function,app_shear,m2bias,p0=(1.,1.,0.))#, sigma=m2biaserr)
     a2,b2,c2=params2[0]
 
     print(a1,b1,c1,a2,b2,c2)
@@ -426,4 +432,5 @@ dirr4='v1_11'
 dirr5='v1_13'
 dirr6='v1_14'
 #plot_3points(num, dirr1, dirr2, dirr3, dirr4)
-plot_biasvsg(dirr1, dirr2, dirr3, dirr4, dirr5, dirr6)
+#plot_biasvsg(dirr1, dirr2, dirr3, dirr4, dirr5, dirr6)
+plot_biasvsg()
