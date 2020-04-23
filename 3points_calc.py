@@ -413,14 +413,14 @@ def plot_biasvsg(): #plot_biasvsg(dir1, dir2, dir3, dir4, dir5, dir6):
 
 
     fig, ax1 = plt.subplots(figsize=(8,6))
-    ax1.plot(x, quadratic_function(x,a1,b1,c1), c='m', label='m1 fit')
-    ax1.plot(x, quadratic_function(x,a2,b2,c2), c='b', label='m2 fit')
+    ax1.plot(x, quadratic_function(x,a1,b1,c1), c='b', label='m1 fit')
+    ax1.plot(x, quadratic_function(x,a2,b2,c2), c='m', label='m2 fit')
     ax1.scatter(app_shear, m1bias, c='b', label='m1')
     ax1.errorbar(app_shear, m1bias, yerr=m1biaserr, c='b', fmt='o')
     ax1.scatter(app_shear, m2bias, c='m',label='m2')
     ax1.errorbar(app_shear, m2bias, yerr=m2biaserr, c='m', fmt='o')
     ax1.set_xlabel('Applied Shear, g', fontsize=15)
-    ax1.set_ylabel('Multicative Bias, m', fontsize=15)
+    ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
     plt.legend(fontsize=14)
     ax1.tick_params(labelsize=12)
     plt.savefig('metacal_bias_shear.png')
