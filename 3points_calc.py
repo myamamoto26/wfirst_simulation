@@ -3,7 +3,7 @@ import math
 import os
 from matplotlib import pyplot as plt
 import fitsio as fio
-from numpy.linalg import inv
+from scipy.optimize import curve_fit
 
 
 def readinfiles(dirr):
@@ -52,9 +52,6 @@ def plot_3points(num, dirr1, dirr2, dirr3, dirr4, dirr5, dirr6):
     #print(deltae1, deltae2)
     #print(deltae1_err, deltae2_err)
 
-
-    from scipy.optimize import curve_fit
-    from scipy.stats import chisquare
     def func(x,m,n):
         return (1+m)*x+n
 
