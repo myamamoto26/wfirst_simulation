@@ -31,7 +31,7 @@ import yaml
 import copy
 import galsim as galsim
 import galsim.wfirst as wfirst
-wfirst.pixel_scale /= 4
+#wfirst.pixel_scale /= 4
 import galsim.config.process as process
 import galsim.des as des
 import ngmix
@@ -697,7 +697,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
 
     ## necessary input (noise, filters, sca number, number of galaxies, stamp sizes, ) =====> params
-    random_seed = 314
+    random_seed = 126
     rng = galsim.BaseDeviate(random_seed)
     poisson_noise = galsim.PoissonNoise(rng)
     dither_i = 22535
@@ -829,7 +829,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_16'
+        dirr='v1_17'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -868,7 +868,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -882,11 +882,11 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
     
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
