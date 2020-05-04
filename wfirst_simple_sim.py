@@ -697,7 +697,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
 
     ## necessary input (noise, filters, sca number, number of galaxies, stamp sizes, ) =====> params
-    random_seed = 126
+    random_seed = 816
     rng = galsim.BaseDeviate(random_seed)
     poisson_noise = galsim.PoissonNoise(rng)
     dither_i = 22535
@@ -829,7 +829,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_18'
+        dirr='v1_20'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
