@@ -20,11 +20,17 @@ def readinfiles(dirr):
 
 def stack_files(f1, f2, f3, f4, f5, f6):
     a1, b1, c1, d1, e1 = readinfiles(f1)
+    print('reading in file 1...')
     a2, b2, c2, d2, e2 = readinfiles(f2)
+    print('reading in file 2...')
     a3, b3, c3, d3, e3 = readinfiles(f3)
+    print('reading in file 3...')
     a4, b4, c4, d4, e4 = readinfiles(f4)
+    print('reading in file 4...')
     a5, b5, c5, d5, e5 = readinfiles(f5)
+    print('reading in file 5...')
     a6, b6, c6, d6, e6 = readinfiles(f6)
+    print('reading in file 6...')
 
     noshear = np.append(a1,a2,a3,a4,a5,a6)
     shear1p = np.append(b1,b2,b3,b4,b5,b6)
@@ -93,6 +99,7 @@ def residual_bias(res_tot, gal_num):
     return R11, R22, R12, R21
 
 def residual_bias_correction(a, b, c, d, e, gal_num):
+    print('calculating residual biases...')
     g = 0.01
     new = a
     new1p = b
