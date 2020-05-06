@@ -697,13 +697,13 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
 
     ## necessary input (noise, filters, sca number, number of galaxies, stamp sizes, ) =====> params
-    random_seed = 816
+    random_seed = 314
     rng = galsim.BaseDeviate(random_seed)
     poisson_noise = galsim.PoissonNoise(rng)
     dither_i = 22535
     use_SCA = 1
     filter_ = 'H158'
-    galaxy_model = 'Gaussian'
+    galaxy_model = 'exponential'
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
@@ -747,6 +747,19 @@ def main(argv):
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
+            if i_gal%2 == 0:
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
+                g2=0
+            else:
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=-0.02
+                g2=0
+        elif galaxy_model == "exponential":
+            tot_mag = np.random.choice(cat)
+            sed = sed.withMagnitude(tot_mag, bpass)
+            flux = sed.calculateFlux(bpass)
+            gal_model = galsim.exponential(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
                 gal_model = gal_model.shear(g1=0.02,g2=0)
                 g1=0.02
@@ -829,7 +842,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v1_19'
+        dirr='v2_1'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
