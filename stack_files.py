@@ -32,11 +32,25 @@ def stack_files(f1, f2, f3, f4, f5, f6):
     a6, b6, c6, d6, e6 = readinfiles(f6)
     print('reading in file 6...')
 
-    noshear = np.append(a1,a2,a3,a4,a5,a6)
-    shear1p = np.append(b1,b2,b3,b4,b5,b6)
-    shear1m = np.append(c1,c2,c3,c4,c5,c6)
-    shear2p = np.append(d1,d2,d3,d4,d5,d6)
-    shear2m = np.append(e1,e2,e3,e4,e5,e6)
+    list0 = [a1,a2,a3,a4,a5,a6]
+    list1 = [b1,b2,b3,b4,b5,b6]
+    list2 = [c1,c2,c3,c4,c5,c6]
+    list3 = [d1,d2,d3,d4,d5,d6]
+    list4 = [e1,e2,e3,e4,e5,e6]
+    noshear=None
+    for i in range(2,6):
+        if noshear is None:
+            noshear = np.append(list0[0], list0[1])
+            shear1p = np.append(list1[0], list1[1])
+            shear1m = np.append(list2[0], list2[1])
+            shear2p = np.append(list3[0], list3[1])
+            shear2m = np.append(list4[0], list4[1])
+        else: 
+            noshear = np.append(noshear, list0[i])
+            shear1p = np.append(shear1p, list1[i])
+            shear1m = np.append(shear1m, list2[i])
+            shear2p = np.append(shear2p, list3[i])
+            shear2m = np.append(shear2m, list4[i])
 
     return noshear, shear1p, shear1m, shear2p, shear2m
 
