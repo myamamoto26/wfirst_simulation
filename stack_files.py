@@ -38,7 +38,7 @@ def stack_files(f1, f2, f3, f4, f5, f6):
     list3 = [d1,d2,d3,d4,d5,d6]
     list4 = [e1,e2,e3,e4,e5,e6]
     noshear=None
-    for i in range(2,6):
+    for i in range(1,6):
         if noshear is None:
             noshear = np.append(list0[0], list0[1])
             shear1p = np.append(list1[0], list1[1])
