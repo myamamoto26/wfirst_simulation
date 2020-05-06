@@ -759,7 +759,7 @@ def main(argv):
             tot_mag = np.random.choice(cat)
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
-            gal_model = galsim.exponential(half_light_radius=hlr, flux=flux)
+            gal_model = galsim.Exponential(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
                 gal_model = gal_model.shear(g1=0.02,g2=0)
                 g1=0.02
