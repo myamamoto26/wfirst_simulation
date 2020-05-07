@@ -774,10 +774,10 @@ def main(argv):
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
-        #print(gal_model)
-
+        print(gal_model)
+        print(flux)
         flux_ = gal_model.calculateFlux(bpass)
-        mag_ = gal_model.calculateMagnitude(bpass)
+        #mag_ = gal_model.calculateMagnitude(bpass)
         # This makes the object achromatic, which speeds up drawing and convolution
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
