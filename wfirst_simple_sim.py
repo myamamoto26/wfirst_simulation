@@ -707,7 +707,7 @@ def main(argv):
     use_SCA = 1
     filter_ = 'H158'
     galaxy_model = 'Gaussian'
-    PSF_model = 'Gaussian'
+    PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
     gal_num = 5000000
@@ -774,8 +774,15 @@ def main(argv):
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
-        print(gal_model)
-        exit()
+        #print(gal_model)
+
+        flux_ = gal_model.calculateFlux(bpass)
+        mag_ = gal_model.calculateMagnitude(bpass)
+        # This makes the object achromatic, which speeds up drawing and convolution
+        gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
+        # Reassign correct flux
+        gal_model  = gal_model.withFlux(flux_)
+
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
             stamp_size_factor = 1
