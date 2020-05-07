@@ -232,7 +232,7 @@ def getPSF(PSF_model, sca, filter_):
         psf = galsim.Gaussian(fwhm=0.178)
     #elif PSF_model == 'exponential':
     elif PSF_model == 'wfirst':
-        psf = wfirst.getPSF(sca, filter_, SCA_pos=None, approximate_struts=True, n_waves=10, extra_aberrations=None, logger=None, wavelength=None, high_accuracy=False, gsparams=None)
+        psf = wfirst.getPSF(sca, filter_, SCA_pos=None, approximate_struts=True, high_accuracy=False)
 
     return psf
 
@@ -774,6 +774,7 @@ def main(argv):
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         gal_model = galsim.Convolve(gal_model, PSF)
+        print(gal_model)
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
             stamp_size_factor = 1
