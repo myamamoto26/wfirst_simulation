@@ -230,6 +230,8 @@ def getPSF(PSF_model):
     
     if PSF_model == "Gaussian":
         psf = galsim.Gaussian(fwhm=0.178)
+    #elif PSF_model == 'exponential':
+        
 
     return psf
 
@@ -703,8 +705,8 @@ def main(argv):
     dither_i = 22535
     use_SCA = 1
     filter_ = 'H158'
-    galaxy_model = 'exponential'
-    PSF_model = 'Gaussian'
+    galaxy_model = 'Gaussian'
+    PSF_model = 'exponential'
     stamp_size = 32
     hlr = 1.0
     gal_num = 5000000
@@ -748,13 +750,13 @@ def main(argv):
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.02)
-                g1=0
-                g2=0.02
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
+                g2=0
             else:
-                gal_model = gal_model.shear(g1=0,g2=-0.02)
-                g1=0
-                g2=-0.02
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=-0.02
+                g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = sed.withMagnitude(tot_mag, bpass)
@@ -842,7 +844,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_2'
+        dirr='v2_3'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -856,7 +858,7 @@ def main(argv):
 
 def sub(argv):
     num = 5000000
-    dirr='v1_16'
+    dirr='v2_1'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
@@ -881,7 +883,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    
+    '''
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -895,11 +897,11 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
+    '''
     
     
     
-    
-    #sub(sys.argv)
+    sub(sys.argv)
 
 
 
