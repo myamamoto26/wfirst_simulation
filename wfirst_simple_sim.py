@@ -232,7 +232,7 @@ def getPSF(PSF_model, sca, filter_):
         psf = galsim.Gaussian(fwhm=0.178)
     #elif PSF_model == 'exponential':
     elif PSF_model == 'wfirst':
-        psf = wfirst.getPSF(sca, filter_)
+        psf = wfirst.getPSF(sca, filter_, approximate_struts=True, n_waves=10)
 
     return psf
 
