@@ -226,12 +226,13 @@ def add_background(im,  sky_level, b, thermal_backgrounds=None, filter_='H158', 
     
     return im,sky_stamp
 
-def getPSF(PSF_model):
+def getPSF(PSF_model, sca, bpass):
     
     if PSF_model == "Gaussian":
         psf = galsim.Gaussian(fwhm=0.178)
     #elif PSF_model == 'exponential':
-        
+    elif PSF_model == 'wfirst':
+        psf = wfirst.getPSF(sca, bpass)
 
     return psf
 
@@ -706,7 +707,7 @@ def main(argv):
     use_SCA = 1
     filter_ = 'H158'
     galaxy_model = 'Gaussian'
-    PSF_model = 'exponential'
+    PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
     gal_num = 5000000
@@ -729,7 +730,7 @@ def main(argv):
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
     wcs, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size)
-    PSF = getPSF(PSF_model)
+    PSF = getPSF(PSF_model, use_SCA, bpass)
 
 
     t0 = time.time()
@@ -883,7 +884,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    '''
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -897,11 +898,11 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    '''
     
     
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
