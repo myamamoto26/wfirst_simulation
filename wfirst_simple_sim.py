@@ -812,6 +812,10 @@ def main(argv):
         gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
         psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
         st_model = galsim.DeltaFunction(flux=1.)
+        st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
+        # reassign correct flux
+        starflux=1.
+        st_model = st_model.withFlux(starflux)
         st_model = galsim.Convolve(st_model, PSF)
 
         #gal_stamp = galsim.Image(b, wcs=wcs)
