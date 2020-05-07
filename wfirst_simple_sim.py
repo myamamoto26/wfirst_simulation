@@ -226,13 +226,13 @@ def add_background(im,  sky_level, b, thermal_backgrounds=None, filter_='H158', 
     
     return im,sky_stamp
 
-def getPSF(PSF_model, sca, bpass):
+def getPSF(PSF_model, sca, filter_):
     
     if PSF_model == "Gaussian":
         psf = galsim.Gaussian(fwhm=0.178)
     #elif PSF_model == 'exponential':
     elif PSF_model == 'wfirst':
-        psf = wfirst.getPSF(sca, bpass)
+        psf = wfirst.getPSF(sca, filter_)
 
     return psf
 
@@ -730,7 +730,7 @@ def main(argv):
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
     wcs, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size)
-    PSF = getPSF(PSF_model, use_SCA, bpass)
+    PSF = getPSF(PSF_model, use_SCA, filter_)
 
 
     t0 = time.time()
