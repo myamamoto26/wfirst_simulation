@@ -249,6 +249,23 @@ def add_poisson_noise(rng, im, sky_image, phot=False):
 
     return im
 
+def make_sed_model(model, sed, filter_, bpass):
+    """
+    Modifies input SED to be at appropriate redshift and magnitude, then applies it to the object model.
+
+    Input
+    model : Galsim object model
+    sed   : Template SED for object
+    flux  : flux fraction in this sed
+    """
+
+    # Apply correct flux from magnitude for filter bandpass
+    sed_ = sed.atRedshift(0) #picking z=0 for now. 
+    sed_ = sed_.withMagnitude(filter_, bpass)
+
+    # Return model with SED applied
+    return model * sed_
+
 ## metacal shapemeasurement
 #def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
 def get_exp_list(gal, psf, sky_stamp, psf2=None):
@@ -377,60 +394,6 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
         iteration+=1
 
     return res_tot
-
-
-def hsm(im, psf=None, wt=None):
-    """
-    Not used currently, but this is a helper function to run hsm via galsim.
-    """
-
-    out = np.zeros(1,dtype=[('e1','f4')]+[('e2','f4')]+[('T','f4')]+[('dx','f4')]+[('dy','f4')]+[('flag','i2')])
-    try:
-        if psf is not None:
-            shape_data = galsim.hsm.EstimateShear(im, psf, weight=wt, strict=False)
-        else:
-            shape_data = im.FindAdaptiveMom(weight=wt, strict=False)
-    except:
-        # print(' *** Bad measurement (caught exception).  Mask this one.')
-        out['flag'] |= BAD_MEASUREMENT
-        return out
-
-    if shape_data.moments_status != 0:
-        # print('status = ',shape_data.moments_status)
-        # print(' *** Bad measurement.  Mask this one.')
-        out['flag'] |= BAD_MEASUREMENT
-
-    out['dx'] = shape_data.moments_centroid.x - im.true_center.x
-    out['dy'] = shape_data.moments_centroid.y - im.true_center.y
-    if out['dx']**2 + out['dy']**2 > MAX_CENTROID_SHIFT**2:
-        # print(' *** Centroid shifted by ',out['dx'],out['dy'],'.  Mask this one.')
-        out['flag'] |= CENTROID_SHIFT
-
-    # Account for the image wcs
-    if im.wcs.isPixelScale():
-        out['e1'] = shape_data.observed_shape.g1
-        out['e2'] = shape_data.observed_shape.g2
-        out['T']  = 2 * shape_data.moments_sigma**2 * im.scale**2
-    else:
-        e1 = shape_data.observed_shape.e1
-        e2 = shape_data.observed_shape.e2
-        s = shape_data.moments_sigma
-
-        jac = im.wcs.jacobian(im.trueCenter)
-        M = np.matrix( [[ 1 + e1, e2 ], [ e2, 1 - e1 ]] ) * s*s
-        J = jac.getMatrix()
-        M = J * M * J.T
-        scale = np.sqrt(M/2./s/s)
-
-        e1 = old_div((M[0,0] - M[1,1]), (M[0,0] + M[1,1]))
-        e2 = old_div((2.*M[0,1]), (M[0,0] + M[1,1]))
-        out['T'] = M[0,0] + M[1,1]
-
-        shear = galsim.Shear(e1=e1, e2=e2)
-        out['e1'] = shear.g1
-        out['e2'] = shear.g2
-
-    return out
 
 def residual_bias(res_tot, gal_num):
     g = 0.01
@@ -710,9 +673,10 @@ def main(argv):
     PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 5000000
+    gal_num = 10
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
-    sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
+    galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
+
     #wfirst.pixel_scale=0.011
 
     #res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -740,16 +704,20 @@ def main(argv):
 
         if i_gal % 100 == 0:
             print('rank', rank, 'object number, ', i_gal)
-        gals = []
-        psfs = []
         
         gal_model = None
 
         if galaxy_model == "Gaussian":
             tot_mag = np.random.choice(cat)
+            sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
+            ## making galaxy sed
+            knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
+            knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
+            gal_model = galsim.Add([gal_model, knots])
+            ## shearing
             if i_gal%2 == 0:
                 gal_model = gal_model.shear(g1=0.02,g2=0)
                 g1=0.02
@@ -760,9 +728,15 @@ def main(argv):
                 g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
+            sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
             gal_model = galsim.Exponential(half_light_radius=hlr, flux=flux)
+            ## making galaxy sed
+            knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
+            knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
+            gal_model = galsim.Add([gal_model, knots])
+            ## shearing
             if i_gal%2 == 0:
                 gal_model = gal_model.shear(g1=0,g2=0.02)
                 g1=0
@@ -773,7 +747,7 @@ def main(argv):
                 g2=-0.02
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
-        gal_model = galsim.Convolve(gal_model, PSF)
+        #gal_model = galsim.Convolve(gal_model, PSF)
 
         #flux_ = gal_model.calculateFlux(bpass)
         #mag_ = gal_model.calculateMagnitude(bpass)
@@ -781,6 +755,7 @@ def main(argv):
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux)
+        gal_model = galsim.Convolve(gal_model, PSF)
 
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
@@ -812,11 +787,13 @@ def main(argv):
         gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
         psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
         st_model = galsim.DeltaFunction(flux=1.)
-        st_model = galsim.Convolve(st_model, PSF)
+        #st_model = galsim.Convolve(st_model, PSF)
         st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
         # reassign correct flux
         starflux=1.
         st_model = st_model.withFlux(starflux)
+        st_model = galsim.Convolve(st_model, PSF)
+        print(st_model)
 
         #gal_stamp = galsim.Image(b, wcs=wcs)
         gal_model.drawImage(image=gal_stamp)
@@ -841,7 +818,7 @@ def main(argv):
         #gal_stamp.write(str(i_gal)+'.fits')
 
         res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
-
+    exit()
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
