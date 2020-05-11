@@ -261,7 +261,7 @@ def make_sed_model(model, sed, filter_, bpass):
 
     # Apply correct flux from magnitude for filter bandpass
     sed_ = sed.atRedshift(0) #picking z=0 for now. 
-    target_mag = galsim.calculateMagnitude(bpass)
+    target_mag = sed_.calculateMagnitude(bpass)
     sed_ = sed_.withMagnitude(target_mag, bpass)
 
     # Return model with SED applied
