@@ -755,6 +755,7 @@ def main(argv):
         #flux_ = gal_model.calculateFlux(bpass)
         #mag_ = gal_model.calculateMagnitude(bpass)
         # This makes the object achromatic, which speeds up drawing and convolution
+        print(gal_model)
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux)
