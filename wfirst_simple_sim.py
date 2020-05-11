@@ -713,11 +713,12 @@ def main(argv):
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
-            gal_model = galsim.Gaussian(half_light_radius=hlr, flux=flux)
+            gal_model = galsim.Gaussian(half_light_radius=hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
             ## making galaxy sed
-            knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
-            knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
-            gal_model = galsim.Add([gal_model, knots])
+            #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
+            #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
+            #gal_model = galsim.Add([gal_model, knots])
+            gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
                 gal_model = gal_model.shear(g1=0.02,g2=0)
@@ -732,11 +733,12 @@ def main(argv):
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
-            gal_model = galsim.Exponential(half_light_radius=hlr, flux=flux)
-            ## making galaxy sed
-            knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
-            knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
-            gal_model = galsim.Add([gal_model, knots])
+            gal_model = galsim.Exponential(half_light_radius=hlr, flux=1.)
+            ## making galaxy sed ## random knots should be used for bdf model
+            #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=1.)
+            #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
+            #gal_model = galsim.Add([gal_model, knots])
+            gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
                 gal_model = gal_model.shear(g1=0,g2=0.02)
