@@ -758,7 +758,9 @@ def main(argv):
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux)
+        print(gal_model)
         gal_model = galsim.Convolve(gal_model, PSF)
+        print(gal_model)
 
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
