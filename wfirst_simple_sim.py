@@ -830,10 +830,10 @@ def main(argv):
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            #gal_stamp.write(str(i)+'.fits')
-        
+            gal_stamp.write(str(i)+'_gauss.fits')
+        exit()
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2)
-    exit()
+    
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
