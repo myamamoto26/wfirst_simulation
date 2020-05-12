@@ -269,7 +269,7 @@ def make_sed_model(model, sed, filter_, bpass):
 
 ## metacal shapemeasurement
 #def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
-def get_exp_list(gal, psf, sky_stamp, psf2=None):
+def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
 
     if psf2 is None:
         psf2 = psf
@@ -342,7 +342,7 @@ def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_
 
     return res_
 
-def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
+def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
         flux=0.
@@ -373,7 +373,7 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
     #for i in range(len(gals)):
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
+    obs_list,psf_list,w = get_exp_list(gals,psfs,offsets,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
 
@@ -671,10 +671,10 @@ def main(argv):
     use_SCA = 1
     filter_ = 'H158'
     galaxy_model = 'Gaussian'
-    PSF_model = 'wfirst'
+    PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1000000
+    gal_num = 10
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -760,6 +760,14 @@ def main(argv):
         gal_model  = gal_model.withFlux(flux_)
         gal_model = galsim.Convolve(gal_model, PSF)
 
+        st_model = galsim.DeltaFunction(flux=1.)
+        #st_model = galsim.Convolve(st_model, PSF)
+        st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
+        # reassign correct flux
+        starflux=1.
+        st_model = st_model.withFlux(starflux)
+        st_model = galsim.Convolve(st_model, PSF)
+
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
             stamp_size_factor = 1
@@ -785,41 +793,42 @@ def main(argv):
         # Create postage stamp for galaxy
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
+        ## translational dither check (multiple exposures)
+        random_dir = galsim.UniformDeviate(rng)
+        offsets = []
+        gals = []
+        psfs = []
+        for i in range(2): 
+            ## use pixel scale for now. 
+            gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+            psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+            #gal_stamp = galsim.Image(b, wcs=wcs)
+            dx = random_dir() - 0.5
+            dy = random_dir() - 0.5
+            offset = np.array((dx,dy))
+            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
-        ## use pixel scale for now. 
-        gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-        psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-        st_model = galsim.DeltaFunction(flux=1.)
-        #st_model = galsim.Convolve(st_model, PSF)
-        st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
-        # reassign correct flux
-        starflux=1.
-        st_model = st_model.withFlux(starflux)
-        st_model = galsim.Convolve(st_model, PSF)
+            sigma=wfirst.read_noise
+            read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
-        #gal_stamp = galsim.Image(b, wcs=wcs)
-        gal_model.drawImage(image=gal_stamp)
-        st_model.drawImage(image=psf_stamp)
+            im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
+            #im.addNoise(read_noise)
+            gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
+            #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
 
-        sigma=wfirst.read_noise
-        read_noise = galsim.GaussianNoise(rng, sigma=sigma)
+            gal_stamp -= sky_image
+            #print(gal_stamp.array)
 
-        im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
-        #im.addNoise(read_noise)
-        gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
-        #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
+            offsets.append(offset)
+            gals.append(gal_stamp)
+            psfs.append(psf_stamp)
 
-        gal_stamp -= sky_image
-        #print(gal_stamp.array)
+            #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-        #gals.append(gal_stamp)
-        #psfs.append(psf_stamp)
-
-        #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
-
-        #gal_stamp.write(str(i_gal)+'.fits')
-
-        res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
+            gal_stamp.write(str(i)+'.fits')
+        exit()
+        res_tot = get_coadd_shape(cat, gals, psfs, offsets, sky_image, i_gal, hlr, res_tot, g1, g2)
     
     ## send and receive objects from one processors to others
     if rank!=0:
