@@ -676,7 +676,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 10
+    gal_num = 2000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -848,7 +848,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_3'
+        dirr='v2_5'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
