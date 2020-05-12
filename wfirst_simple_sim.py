@@ -797,6 +797,7 @@ def main(argv):
         st_model = st_model.withFlux(starflux)
         st_model = galsim.Convolve(st_model, PSF)
         print(st_model)
+        print(gal_model)
 
         #gal_stamp = galsim.Image(b, wcs=wcs)
         gal_model.drawImage(image=gal_stamp)
