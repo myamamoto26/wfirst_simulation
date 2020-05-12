@@ -790,12 +790,12 @@ def main(argv):
         gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
         psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
         st_model = galsim.DeltaFunction(flux=1.)
-        st_model = galsim.Convolve(st_model, PSF)
+        #st_model = galsim.Convolve(st_model, PSF)
         st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
         # reassign correct flux
         starflux=1.
         st_model = st_model.withFlux(starflux)
-        #st_model = galsim.Convolve(st_model, PSF)
+        st_model = galsim.Convolve(st_model, PSF)
 
         #gal_stamp = galsim.Image(b, wcs=wcs)
         gal_model.drawImage(image=gal_stamp)
@@ -820,6 +820,7 @@ def main(argv):
         #gal_stamp.write(str(i_gal)+'.fits')
 
         res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
+    print(time.time()-t0)
     exit()
     ## send and receive objects from one processors to others
     if rank!=0:
