@@ -284,13 +284,13 @@ def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
         im_psf2 = psf2[i].array
         weight = 1/sky_stamp[i].array
 
-        jacob = gal.wcs.jacobian()
+        jacob = gal[i].wcs.jacobian()
         dx = offsets[i][0]
         dy = offsets[i][1]
         #print(jacob)
         gal_jacob = Jacobian(
-            row=gal.true_center.y+dy,
-            col=gal.true_center.x+dx,
+            row=gal[i].true_center.y+dy,
+            col=gal[i].true_center.x+dx,
             dvdrow=jacob.dvdy,
             dvdcol=jacob.dvdx,
             dudrow=jacob.dudy,
