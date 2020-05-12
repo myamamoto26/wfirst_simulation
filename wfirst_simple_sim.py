@@ -795,6 +795,7 @@ def main(argv):
         # reassign correct flux
         starflux=1.
         st_model = st_model.withFlux(starflux)
+        print(st_model)
         st_model = galsim.Convolve(st_model, PSF)
         print(st_model)
         print(gal_model)
