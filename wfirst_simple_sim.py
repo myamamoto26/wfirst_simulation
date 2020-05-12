@@ -760,7 +760,7 @@ def main(argv):
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux_)
-        gal_model = galsim.Convolve(gal_model, PSF)
+        #gal_model = galsim.Convolve(gal_model, PSF)
 
         st_model = galsim.DeltaFunction(flux=1.)
         #st_model = galsim.Convolve(st_model, PSF)
@@ -830,7 +830,7 @@ def main(argv):
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            gal_stamp.write(str(i)+'_gauss.fits')
+            gal_stamp.write(str(i)+'_nopsf.fits')
         exit()
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2)
     
