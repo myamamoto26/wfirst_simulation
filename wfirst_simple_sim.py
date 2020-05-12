@@ -750,18 +750,15 @@ def main(argv):
                 g2=-0.02
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
-        #gal_model = galsim.Convolve(gal_model, PSF)
+        gal_model = galsim.Convolve(gal_model, PSF)
 
         #flux_ = gal_model.calculateFlux(bpass)
         #mag_ = gal_model.calculateMagnitude(bpass)
         # This makes the object achromatic, which speeds up drawing and convolution
-        print(gal_model)
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux)
-        print(gal_model)
-        gal_model = galsim.Convolve(gal_model, PSF)
-        print(gal_model)
+        #gal_model = galsim.Convolve(gal_model, PSF)
 
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
