@@ -278,35 +278,37 @@ def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
     psf_list=ObsList()
 
     w = []
-    #for i in range(len(gal)):
-    im = gal.array
-    im_psf = psf.array
-    im_psf2 = psf2.array
-    weight = 1/sky_stamp.array
+    for i in range(len(gal)):
+        im = gal[i].array
+        im_psf = psf[i].array
+        im_psf2 = psf2[i].array
+        weight = 1/sky_stamp[i].array
 
-    jacob = gal.wcs.jacobian()
-    #print(jacob)
-    gal_jacob = Jacobian(
-        row=gal.true_center.y,
-        col=gal.true_center.x,
-        dvdrow=jacob.dvdy,
-        dvdcol=jacob.dvdx,
-        dudrow=jacob.dudy,
-        dudcol=jacob.dudx)
-    psf_jacob2 = gal_jacob
+        jacob = gal.wcs.jacobian()
+        dx = offsets[i][0]
+        dy = offsets[i][1]
+        #print(jacob)
+        gal_jacob = Jacobian(
+            row=gal.true_center.y+dy,
+            col=gal.true_center.x+dx,
+            dvdrow=jacob.dvdy,
+            dvdcol=jacob.dvdx,
+            dudrow=jacob.dudy,
+            dudcol=jacob.dudx)
+        psf_jacob2 = gal_jacob
 
-    mask = np.where(weight!=0)
-    w.append(np.mean(weight[mask]))
-    noise = old_div(np.ones_like(weight),w[-1])
+        mask = np.where(weight!=0)
+        w.append(np.mean(weight[mask]))
+        noise = old_div(np.ones_like(weight),w[-1])
 
 
-    psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
-    psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
-    obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
-    obs.set_noise(noise)
+        psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
+        psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
+        obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
+        obs.set_noise(noise)
 
-    obs_list.append(obs)
-    psf_list.append(psf_obs2)
+        obs_list.append(obs)
+        psf_list.append(psf_obs2)
 
     #print(obs_list)
     return obs_list,psf_list,np.array(w)
@@ -798,6 +800,7 @@ def main(argv):
         offsets = []
         gals = []
         psfs = []
+        skys = []
         for i in range(2): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
@@ -823,13 +826,14 @@ def main(argv):
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
+            skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            gal_stamp.write(str(i)+'.fits')
-        exit()
-        res_tot = get_coadd_shape(cat, gals, psfs, offsets, sky_image, i_gal, hlr, res_tot, g1, g2)
-    
+            #gal_stamp.write(str(i)+'.fits')
+        
+        res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+    exit()
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
