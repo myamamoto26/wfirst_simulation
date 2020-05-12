@@ -674,7 +674,7 @@ def main(argv):
     PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 100
+    gal_num = 10
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -751,14 +751,16 @@ def main(argv):
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
         #gal_model = galsim.Convolve(gal_model, PSF)
-
+        print(gal_model)
         flux_ = gal_model.calculateFlux(bpass)
         #mag_ = gal_model.calculateMagnitude(bpass)
         # This makes the object achromatic, which speeds up drawing and convolution
         gal_model  = gal_model.evaluateAtWavelength(bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux_)
+        print(gal_model)
         gal_model = galsim.Convolve(gal_model, PSF)
+        print(gal_model)
 
         stamp_size_factor = old_div(int(gal_model.getGoodImageSize(wfirst.pixel_scale)), stamp_size)
         if stamp_size_factor == 0:
