@@ -861,7 +861,7 @@ def main(argv):
     return None
 
 def sub(argv):
-    num = 1000000
+    num = 4000000
     dirr='v2_5'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
@@ -902,7 +902,6 @@ if __name__ == "__main__":
 
     main(sys.argv)
     """
-    
     
     
     sub(sys.argv)
