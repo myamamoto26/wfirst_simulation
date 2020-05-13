@@ -287,7 +287,7 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         jacob = gal[i].wcs.jacobian()
         dx = offsets[i][0]
         dy = offsets[i][1]
-        print(jacob.dvdy, jacob.dvdx, jacob.dudy, jacob.dudx)
+        
         gal_jacob = Jacobian(
             row=gal[i].true_center.y+dy,
             col=gal[i].true_center.x+dx,
@@ -295,7 +295,7 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
             dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
             dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
             dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-        print(gal_jacob)
+        #print(gal_jacob)
         psf_jacob2 = gal_jacob
 
         mask = np.where(weight!=0)
@@ -677,7 +677,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 10
+    gal_num = 4000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -839,7 +839,6 @@ def main(argv):
             #gal_stamp.write(str(i)+'_rotate.fits')
         #exit()
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
-    exit()
     
     ## send and receive objects from one processors to others
     if rank!=0:
