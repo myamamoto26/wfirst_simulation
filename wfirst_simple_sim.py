@@ -291,10 +291,10 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         gal_jacob = Jacobian(
             row=gal[i].true_center.y+dy,
             col=gal[i].true_center.x+dx,
-            dvdrow=jacob.dvdy,
-            dvdcol=jacob.dvdx,
-            dudrow=jacob.dudy,
-            dudcol=jacob.dudx)
+            dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+            dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+            dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+            dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         print(gal_jacob)
         psf_jacob2 = gal_jacob
 
