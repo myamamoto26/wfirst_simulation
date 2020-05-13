@@ -287,9 +287,7 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         jacob = gal[i].wcs.jacobian()
         dx = offsets[i][0]
         dy = offsets[i][1]
-        R = np.array([[np.cos(thetas[i]), -np.sin(thetas[i])], [np.sin(thetas[i]), np.cos(thetas[i])]])
-        jacob = R*jacob
-        #print(jacob)
+        print(jacob.dvdy, jacob.dvdx, jacob.dudy, jacob.dudx)
         gal_jacob = Jacobian(
             row=gal[i].true_center.y+dy,
             col=gal[i].true_center.x+dx,
