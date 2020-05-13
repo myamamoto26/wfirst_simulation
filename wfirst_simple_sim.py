@@ -269,7 +269,7 @@ def make_sed_model(model, sed, filter_, bpass):
 
 ## metacal shapemeasurement
 #def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
-def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
+def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
 
     if psf2 is None:
         psf2 = psf
@@ -285,6 +285,7 @@ def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
         weight = 1/sky_stamp[i].array
 
         jacob = gal[i].wcs.jacobian()
+        print(jacob)
         dx = offsets[i][0]
         dy = offsets[i][1]
         #print(jacob)
@@ -344,7 +345,7 @@ def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_
 
     return res_
 
-def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
+def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
         flux=0.
@@ -375,7 +376,7 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
     #for i in range(len(gals)):
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    obs_list,psf_list,w = get_exp_list(gals,psfs,offsets,sky_stamp,psf2=None)
+    obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
 
@@ -798,6 +799,7 @@ def main(argv):
         ## translational dither check (multiple exposures)
         random_dir = galsim.UniformDeviate(rng)
         offsets = []
+        thetas = []
         gals = []
         psfs = []
         skys = []
@@ -811,8 +813,8 @@ def main(argv):
             offset = np.array((dx,dy))
             theta = 2.*math.pi * random_dir() * galsim.radians
 
-            gal_model = gal_model.rotate(theta)
-            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            new_gal_model = gal_model.rotate(theta)
+            new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
             sigma=wfirst.read_noise
@@ -827,15 +829,17 @@ def main(argv):
             #print(gal_stamp.array)
 
             offsets.append(offset)
+            thetas.append(theta)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            gal_stamp.write(str(i)+'_rotate.fits')
-        exit()
-        res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+            #gal_stamp.write(str(i)+'_rotate.fits')
+        #exit()
+        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+    exit()
     
     ## send and receive objects from one processors to others
     if rank!=0:
