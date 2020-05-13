@@ -676,7 +676,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 4000000
+    gal_num = 10
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -806,9 +806,12 @@ def main(argv):
             gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             #gal_stamp = galsim.Image(b, wcs=wcs)
-            dx = random_dir() - 0.5
-            dy = random_dir() - 0.5
+            dx = 0 #random_dir() - 0.5
+            dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
+            theta = 2.*math.pi * random_dir() * galsim.radians
+
+            gal_model = gal_model.rotate(theta)
             gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
@@ -830,7 +833,8 @@ def main(argv):
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            #gal_stamp.write(str(i)+'_nopsf.fits')
+            gal_stamp.write(str(i)+'_rotate.fits')
+        exit()
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2)
     
     ## send and receive objects from one processors to others
@@ -848,7 +852,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_5'
+        dirr='v2_7'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -887,7 +891,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -901,10 +905,9 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
     
-    sub(sys.argv)
+    #sub(sys.argv)
 
 
 
