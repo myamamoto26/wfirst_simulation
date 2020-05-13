@@ -862,7 +862,7 @@ def main(argv):
 
 def sub(argv):
     num = 1000000
-    dirr='v2_3'
+    dirr='v2_5'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
@@ -887,6 +887,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
+    """
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -900,11 +901,11 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
+    """
     
     
     
-    
-    #sub(sys.argv)
+    sub(sys.argv)
 
 
 
