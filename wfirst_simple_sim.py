@@ -285,7 +285,6 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         weight = 1/sky_stamp[i].array
 
         jacob = gal[i].wcs.jacobian()
-        print(jacob)
         dx = offsets[i][0]
         dy = offsets[i][1]
         #print(jacob)
@@ -296,6 +295,9 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
             dvdcol=jacob.dvdx,
             dudrow=jacob.dudy,
             dudcol=jacob.dudx)
+        print(gal_jacob)
+        gal_jacob = gal_jacob.rotate(thetas[i])
+        print(gal_jacob)
         psf_jacob2 = gal_jacob
 
         mask = np.where(weight!=0)
