@@ -288,13 +288,20 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         dx = offsets[i][0]
         dy = offsets[i][1]
         
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.y+dy,
+        #    col=gal[i].true_center.x+dx,
+        #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+        #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+        #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+        #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         gal_jacob = Jacobian(
             row=gal[i].true_center.y+dy,
             col=gal[i].true_center.x+dx,
-            dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-            dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-            dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-            dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+            dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+            dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+            dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+            dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         print(gal_jacob)
         psf_jacob2 = gal_jacob
 
@@ -836,7 +843,7 @@ def main(argv):
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            gal_stamp.write(str(i)+'_rotate.fits')
+            gal_stamp.write(str(i)+'_jac_rotate.fits')
         #res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         exit()
