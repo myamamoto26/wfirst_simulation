@@ -296,8 +296,8 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
         #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         gal_jacob = Jacobian(
-            row=gal[i].true_center.y+dy,
-            col=gal[i].true_center.x+dx,
+            row=gal[i].true_center.x+dx,
+            col=gal[i].true_center.y+dy,
             dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
             dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
             dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
@@ -842,11 +842,12 @@ def main(argv):
             skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
+            world_profile = wcs.toWorld(gal_stamp, image_pos=None, world_pos=None)
 
-            gal_stamp.write(str(i)+'_jac_rotate.fits')
-        #res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, i_gal, hlr, res_tot, g1, g2)
-        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+            #gal_stamp.write(str(i)+'_jac_rotate.fits')
         exit()
+        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+        
     
     ## send and receive objects from one processors to others
     if rank!=0:
