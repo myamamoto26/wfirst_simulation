@@ -842,7 +842,7 @@ def main(argv):
             skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
-            world_profile = wcs.toWorld(gal_stamp, image_pos=None, world_pos=None)
+            world_profile = wcs.toWorld(gal_stamp, world_pos=None)
 
             #gal_stamp.write(str(i)+'_jac_rotate.fits')
         exit()
