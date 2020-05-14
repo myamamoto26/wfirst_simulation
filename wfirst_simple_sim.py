@@ -838,7 +838,7 @@ def main(argv):
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_rotate.fits')
-        #exit()
+        exit()
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
     
     ## send and receive objects from one processors to others
