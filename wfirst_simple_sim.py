@@ -832,7 +832,7 @@ def main(argv):
             thetas.append(theta)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
-            skys.append(sky_image)
+            #skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
