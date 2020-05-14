@@ -677,7 +677,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 4000000
+    gal_num = 1
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -724,7 +724,7 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.5,g2=0)
+                gal_model = gal_model.shear(g1=0.1,g2=0)
                 g1=0.02
                 g2=0
             else:
