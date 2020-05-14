@@ -827,7 +827,7 @@ def main(argv):
 
             gal_stamp -= sky_image
             #print(gal_stamp.array)
-            world_profile = wcs.toWorld(new_gal_model)
+            world_profile = wcs.toWorld(gal_stamp)
             print(world_profile)
 
             offsets.append(offset)
