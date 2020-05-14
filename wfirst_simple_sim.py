@@ -724,7 +724,7 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
+                gal_model = gal_model.shear(g1=0.9,g2=0)
                 g1=0.02
                 g2=0
             else:
@@ -820,15 +820,13 @@ def main(argv):
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
-            im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
+            #im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
             #im.addNoise(read_noise)
-            gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
+            #gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
 
-            gal_stamp -= sky_image
+            #gal_stamp -= sky_image
             #print(gal_stamp.array)
-            world_profile = wcs.toWorld(gal_stamp)
-            print(world_profile)
 
             offsets.append(offset)
             thetas.append(theta)
@@ -838,7 +836,7 @@ def main(argv):
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            #gal_stamp.write(str(i)+'_rotate.fits')
+            gal_stamp.write(str(i)+'_rotate.fits')
         exit()
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
     
