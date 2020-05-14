@@ -820,23 +820,24 @@ def main(argv):
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
-            #im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
+            im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
             #im.addNoise(read_noise)
-            #gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
+            gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
 
-            #gal_stamp -= sky_image
+            gal_stamp -= sky_image
             #print(gal_stamp.array)
 
             offsets.append(offset)
             thetas.append(theta)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
-            #skys.append(sky_image)
+            skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             gal_stamp.write(str(i)+'_rotate.fits')
+        #res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         exit()
     
