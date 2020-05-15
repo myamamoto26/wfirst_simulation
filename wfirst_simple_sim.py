@@ -833,7 +833,6 @@ def main(argv):
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
 
             gal_stamp -= sky_image
-            print(gal_stamp.wcs.jacobian())
 
             offsets.append(offset)
             thetas.append(theta)
@@ -842,7 +841,7 @@ def main(argv):
             skys.append(sky_image)
 
             print(gal_stamp)
-            world_profile = wcs.toWorld(gal_stamp,image_pos=None, world_pos=None)
+            world_profile = wcs.toWorld(gal_stamp,image_pos=None)
             print(world_profile)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
