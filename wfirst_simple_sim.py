@@ -841,6 +841,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
+            print(gal_stamp)
             world_profile = wcs.toWorld(gal_stamp,image_pos=None, world_pos=None)
             print(world_profile)
 
