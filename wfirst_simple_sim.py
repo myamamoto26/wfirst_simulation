@@ -841,9 +841,12 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
+            world_profile = wcs.toWorld(gal_stamp)
+            print(world_profile)
+
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            gal_stamp.write(str(i)+'_pos_rotate.fits')
+            #gal_stamp.write(str(i)+'_pos_rotate.fits')
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         exit()
         
