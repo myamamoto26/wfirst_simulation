@@ -818,7 +818,7 @@ def main(argv):
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
-            theta = 2.*math.pi * random_dir() * galsim.radians
+            theta = math.pi * random_dir() * galsim.radians
 
             new_gal_model = gal_model.rotate(theta)
             new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
@@ -842,11 +842,10 @@ def main(argv):
             skys.append(sky_image)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
-            world_profile = wcs.toWorld(gal_stamp, world_pos=None)
 
-            #gal_stamp.write(str(i)+'_jac_rotate.fits')
-        exit()
+            gal_stamp.write(str(i)+'_pos_rotate.fits')
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+        exit()
         
     
     ## send and receive objects from one processors to others
