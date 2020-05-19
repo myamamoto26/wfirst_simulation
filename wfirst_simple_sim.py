@@ -815,7 +815,7 @@ def main(argv):
         gals = []
         psfs = []
         skys = []
-        for i in range(1): 
+        for i in range(2): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
