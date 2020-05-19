@@ -820,8 +820,9 @@ def main(argv):
             offset = np.array((dx,dy))
             theta = 0 #math.pi * random_dir() * galsim.radians
 
-            new_gal_model = gal_model.rotate(theta)
-            new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            #new_gal_model = gal_model.rotate(theta)
+            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            #new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
             sigma=wfirst.read_noise
