@@ -684,7 +684,7 @@ def main(argv):
     PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1000000
+    gal_num = 1
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -842,12 +842,13 @@ def main(argv):
             skys.append(sky_image)
 
             #print(gal_stamp)
-            #world_profile = wcs.toWorld(gal_stamp,image_pos=None)
-            #print(world_profile)
+            world_profile = wcs.toWorld(b)
+            print(world_profile)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
+        exit()
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
     
