@@ -794,10 +794,15 @@ def main(argv):
         # Galsim integer image coordinate object 
         xyI = galsim.PositionI(int(xy.x),int(xy.y))
         """
-        b = galsim.BoundsI( xmin=1,
-                            xmax=int(stamp_size_factor*stamp_size),
+        xyI = galsim.PositionI(int(stamp_size_factor*stamp_size), int(stamp_size_factor*stamp_size))
+        #b = galsim.BoundsI( xmin=1,
+        #                    xmax=int(stamp_size_factor*stamp_size),
+        #                    ymin=1,
+        #                    ymax=int(stamp_size_factor*stamp_size))
+        b = galsin.BoundsI(xmin=1,
+                            xmax=xyI.x,
                             ymin=1,
-                            ymax=int(stamp_size_factor*stamp_size))
+                            ymax=xyI.y)
         #print(xyI.x, int(stamp_size_factor*stamp_size), xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1)
         #print(b)
         # Create postage stamp for galaxy
