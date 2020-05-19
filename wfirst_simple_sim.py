@@ -288,21 +288,21 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         dx = offsets[i][0]
         dy = offsets[i][1]
         
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.y+dy,
-        #    col=gal[i].true_center.x+dx,
-        #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-        #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-        #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-        #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         gal_jacob = Jacobian(
-            row=gal[i].true_center.x+dx,
-            col=gal[i].true_center.y+dy,
-            dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-            dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-            dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-            dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-        print(gal_jacob)
+            row=gal[i].true_center.y+dy,
+            col=gal[i].true_center.x+dx,
+            dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+            dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+            dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+            dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.x+dx,
+        #    col=gal[i].true_center.y+dy,
+        #    dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+        #    dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+        #    dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+        #    dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+        #print(gal_jacob)
         psf_jacob2 = gal_jacob
 
         mask = np.where(weight!=0)
@@ -681,10 +681,10 @@ def main(argv):
     use_SCA = 1
     filter_ = 'H158'
     galaxy_model = 'Gaussian'
-    PSF_model = 'Gaussian'
+    PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1
+    gal_num = 1000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -731,13 +731,13 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.5,g2=0)
-                g1=0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=0.02)
+                g1=0
+                g2=0.02
             else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=-0.02)
+                g1=0
+                g2=-0.02
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
@@ -810,7 +810,7 @@ def main(argv):
         gals = []
         psfs = []
         skys = []
-        for i in range(2): 
+        for i in range(1): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
@@ -818,7 +818,7 @@ def main(argv):
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
-            theta = math.pi * random_dir() * galsim.radians
+            theta = 0 #math.pi * random_dir() * galsim.radians
 
             new_gal_model = gal_model.rotate(theta)
             new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
@@ -840,15 +840,14 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            print(gal_stamp)
-            world_profile = wcs.toWorld(gal_stamp,image_pos=None)
-            print(world_profile)
+            #print(gal_stamp)
+            #world_profile = wcs.toWorld(gal_stamp,image_pos=None)
+            #print(world_profile)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
-        exit()
         
     
     ## send and receive objects from one processors to others
@@ -866,7 +865,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7'
+        dirr='v2_4'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
