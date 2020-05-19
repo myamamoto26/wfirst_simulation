@@ -823,11 +823,11 @@ def main(argv):
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
-            theta = 0 #math.pi * random_dir() * galsim.radians
+            theta = math.pi * random_dir() * galsim.radians
 
-            #new_gal_model = gal_model.rotate(theta)
-            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
-            #new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            new_gal_model = gal_model.rotate(theta)
+            #gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
             sigma=wfirst.read_noise
@@ -846,9 +846,10 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            print(gal_model.centroid)
-            world_profile = wcs.toWorld(gal_model)
-            print(world_profile)
+            print(new_gal_model.centroid)
+            print(gal_stamp.centroid)
+            #world_profile = wcs.toWorld(gal_model)
+            #print(world_profile)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
