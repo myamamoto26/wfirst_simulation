@@ -847,7 +847,6 @@ def main(argv):
             skys.append(sky_image)
 
             print(new_gal_model.centroid)
-            print(gal_stamp.centroid)
             #world_profile = wcs.toWorld(gal_model)
             #print(world_profile)
 
