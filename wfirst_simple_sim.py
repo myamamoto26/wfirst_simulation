@@ -799,7 +799,7 @@ def main(argv):
         #                    xmax=int(stamp_size_factor*stamp_size),
         #                    ymin=1,
         #                    ymax=int(stamp_size_factor*stamp_size))
-        b = galsim.BoundsI(xmin=1,
+        b = galsim.BoundsI( xmin=1,
                             xmax=xyI.x,
                             ymin=1,
                             ymax=xyI.y)
@@ -846,8 +846,8 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            #print(gal_stamp)
-            world_profile = wcs.toWorld(gal_stamp, image_pos=(xyI.x,xyI.y))
+            print(gal_model.centroid)
+            world_profile = wcs.toWorld(gal_model)
             print(world_profile)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
