@@ -684,7 +684,7 @@ def main(argv):
     PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1
+    gal_num = 1000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -731,13 +731,13 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.02)
-                g1=0
-                g2=0.02
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
+                g2=0
             else:
-                gal_model = gal_model.shear(g1=0,g2=-0.02)
-                g1=0
-                g2=-0.02
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=-0.02
+                g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
@@ -794,15 +794,15 @@ def main(argv):
         # Galsim integer image coordinate object 
         xyI = galsim.PositionI(int(xy.x),int(xy.y))
         """
-        xyI = galsim.PositionI(int(stamp_size_factor*stamp_size), int(stamp_size_factor*stamp_size))
-        #b = galsim.BoundsI( xmin=1,
-        #                    xmax=int(stamp_size_factor*stamp_size),
-        #                    ymin=1,
-        #                    ymax=int(stamp_size_factor*stamp_size))
+        #xyI = galsim.PositionI(int(stamp_size_factor*stamp_size), int(stamp_size_factor*stamp_size))
         b = galsim.BoundsI( xmin=1,
-                            xmax=xyI.x,
+                            xmax=int(stamp_size_factor*stamp_size),
                             ymin=1,
-                            ymax=xyI.y)
+                            ymax=int(stamp_size_factor*stamp_size))
+        #b = galsim.BoundsI( xmin=1,
+        #                    xmax=xyI.x,
+        #                    ymin=1,
+        #                    ymax=xyI.y)
         #print(xyI.x, int(stamp_size_factor*stamp_size), xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1)
         #print(b)
         # Create postage stamp for galaxy
@@ -815,7 +815,7 @@ def main(argv):
         gals = []
         psfs = []
         skys = []
-        for i in range(2): 
+        for i in range(1): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
@@ -825,9 +825,9 @@ def main(argv):
             offset = np.array((dx,dy))
             theta = math.pi * random_dir() * galsim.radians
 
-            new_gal_model = gal_model.rotate(theta)
-            #gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
-            new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            #new_gal_model = gal_model.rotate(theta)
+            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            #new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
             sigma=wfirst.read_noise
@@ -846,14 +846,13 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            print(new_gal_model.centroid)
-            world_profile = wcs.toWorld(new_gal_model.centroid)
-            print(world_profile)
+            #print(new_gal_model.centroid)
+            #world_profile = wcs.toWorld(new_gal_model.centroid)
+            #print(world_profile)
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
-        exit()
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
     
@@ -872,7 +871,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_4'
+        dirr='tmpv2_3'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -911,7 +910,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -925,10 +924,10 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
