@@ -269,7 +269,7 @@ def make_sed_model(model, sed, filter_, bpass):
 
 ## metacal shapemeasurement
 #def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
-def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
+def get_exp_list(gal, psf, sky_stamp, psf2=None):
 
     if psf2 is None:
         psf2 = psf
@@ -392,7 +392,8 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
     #for i in range(len(gals)):
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
+    #obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
+    obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
 
