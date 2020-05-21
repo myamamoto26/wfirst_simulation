@@ -268,8 +268,8 @@ def make_sed_model(model, sed, filter_, bpass):
     return model * sed_
 
 ## metacal shapemeasurement
-#def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
-def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
+#def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
+def get_exp_list(cat, gal, psf, sky_stamp, psf2=None, size=None):
 
     if psf2 is None:
         psf2 = psf
@@ -278,23 +278,31 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
     psf_list=ObsList()
 
     w = []
-    for i in range(len(gal)):
-        im = gal[i].array
-        im_psf = psf[i].array
-        im_psf2 = psf2[i].array
-        weight = 1/sky_stamp[i].array
+    for i in range(1):
+        im = gal.array
+        im_psf = psf.array
+        im_psf2 = psf2.array
+        weight = 1/sky_stamp.array
 
-        jacob = gal[i].wcs.jacobian()
-        dx = offsets[i][0]
-        dy = offsets[i][1]
+        jacob = gal.wcs.jacobian()
+        #dx = offsets[i][0]
+        #dy = offsets[i][1]
         
         gal_jacob = Jacobian(
-            row=gal[i].true_center.y+dy,
-            col=gal[i].true_center.x+dx,
-            dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-            dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-            dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-            dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+            row=gal[i].true_center.y,
+            col=gal[i].true_center.x,
+            dvdrow=jacob.dvdy,
+            dvdcol=jacob.dvdx,
+            dudrow=jacob.dudy,
+            dudcol=jacob.dudx)
+        # original direction times rotation matrix
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.y+dy,
+        #    col=gal[i].true_center.x+dx,
+        #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+        #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+        #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+        #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         #gal_jacob = Jacobian(
         #    row=gal[i].true_center.x+dx,
         #    col=gal[i].true_center.y+dy,
@@ -352,7 +360,8 @@ def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_
 
     return res_
 
-def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
+#def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
+def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
         flux=0.
@@ -731,13 +740,13 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=0.02)
+                g1=0
+                g2=0.02
             else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=-0.02)
+                g1=0
+                g2=-0.02
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
@@ -808,6 +817,22 @@ def main(argv):
         # Create postage stamp for galaxy
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
+        gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+        psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+
+        gal_model.drawImage(image=gal_stamp)
+        st_model.drawImage(image=psf_stamp)
+
+        sigma=wfirst.read_noise
+        read_noise = galsim.GaussianNoise(rng, sigma=sigma)
+
+        im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
+        #im.addNoise(read_noise)
+        gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
+        #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
+
+        gal_stamp -= sky_image
+        """
         ## translational dither check (multiple exposures)
         random_dir = galsim.UniformDeviate(rng)
         offsets = []
@@ -853,7 +878,9 @@ def main(argv):
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
-        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+        """
+        res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
+        #res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
     
     ## send and receive objects from one processors to others
@@ -871,7 +898,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='tmpv2_3'
+        dirr='v2_4'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
