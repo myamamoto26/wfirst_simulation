@@ -278,53 +278,53 @@ def get_exp_list(gal, psf, sky_stamp, psf2=None):
     psf_list=ObsList()
 
     w = []
-    for i in range(1):
-        im = gal.array
-        im_psf = psf.array
-        im_psf2 = psf2.array
-        weight = 1/sky_stamp.array
+    #for i in range(1):
+    im = gal.array
+    im_psf = psf.array
+    im_psf2 = psf2.array
+    weight = 1/sky_stamp.array
 
-        jacob = gal.wcs.jacobian()
-        #dx = offsets[i][0]
-        #dy = offsets[i][1]
-        
-        gal_jacob = Jacobian(
-            row=gal.true_center.y,
-            col=gal.true_center.x,
-            dvdrow=jacob.dvdy,
-            dvdcol=jacob.dvdx,
-            dudrow=jacob.dudy,
-            dudcol=jacob.dudx)
-        # original direction times rotation matrix
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.y+dy,
-        #    col=gal[i].true_center.x+dx,
-        #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-        #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-        #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-        #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.x+dx,
-        #    col=gal[i].true_center.y+dy,
-        #    dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-        #    dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-        #    dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-        #    dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-        #print(gal_jacob)
-        psf_jacob2 = gal_jacob
+    jacob = gal.wcs.jacobian()
+    #dx = offsets[i][0]
+    #dy = offsets[i][1]
+    
+    gal_jacob = Jacobian(
+        row=gal.true_center.y,
+        col=gal.true_center.x,
+        dvdrow=jacob.dvdy,
+        dvdcol=jacob.dvdx,
+        dudrow=jacob.dudy,
+        dudcol=jacob.dudx)
+    # original direction times rotation matrix
+    #gal_jacob = Jacobian(
+    #    row=gal[i].true_center.y+dy,
+    #    col=gal[i].true_center.x+dx,
+    #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+    #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+    #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+    #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+    #gal_jacob = Jacobian(
+    #    row=gal[i].true_center.x+dx,
+    #    col=gal[i].true_center.y+dy,
+    #    dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+    #    dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+    #    dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+    #    dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+    #print(gal_jacob)
+    psf_jacob2 = gal_jacob
 
-        mask = np.where(weight!=0)
-        w.append(np.mean(weight[mask]))
-        noise = old_div(np.ones_like(weight),w[-1])
+    mask = np.where(weight!=0)
+    w.append(np.mean(weight[mask]))
+    noise = old_div(np.ones_like(weight),w[-1])
 
 
-        psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
-        psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
-        obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
-        obs.set_noise(noise)
+    psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
+    psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
+    obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
+    obs.set_noise(noise)
 
-        obs_list.append(obs)
-        psf_list.append(psf_obs2)
+    obs_list.append(obs)
+    psf_list.append(psf_obs2)
 
     #print(obs_list)
     return obs_list,psf_list,np.array(w)
@@ -938,7 +938,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -952,10 +952,10 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
