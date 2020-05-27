@@ -863,7 +863,7 @@ def main(argv):
             simple_jacob.dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
             simple_jacob.dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
             print(jac_stamp.wcs.jacobian(), jac_stamp.wcs)
-            gal_stamp.wcs.jacobian() = simple_jacob
+            #gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
             gals.append(gal_stamp)
