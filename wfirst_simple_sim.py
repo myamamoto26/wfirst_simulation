@@ -178,7 +178,7 @@ def init_gal(gal_dist, gal_sample):
     print('-------truth catalog built-------')
 
 
-def for_wcs(dither_i, sca, filter_, stamp_size):
+def for_wcs(dither_i, sca, filter_, stamp_size, random_angle):
     dither_i = dither_i
     sca = sca
     filter_ = filter_
@@ -188,13 +188,16 @@ def for_wcs(dither_i, sca, filter_, stamp_size):
     d = fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][dither_i]
     ra     = d['ra']  * np.pi / 180. # RA of pointing
     dec    = d['dec'] * np.pi / 180. # Dec of pointing
-    pa     = d['pa']  * np.pi / 180.  # Position angle of pointing
+    #pa     = d['pa']  * np.pi / 180.  # Position angle of pointing
     date   = Time(d['date'],format='mjd').datetime
 
+    #random_dir = galsim.UniformDeviate(314)
+    #pa = math.pi * random_dir()
+    pa=random_angle * np.pi /180.
+
     WCS = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=ra*galsim.radians, \
-                                                                    dec=dec*galsim.radians), 
+                                                           dec=dec*galsim.radians), 
                                 PA          = pa*galsim.radians, 
-                                date        = date,
                                 SCAs        = sca,
                                 PA_is_FPA   = True
                                 )[sca]
@@ -694,7 +697,7 @@ def main(argv):
     PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1000000
+    gal_num = 10
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -714,9 +717,11 @@ def main(argv):
     res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
-    wcs, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size)
+    position_angle1=20 #degrees
+    position_angle2=65 #degrees
+    wcs1, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+    wcs2, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-
 
     t0 = time.time()
     for i_gal in range(gal_num):
@@ -818,42 +823,27 @@ def main(argv):
         # Create postage stamp for galaxy
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
-        gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-        psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-
-        gal_model.drawImage(image=gal_stamp)
-        st_model.drawImage(image=psf_stamp)
-
-        sigma=wfirst.read_noise
-        read_noise = galsim.GaussianNoise(rng, sigma=sigma)
-
-        im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
-        #im.addNoise(read_noise)
-        gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
-        #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
-
-        gal_stamp -= sky_image
-        """
         ## translational dither check (multiple exposures)
         random_dir = galsim.UniformDeviate(rng)
+        wcs=[wcs1,wcs2]
+        print(wcs)
         offsets = []
-        thetas = []
+        thetas = [position_angle1, position_angle2]
         gals = []
         psfs = []
         skys = []
-        for i in range(1): 
+        for i in range(2): 
             ## use pixel scale for now. 
-            gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-            psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
-            #gal_stamp = galsim.Image(b, wcs=wcs)
+            gal_stamp = galsim.Image(b, wcs=wcs[i])
+            psf_stamp = galsim.Image(b, wcs=wcs[i])
+            #gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
-            theta = math.pi * random_dir() * galsim.radians
 
-            #new_gal_model = gal_model.rotate(theta)
-            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
-            #new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            new_gal_model = gal_model.rotate(thetas[i])
+            #gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
             sigma=wfirst.read_noise
@@ -867,10 +857,11 @@ def main(argv):
             gal_stamp -= sky_image
 
             offsets.append(offset)
-            thetas.append(theta)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
+
+            print(new_gal_model.wcs.jacobian())
 
             #print(new_gal_model.centroid)
             #world_profile = wcs.toWorld(new_gal_model.centroid)
@@ -879,7 +870,7 @@ def main(argv):
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
-        """
+        exit()
         res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         #res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
@@ -938,7 +929,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -952,10 +943,8 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
-    
-    sub(sys.argv)
+    #sub(sys.argv)
 
 
 
