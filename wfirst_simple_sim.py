@@ -842,7 +842,7 @@ def main(argv):
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
 
-            new_gal_model = gal_model.rotate(thetas[i])
+            new_gal_model = gal_model.rotate(thetas[i]*(np.pi/180)*galsim.radians)
             #gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
