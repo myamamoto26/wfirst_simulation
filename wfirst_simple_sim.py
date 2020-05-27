@@ -198,6 +198,7 @@ def for_wcs(dither_i, sca, filter_, stamp_size, random_angle):
     WCS = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=ra*galsim.radians, \
                                                            dec=dec*galsim.radians), 
                                 PA          = pa*galsim.radians, 
+                                date        = date,
                                 SCAs        = sca,
                                 PA_is_FPA   = True
                                 )[sca]
