@@ -272,8 +272,8 @@ def make_sed_model(model, sed, filter_, bpass):
     return model * sed_
 
 ## metacal shapemeasurement
-#def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
-def get_exp_list(gal, psf, sky_stamp, psf2=None):
+def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
+    #def get_exp_list(gal, psf, sky_stamp, psf2=None):
 
     if psf2 is None:
         psf2 = psf
@@ -364,8 +364,8 @@ def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_
 
     return res_
 
-#def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
-def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
+def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
+    #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
         flux=0.
@@ -396,8 +396,8 @@ def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
     #for i in range(len(gals)):
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    #obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
-    obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
+    obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
+    #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
 
@@ -829,7 +829,7 @@ def main(argv):
         wcs=[wcs1,wcs2]
         print(wcs)
         offsets = []
-        thetas = [position_angle1, position_angle2]
+        thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
         gals = []
         psfs = []
         skys = []
@@ -837,12 +837,12 @@ def main(argv):
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, wcs=wcs[i])
             psf_stamp = galsim.Image(b, wcs=wcs[i])
-            #gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+            jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
 
-            new_gal_model = gal_model.rotate(thetas[i]*(np.pi/180)*galsim.radians)
+            new_gal_model = gal_model.rotate(thetas[i])
             #gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
@@ -854,15 +854,21 @@ def main(argv):
             #im.addNoise(read_noise)
             gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
-
             gal_stamp -= sky_image
+
+            # set a simple jacobian to the stamps before sending them to ngmix
+            simple_jacob=jac_stamp.wcs.jacobian()
+            simple_jacob.dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
+            simple_jacob.dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
+            simple_jacob.dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
+            simple_jacob.dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
+            print(jac_stamp.wcs.jacobian(), jac_stamp.wcs)
+            gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-
-            print(gal_stamp.wcs)
 
             #print(new_gal_model.centroid)
             #world_profile = wcs.toWorld(new_gal_model.centroid)
@@ -871,9 +877,9 @@ def main(argv):
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
+        #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
+        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         exit()
-        res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
-        #res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
     
     ## send and receive objects from one processors to others
