@@ -862,7 +862,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            print(new_gal_model.wcs.jacobian())
+            print(gal_stamp.wcs.jacobian())
 
             #print(new_gal_model.centroid)
             #world_profile = wcs.toWorld(new_gal_model.centroid)
