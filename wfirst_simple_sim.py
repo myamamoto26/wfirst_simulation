@@ -857,14 +857,15 @@ def main(argv):
 
             # set a simple jacobian to the stamps before sending them to ngmix
             simple_jacob=jac_stamp.wcs.jacobian()
+            new_wcs=gal_stamp.wcs.affine(image_pos=(gal_stamp.true_center.x, gal_stamp.true_center.y))
             dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
             dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
             dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
             dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
-            pixel_wcs = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
-            #pixel_wcs = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
+            #pixel_wcs = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
+            pixel_wcs = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
             gal_stamp.wcs=pixel_wcs
-            print(simple_jacob, gal_stamp.wcs)
+            print(simple_jacob, gal_stamp.wcs, new_wcs)
             #gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
