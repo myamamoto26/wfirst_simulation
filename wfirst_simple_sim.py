@@ -837,7 +837,7 @@ def main(argv):
         for i in range(2): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            new_center = wcs[i].toImage(gal_stamp, sca_center[0])
+            new_center = wcs[i].toImage(gal_model, world_pos=sca_center[0])
             print(new_center)
             gal_stamp.true_center = new_center
 
