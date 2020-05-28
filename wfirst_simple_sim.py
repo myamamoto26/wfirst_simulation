@@ -857,14 +857,14 @@ def main(argv):
 
             # set a simple jacobian to the stamps before sending them to ngmix
             simple_jacob=jac_stamp.wcs.jacobian()
-            stamp_jacob=gal_stamp.wcs.jacobian()
+            galstamp_wcs=galsim.GSFitsWCS(gal_stamp)
             dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
             dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
             dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
             dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
             simple_jacob = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
-            stamp_jacob=simple_jacob
-            print(simple_jacob, stamp_jacob)
+            galstamp_wcs=simple_jacob
+            print(simple_jacob, galstamp_wcs)
             #gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
@@ -879,9 +879,9 @@ def main(argv):
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
             #gal_stamp.write(str(i)+'_pos_rotate.fits')
+        exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
-        exit()
         
     
     ## send and receive objects from one processors to others
