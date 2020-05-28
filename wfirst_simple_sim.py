@@ -877,7 +877,7 @@ def main(argv):
 
             #print(hsm(gal_stamp, psf=psf_stamp, wt=sky_image.invertSelf()))
 
-            #gal_stamp.write(str(i)+'_pos_rotate.fits')
+            gal_stamp.write(str(i)+'_rotationaldithers.fits')
         exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
