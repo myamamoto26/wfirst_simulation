@@ -863,7 +863,7 @@ def main(argv):
             dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
             dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
             dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
-            simple_jacob = JacobianWCS(dvdy, dvdx, dudy, dudx)
+            simple_jacob = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
             print(simple_jacob)
             #gal_stamp.wcs.jacobian() = simple_jacob
 
