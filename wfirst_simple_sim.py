@@ -836,7 +836,7 @@ def main(argv):
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, wcs=wcs[i])
             psf_stamp = galsim.Image(b, wcs=wcs[i])
-            jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+            #jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
@@ -856,16 +856,16 @@ def main(argv):
             gal_stamp -= sky_image
 
             # set a simple jacobian to the stamps before sending them to ngmix
-            simple_jacob=jac_stamp.wcs.jacobian()
+            #simple_jacob=jac_stamp.wcs.jacobian()
             new_wcs=gal_stamp.wcs.affine(image_pos=galsim.PositionD(gal_stamp.true_center.x, gal_stamp.true_center.y))
-            dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
-            dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
-            dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
-            dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
+            #dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
+            #dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
+            #dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
+            #dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
             #pixel_wcs = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
-            pixel_wcs = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
-            gal_stamp.wcs=pixel_wcs
-            print(simple_jacob, gal_stamp.wcs, new_wcs)
+            new_wcs = galsim.JacobianWCS(new_wcs.dudx, new_wcs.dudy, new_wcs.dvdx, new_wcs.dvdy)
+            gal_stamp.wcs=new_wcs
+            print(gal_stamp.wcs, new_wcs)
             #gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
