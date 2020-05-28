@@ -827,7 +827,7 @@ def main(argv):
         ## translational dither check (multiple exposures)
         random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
-        print(wcs1.postoWorld(image_pos=(galsim.PositionI(2048,2048))))
+        print(galsim.postoWorld(image_pos=(galsim.PositionI(2048,2048))))
         offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
         gals = []
