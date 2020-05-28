@@ -836,7 +836,7 @@ def main(argv):
         for i in range(2): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            print(gal_stamp.true_center)
+            print(wcs[i].toWorld(gal_stamp.true_center))
 
             psf_stamp = galsim.Image(b, wcs=wcs[i])
             #jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
@@ -868,7 +868,7 @@ def main(argv):
             #pixel_wcs = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
             new_wcs = galsim.JacobianWCS(new_wcs.dudx, new_wcs.dudy, new_wcs.dvdx, new_wcs.dvdy)
             gal_stamp.wcs=new_wcs
-            print(gal_stamp.wcs, new_wcs)
+            #print(gal_stamp.wcs, new_wcs)
             #gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
