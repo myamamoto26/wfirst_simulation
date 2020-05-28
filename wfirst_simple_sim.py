@@ -841,9 +841,9 @@ def main(argv):
             dy = 0 #random_dir() - 0.5
             offset = np.array((dx,dy))
 
-            new_gal_model = gal_model.rotate(thetas[i])
-            #gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
-            new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            #new_gal_model = gal_model.rotate(thetas[i])
+            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
+            #new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
             st_model.drawImage(image=psf_stamp, offset=(dx,dy))
 
             sigma=wfirst.read_noise
@@ -854,8 +854,6 @@ def main(argv):
             gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
             gal_stamp -= sky_image
-
-            gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             # set a simple jacobian to the stamps before sending them to ngmix
             simple_jacob=jac_stamp.wcs.jacobian()
@@ -873,6 +871,8 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
+
+            gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
         exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
