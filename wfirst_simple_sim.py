@@ -828,7 +828,7 @@ def main(argv):
         random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
         sca_center=[wcs1.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs2.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
-        print(sca_center)
+        #print(sca_center)
         offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
         gals = []
@@ -837,7 +837,7 @@ def main(argv):
         for i in range(2): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            new_center = wcs[i].toImage(sca_center[0])
+            new_center = wcs[i].toImage(gal_stamp, world_pos=sca_center[0])
             print(new_center)
             gal_stamp.true_center = new_center
 
