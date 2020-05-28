@@ -827,6 +827,7 @@ def main(argv):
         ## translational dither check (multiple exposures)
         random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
+        print(wcs)
         offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
         gals = []
@@ -873,7 +874,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            gal_stamp.write(str(i)+'_rotationaldithers.fits')
+            #gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
         exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
