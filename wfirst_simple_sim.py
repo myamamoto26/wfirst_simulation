@@ -858,7 +858,7 @@ def main(argv):
 
             # set a simple jacobian to the stamps before sending them to ngmix
             simple_jacob=jac_stamp.wcs.jacobian()
-            print(simple_jacob, simple_jacob[0])
+            print(simple_jacob)
             simple_jacob.dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
             simple_jacob.dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
             simple_jacob.dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
