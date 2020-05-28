@@ -827,7 +827,6 @@ def main(argv):
         ## translational dither check (multiple exposures)
         random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
-        print(wcs)
         offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
         gals = []
@@ -858,13 +857,14 @@ def main(argv):
 
             # set a simple jacobian to the stamps before sending them to ngmix
             simple_jacob=jac_stamp.wcs.jacobian()
-            print(simple_jacob)
+            stamp_jacob=gal_stamp.wcs.jacobian()
             dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
             dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
             dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
             dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
             simple_jacob = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
-            print(simple_jacob)
+            stamp_jacob=simple_jacob
+            print(simple_jacob, stamp_jacob)
             #gal_stamp.wcs.jacobian() = simple_jacob
 
             offsets.append(offset)
