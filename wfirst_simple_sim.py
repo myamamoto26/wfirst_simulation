@@ -695,7 +695,7 @@ def main(argv):
     use_SCA = 1
     filter_ = 'H158'
     galaxy_model = 'Gaussian'
-    PSF_model = 'wfirst'
+    PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
     gal_num = 10
