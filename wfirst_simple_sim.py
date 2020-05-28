@@ -839,6 +839,7 @@ def main(argv):
             gal_stamp = galsim.Image(b, wcs=wcs[i])
             new_center = wcs[i].toImage(sca_center[0])
             print(new_center)
+            gal_stamp.true_center = new_center
 
             psf_stamp = galsim.Image(b, wcs=wcs[i])
             #jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
