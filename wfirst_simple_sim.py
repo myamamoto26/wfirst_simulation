@@ -837,7 +837,8 @@ def main(argv):
         for i in range(2): 
             ## use pixel scale for now. 
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            #new_center = wcs[i].toImage(sca_center[i])
+            new_center = wcs[i].toImage(sca_center[0])
+            print(new_center)
 
             psf_stamp = galsim.Image(b, wcs=wcs[i])
             #jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
