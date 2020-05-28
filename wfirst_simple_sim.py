@@ -747,8 +747,8 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
+                gal_model = gal_model.shear(g1=0.7,g2=0)
+                g1=0.7
                 g2=0
             else:
                 gal_model = gal_model.shear(g1=-0.02,g2=0)
