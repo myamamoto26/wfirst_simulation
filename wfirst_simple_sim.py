@@ -843,7 +843,7 @@ def main(argv):
                             xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
                             ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            print(gal_stamp.true_center)
+            print(wcs[i].toWorld(gal_stamp.true_center))
             
 
             psf_stamp = galsim.Image(b, wcs=wcs[i])
