@@ -837,7 +837,7 @@ def main(argv):
         for i in range(2): 
             ## use pixel scale for now. 
             xy = wcs[i].toImage(gal_radec)
-            xyI = galsim.PositionI(int(xyI.x), int(xyI.y))
+            xyI = galsim.PositionI(int(xy.x), int(xy.y))
             b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
                             ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
                             xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
