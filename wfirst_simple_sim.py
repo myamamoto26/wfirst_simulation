@@ -884,7 +884,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            #gal_stamp.write(str(i)+'_rotationaldithers.fits')
+            gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
         exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
