@@ -838,24 +838,22 @@ def main(argv):
             ## use pixel scale for now. 
             xy = wcs[i].toImage(gal_radec)
             xyI = galsim.PositionI(int(xy.x), int(xy.y))
+            offset = xy - xyI
             b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
                             ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
                             xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
                             ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            print(wcs[i].toWorld(gal_stamp.true_center))
+            print(gal_stamp.wcs)
             
 
             psf_stamp = galsim.Image(b, wcs=wcs[i])
-            #jac_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
-            offset = np.array((dx,dy))
+            #offset = np.array((dx,dy))
 
-            #new_gal_model = gal_model.rotate(thetas[i])
-            gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
-            #new_gal_model.drawImage(image=gal_stamp, offset=(dx,dy))
-            st_model.drawImage(image=psf_stamp, offset=(dx,dy))
+            gal_model.drawImage(image=gal_stamp, offset=offset)
+            st_model.drawImage(image=psf_stamp, offset=offset)
 
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
@@ -869,17 +867,10 @@ def main(argv):
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             # set a simple jacobian to the stamps before sending them to ngmix
-            #simple_jacob=jac_stamp.wcs.jacobian()
             new_wcs=gal_stamp.wcs.affine(image_pos=galsim.PositionD(gal_stamp.true_center.x, gal_stamp.true_center.y))
-            #dvdy=simple_jacob.dvdy*np.cos(thetas[i]) - simple_jacob.dudy*np.sin(thetas[i])
-            #dvdx=simple_jacob.dvdx*np.cos(thetas[i]) - simple_jacob.dudx*np.sin(thetas[i])
-            #dudy=simple_jacob.dudy*np.cos(thetas[i]) + simple_jacob.dvdy*np.sin(thetas[i])
-            #dudx=simple_jacob.dudx*np.cos(thetas[i]) + simple_jacob.dvdx*np.sin(thetas[i])
-            #pixel_wcs = galsim.JacobianWCS(dvdy, dvdx, dudy, dudx)
             new_wcs = galsim.JacobianWCS(new_wcs.dudx, new_wcs.dudy, new_wcs.dvdx, new_wcs.dvdy)
             gal_stamp.wcs=new_wcs
-            #print(gal_stamp.wcs, new_wcs)
-            #gal_stamp.wcs.jacobian() = simple_jacob
+            print(gal_stamp.wcs)
 
             offsets.append(offset)
             gals.append(gal_stamp)
