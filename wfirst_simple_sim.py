@@ -811,10 +811,10 @@ def main(argv):
         xyI = galsim.PositionI(int(xy.x),int(xy.y))
         """
         #xyI = galsim.PositionI(int(stamp_size_factor*stamp_size), int(stamp_size_factor*stamp_size))
-        b = galsim.BoundsI( xmin=1,
-                            xmax=int(stamp_size_factor*stamp_size),
-                            ymin=1,
-                            ymax=int(stamp_size_factor*stamp_size))
+        #b = galsim.BoundsI( xmin=1,
+        #                    xmax=int(stamp_size_factor*stamp_size),
+        #                    ymin=1,
+        #                    ymax=int(stamp_size_factor*stamp_size))
         #b = galsim.BoundsI( xmin=1,
         #                    xmax=xyI.x,
         #                    ymin=1,
@@ -828,7 +828,7 @@ def main(argv):
         random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
         sca_center=[wcs1.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs2.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
-        #print(sca_center)
+        gal_radec = sca_center[0]
         offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
         gals = []
@@ -836,9 +836,13 @@ def main(argv):
         skys = []
         for i in range(2): 
             ## use pixel scale for now. 
+            xy = wcs[i].toImage(gal_radec)
+            xyI = galsim.PositionI(int(xyI.x), int(xyI.y))
+            b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
+                            ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
+                            xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
+                            ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            new_center = wcs[i].toImage(sca_center[0])
-            gal_stamp.setCenter(galsim.PositionI(old_div(new_center.x,1), old_div(new_center.y,1)))
             print(gal_stamp.true_center)
             
 
