@@ -867,8 +867,9 @@ def main(argv):
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             # set a simple jacobian to the stamps before sending them to ngmix
-            new_wcs=gal_stamp.wcs.affine(image_pos=galsim.PositionD(gal_stamp.true_center.x, gal_stamp.true_center.y))
-            new_wcs = galsim.JacobianWCS(new_wcs.dudx, new_wcs.dudy, new_wcs.dvdx, new_wcs.dvdy)
+            wcs_transf = gal_stamp.wcs.affine(image_pos=gal_stamp.true_center)
+            print(wcs_transf)
+            new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
             print(gal_stamp.wcs)
 
