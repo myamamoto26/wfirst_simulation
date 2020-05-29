@@ -866,6 +866,8 @@ def main(argv):
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
             gal_stamp -= sky_image
 
+            gal_stamp.write(str(i)+'_rotationaldithers.fits')
+
             # set a simple jacobian to the stamps before sending them to ngmix
             #simple_jacob=jac_stamp.wcs.jacobian()
             new_wcs=gal_stamp.wcs.affine(image_pos=galsim.PositionD(gal_stamp.true_center.x, gal_stamp.true_center.y))
@@ -884,7 +886,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-            gal_stamp.write(str(i)+'_rotationaldithers.fits')
+            #gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
         exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
