@@ -874,6 +874,7 @@ def main(argv):
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
 
+            print(wcs[i].toWorld(gal_stamp.true_center))
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             offsets.append(offset)
