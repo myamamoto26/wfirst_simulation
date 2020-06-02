@@ -864,13 +864,11 @@ def main(argv):
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
             gal_stamp -= sky_image
 
-            gal_stamp.write(str(i)+'_rotationaldithers.fits')
-
-
             # set a simple jacobian to the stamps before sending them to ngmix
             # old center of the stamp
             origin_x = gal_stamp.origin.x
             origin_y = gal_stamp.origin.y
+            print(origin_x,origin_y)
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
             #offset = [xy.x-origin_x, xy.y-origin_y]
@@ -879,6 +877,7 @@ def main(argv):
             gal_stamp.wcs=new_wcs
             print(gal_stamp.wcs)
 
+            gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             offsets.append(offset)
             gals.append(gal_stamp)
