@@ -836,23 +836,20 @@ def main(argv):
         skys = []
         for i in range(2): 
             ## use pixel scale for now. 
-            xy = wcs[i].toImage(gal_radec)
+            xy = wcs[i].toImage(gal_radec) # galaxy position 
             xyI = galsim.PositionI(int(xy.x), int(xy.y))
             b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
                             ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
                             xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
                             ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
             gal_stamp = galsim.Image(b, wcs=wcs[i])
-            print(gal_stamp.wcs)
-            
-
             psf_stamp = galsim.Image(b, wcs=wcs[i])
+
             #dx = 0 #random_dir() - 0.5
             #dy = 0 #random_dir() - 0.5
             #offset = np.array((dx,dy))
 
             offset = xy-gal_stamp.true_center # original galaxy position - stamp center
-            print(offset)
             gal_model.drawImage(image=gal_stamp, offset=offset)
             st_model.drawImage(image=psf_stamp, offset=offset)
 
@@ -872,13 +869,12 @@ def main(argv):
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
-            offset = [xy.x-origin_x, xy.y-origin_y]
-            print(offset)
+            #offset = [xy.x-origin_x, xy.y-origin_y]
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             #print(wcs_transf)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
-            #print(gal_stamp.wcs)
+            print(gal_stamp.wcs)
 
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
