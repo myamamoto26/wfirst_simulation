@@ -835,6 +835,8 @@ def main(argv):
         psfs = []
         skys = []
         for i in range(2): 
+            gal_stamp=None
+            psf_stamp=None
             ## use pixel scale for now. 
             xy = wcs[i].toImage(gal_radec) # galaxy position 
             xyI = galsim.PositionI(int(xy.x), int(xy.y))
@@ -862,6 +864,8 @@ def main(argv):
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
             gal_stamp -= sky_image
 
+            gal_stamp.write(str(i)+'_rotationaldithers.fits')
+
 
             # set a simple jacobian to the stamps before sending them to ngmix
             # old center of the stamp
@@ -871,20 +875,15 @@ def main(argv):
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
             #offset = [xy.x-origin_x, xy.y-origin_y]
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
-            #print(wcs_transf)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
             print(gal_stamp.wcs)
-
-            gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
 
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-
-            #gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
         exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
