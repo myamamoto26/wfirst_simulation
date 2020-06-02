@@ -852,6 +852,7 @@ def main(argv):
             #offset = np.array((dx,dy))
 
             offset = xy-gal_stamp.true_center # original galaxy position - stamp center
+            print(offset)
             gal_model.drawImage(image=gal_stamp, offset=offset)
             st_model.drawImage(image=psf_stamp, offset=offset)
 
@@ -872,6 +873,7 @@ def main(argv):
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
             offset = [xy.x-origin_x, xy.y-origin_y]
+            print(offset)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             #print(wcs_transf)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
