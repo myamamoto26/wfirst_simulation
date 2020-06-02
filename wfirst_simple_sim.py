@@ -872,7 +872,7 @@ def main(argv):
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
-            #gal_stamp.wcs=new_wcs
+            gal_stamp.wcs=new_wcs
 
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
