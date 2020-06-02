@@ -855,6 +855,8 @@ def main(argv):
             gal_model.drawImage(image=gal_stamp, offset=offset)
             st_model.drawImage(image=psf_stamp, offset=offset)
 
+            print(wcs[i].toWorld(gal_stamp.true_center))
+
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
