@@ -855,8 +855,6 @@ def main(argv):
             gal_model.drawImage(image=gal_stamp, offset=offset)
             st_model.drawImage(image=psf_stamp, offset=offset)
 
-            print(wcs[i].toWorld(gal_stamp.true_center))
-
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
@@ -872,11 +870,11 @@ def main(argv):
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
+            print(new_pos)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
 
-            print(wcs[i].toWorld(gal_stamp.true_center))
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             offsets.append(offset)
