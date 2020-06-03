@@ -870,11 +870,10 @@ def main(argv):
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
-            print(new_pos)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
-            print(gal_stamp.wcs, gal_stamp.true_center)
+            print(new_wcs.toWorld(gal_stamp.true_center))
 
             gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
