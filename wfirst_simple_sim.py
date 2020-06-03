@@ -864,6 +864,8 @@ def main(argv):
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
             gal_stamp -= sky_image
 
+            print(wcs[i].toWorld(gal_stamp.true_center))
+
             # set a simple jacobian to the stamps before sending them to ngmix
             # old center of the stamp
             origin_x = gal_stamp.origin.x
