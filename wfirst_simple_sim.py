@@ -864,14 +864,13 @@ def main(argv):
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
             gal_stamp -= sky_image
 
-            print(wcs[i].toWorld(gal_stamp.true_center))
-
             # set a simple jacobian to the stamps before sending them to ngmix
             # old center of the stamp
             origin_x = gal_stamp.origin.x
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
+            print(new_pos)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
