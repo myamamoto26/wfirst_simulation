@@ -289,6 +289,7 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         weight = 1/sky_stamp[i].array
 
         jacob = gal[i].wcs.jacobian()
+        print(offsets[i].x)
         dx = offsets[i][0]
         dy = offsets[i][1]
         
@@ -844,6 +845,7 @@ def main(argv):
             #offset = np.array((dx,dy))
 
             offset = xy-gal_stamp.true_center # original galaxy position - stamp center
+            print(offset)
             gal_model.drawImage(image=gal_stamp, offset=offset)
             st_model.drawImage(image=psf_stamp, offset=offset)
 
