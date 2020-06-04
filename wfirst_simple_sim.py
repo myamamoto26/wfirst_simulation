@@ -294,8 +294,8 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         dy = offsets[i].y
         
         gal_jacob = Jacobian(
-            row=gal[i].true_center+dy,
-            col=gal[i].true_center+dx,
+            row=gal[i].true_center.y+dy,
+            col=gal[i].true_center.x+dx,
             dvdrow=jacob.dvdy,
             dvdcol=jacob.dvdx,
             dudrow=jacob.dudy,
