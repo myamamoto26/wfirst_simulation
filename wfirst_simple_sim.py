@@ -282,53 +282,53 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
     psf_list=ObsList()
 
     w = []
-    #for i in range(1):
-    im = gal.array
-    im_psf = psf.array
-    im_psf2 = psf2.array
-    weight = 1/sky_stamp.array
+    for i in range(2):
+        im = gal[i].array
+        im_psf = psf[i].array
+        im_psf2 = psf2[i].array
+        weight = 1/sky_stamp[i].array
 
-    jacob = gal.wcs.jacobian()
-    dx = offsets[i][0]
-    dy = offsets[i][1]
-    
-    gal_jacob = Jacobian(
-        row=dy,
-        col=dx,
-        dvdrow=jacob.dvdy,
-        dvdcol=jacob.dvdx,
-        dudrow=jacob.dudy,
-        dudcol=jacob.dudx)
-    # original direction times rotation matrix
-    #gal_jacob = Jacobian(
-    #    row=gal[i].true_center.y+dy,
-    #    col=gal[i].true_center.x+dx,
-    #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-    #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-    #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-    #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-    #gal_jacob = Jacobian(
-    #    row=gal[i].true_center.x+dx,
-    #    col=gal[i].true_center.y+dy,
-    #    dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-    #    dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-    #    dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-    #    dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-    #print(gal_jacob)
-    psf_jacob2 = gal_jacob
+        jacob = gal[i].wcs.jacobian()
+        dx = offsets[i][0]
+        dy = offsets[i][1]
+        
+        gal_jacob = Jacobian(
+            row=dy,
+            col=dx,
+            dvdrow=jacob.dvdy,
+            dvdcol=jacob.dvdx,
+            dudrow=jacob.dudy,
+            dudcol=jacob.dudx)
+        # original direction times rotation matrix
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.y+dy,
+        #    col=gal[i].true_center.x+dx,
+        #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+        #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+        #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+        #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.x+dx,
+        #    col=gal[i].true_center.y+dy,
+        #    dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
+        #    dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
+        #    dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
+        #    dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+        #print(gal_jacob)
+        psf_jacob2 = gal_jacob
 
-    mask = np.where(weight!=0)
-    w.append(np.mean(weight[mask]))
-    noise = old_div(np.ones_like(weight),w[-1])
+        mask = np.where(weight!=0)
+        w.append(np.mean(weight[mask]))
+        noise = old_div(np.ones_like(weight),w[-1])
 
 
-    psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
-    psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
-    obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
-    obs.set_noise(noise)
+        psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
+        psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
+        obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
+        obs.set_noise(noise)
 
-    obs_list.append(obs)
-    psf_list.append(psf_obs2)
+        obs_list.append(obs)
+        psf_list.append(psf_obs2)
 
     #print(obs_list)
     return obs_list,psf_list,np.array(w)
@@ -702,14 +702,6 @@ def main(argv):
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
-    #wfirst.pixel_scale=0.011
-
-    #res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    #res_1p = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    #res_1m = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    #res_2p = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    #res_2m = np.zeros(gal_num, dtype=[('ind', int), ('ra', float), ('dec', float), ('flux', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_1p = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -747,8 +739,8 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.7,g2=0)
-                g1=0.7
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
                 g2=0
             else:
                 gal_model = gal_model.shear(g1=-0.02,g2=0)
@@ -838,7 +830,6 @@ def main(argv):
             gal_stamp=None
             psf_stamp=None
             ## use pixel scale for now. 
-            print(gal_radec)
             xy = wcs[i].toImage(gal_radec) # galaxy position 
             xyI = galsim.PositionI(int(xy.x), int(xy.y))
             b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
@@ -871,22 +862,17 @@ def main(argv):
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
-            #print(new_pos)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
 
-            print(new_wcs)
-            print(wcs[i].local(world_pos=gal_radec))
-
-            gal_stamp.write(str(i)+'_rotationaldithers.fits')
+            #gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
 
-        exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
@@ -906,7 +892,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='tmpv2_3'
+        dirr='v2_7'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
