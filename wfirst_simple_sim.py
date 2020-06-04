@@ -838,6 +838,7 @@ def main(argv):
             gal_stamp=None
             psf_stamp=None
             ## use pixel scale for now. 
+            print(gal_radec)
             xy = wcs[i].toImage(gal_radec) # galaxy position 
             xyI = galsim.PositionI(int(xy.x), int(xy.y))
             b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
@@ -870,7 +871,7 @@ def main(argv):
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
-            print(new_pos)
+            #print(new_pos)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
