@@ -699,7 +699,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 10
+    gal_num = 1000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
