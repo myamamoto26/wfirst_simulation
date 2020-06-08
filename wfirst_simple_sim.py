@@ -322,7 +322,6 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         w.append(np.mean(weight[mask]))
         noise = old_div(np.ones_like(weight),w[-1])
 
-
         psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
         psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
         obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
@@ -861,22 +860,13 @@ def main(argv):
             # old center of the stamp
             origin_x = gal_stamp.origin.x
             origin_y = gal_stamp.origin.y
-            origin_x_psf = psf_stamp.origin.x
-            origin_y_psf = psf_stamp.origin.y
-            print(origin_x, origin_y, origin_x_psf, origin_y_psf)
             gal_stamp.setOrigin(0,0)
             psf_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
-            new_pos_psf = galsim.PositionD(xy.x-origin_x_psf, xy.y-origin_y_psf)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
-            wcs_transf_psf = psf_stamp.wcs.affine(image_pos=new_pos_psf)
-            print(wcs_transf, wcs_transf_psf)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
-            new_wcs_psf = galsim.JacobianWCS(wcs_transf_psf.dudx, wcs_transf_psf.dudy, wcs_transf_psf.dvdx, wcs_transf_psf.dvdy)
             gal_stamp.wcs=new_wcs
-            psf_stamp.wcs=new_wcs_psf
-
-            print(new_wcs, new_wcs_psf)
+            psf_stamp.wcs=new_wcs
 
             #gal_stamp.write(str(i)+'_rotationaldithers.fits')
 
@@ -884,7 +874,6 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-        exit()
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
         
