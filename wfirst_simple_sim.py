@@ -861,15 +861,24 @@ def main(argv):
             # old center of the stamp
             origin_x = gal_stamp.origin.x
             origin_y = gal_stamp.origin.y
+            origin_x_psf = psf_stamp.origin.x
+            origin_y_psf = psf_stamp.origin.y
+            print(origin_x, origin_y, origin_x_psf, origin_y_psf)
             gal_stamp.setOrigin(0,0)
+            psf_stamp.setOrigin(0,0)
             new_pos = galsim.PositionD(xy.x-origin_x, xy.y-origin_y)
+            new_pos_psf = galsim.PositionD(xy.x-origin_x_psf, xy.y-origin_y_psf)
             wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
+            wcs_transf_psf = psf_stamp.wcs.affine(image_pos=new_pos_psf)
+            print(wcs_transf, wcs_transf_psf)
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
+            new_wcs_psf = galsim.JacobianWCS(wcs_transf_psf.dudx, wcs_transf_psf.dudy, wcs_transf_psf.dvdx, wcs_transf_psf.dvdy)
             gal_stamp.wcs=new_wcs
-            #psf_stamp.wcs=new_wcs
+            psf_stamp.wcs=new_wcs_psf
+
+            print(new_wcs, new_wcs_psf)
 
             #gal_stamp.write(str(i)+'_rotationaldithers.fits')
-            print(gal_stamp.array, psf_stamp.array)
 
             offsets.append(offset)
             gals.append(gal_stamp)
