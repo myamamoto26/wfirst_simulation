@@ -293,13 +293,13 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         dx = offsets[i].x
         dy = offsets[i].y
         
-        gal_jacob = Jacobian(
-            row=gal[i].true_center.y+dy,
-            col=gal[i].true_center.x+dx,
-            dvdrow=jacob.dvdy,
-            dvdcol=jacob.dvdx,
-            dudrow=jacob.dudy,
-            dudcol=jacob.dudx)
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.y+dy,
+        #    col=gal[i].true_center.x+dx,
+        #    dvdrow=jacob.dvdy,
+        #    dvdcol=jacob.dvdx,
+        #    dudrow=jacob.dudy,
+        #    dudcol=jacob.dudx)
         # original direction times rotation matrix
         #gal_jacob = Jacobian(
         #    row=gal[i].true_center.y+dy,
@@ -308,13 +308,13 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
         #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
         #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.x+dx,
-        #    col=gal[i].true_center.y+dy,
-        #    dvdrow=jacob.dudx*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-        #    dvdcol=jacob.dudy*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-        #    dudrow=jacob.dvdx*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-        #    dudcol=jacob.dvdy*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
+        gal_jacob = Jacobian(
+            row=gal[i].true_center.x+dx,
+            col=gal[i].true_center.y+dy,
+            dvdrow=jacob.dudx,
+            dvdcol=jacob.dudy,
+            dudrow=jacob.dvdx,
+            dudcol=jacob.dvdy)
         #print(gal_jacob)
         psf_jacob2 = gal_jacob
 
@@ -739,13 +739,13 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.02)
-                g1=0
-                g2=0.02
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
+                g2=0
             else:
-                gal_model = gal_model.shear(g1=0,g2=-0.02)
-                g1=0
-                g2=-0.02
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=-0.02
+                g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
@@ -893,7 +893,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_8'
+        dirr='tmpv2_7'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -932,7 +932,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -946,9 +946,9 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
     
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
