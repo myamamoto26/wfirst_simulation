@@ -739,13 +739,13 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=0.02)
+                g1=0
+                g2=0.02
             else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=-0.02)
+                g1=0
+                g2=-0.02
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
@@ -893,7 +893,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='tmpv2_9'
+        dirr='v2_8_offset_0'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
