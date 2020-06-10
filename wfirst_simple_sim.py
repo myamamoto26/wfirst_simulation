@@ -293,13 +293,13 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         dx = offsets[i].x
         dy = offsets[i].y
         
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.y+dy,
-        #    col=gal[i].true_center.x+dx,
-        #    dvdrow=jacob.dvdy,
-        #    dvdcol=jacob.dvdx,
-        #    dudrow=jacob.dudy,
-        #    dudcol=jacob.dudx)
+        gal_jacob = Jacobian(
+            row=gal[i].true_center.y+dy,
+            col=gal[i].true_center.x+dx,
+            dvdrow=jacob.dvdy,
+            dvdcol=jacob.dvdx,
+            dudrow=jacob.dudy,
+            dudcol=jacob.dudx)
         # original direction times rotation matrix
         #gal_jacob = Jacobian(
         #    row=gal[i].true_center.y+dy,
@@ -308,13 +308,13 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
         #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
         #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
-        gal_jacob = Jacobian(
-            row=gal[i].true_center.x+dx,
-            col=gal[i].true_center.y+dy,
-            dvdrow=jacob.dudx,
-            dvdcol=jacob.dudy,
-            dudrow=jacob.dvdx,
-            dudcol=jacob.dvdy)
+        #gal_jacob = Jacobian(
+        #    row=gal[i].true_center.x+dx,
+        #    col=gal[i].true_center.y+dy,
+        #    dvdrow=jacob.dudx,
+        #    dvdcol=jacob.dudy,
+        #    dudrow=jacob.dvdx,
+        #    dudcol=jacob.dvdy)
         #print(gal_jacob)
         psf_jacob2 = gal_jacob
 
@@ -711,7 +711,7 @@ def main(argv):
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
     position_angle1=20 #degrees
-    position_angle2=65 #degrees
+    position_angle2=20 #degrees
     wcs1, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
@@ -893,7 +893,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='tmpv2_7'
+        dirr='tmpv2_9'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
