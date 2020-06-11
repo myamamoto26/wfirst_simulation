@@ -907,7 +907,7 @@ def main(argv):
 
 def sub(argv):
     num = 5000000
-    dirr='v2_7_offset_10'
+    dirr='v2_8_offset_10'
     a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
     b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
     c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
