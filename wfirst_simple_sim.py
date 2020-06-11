@@ -39,6 +39,7 @@ import fitsio as fio
 #import pickle as pickle
 #import pickletools
 from astropy.time import Time
+from astropy.table import Table
 from mpi4py import MPI
 #from mpi_pool import MPIPool
 #import cProfile, pstats
@@ -289,7 +290,6 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         weight = 1/sky_stamp[i].array
 
         jacob = gal[i].wcs.jacobian()
-        #print(offsets[i].x)
         dx = offsets[i].x
         dy = offsets[i].y
         
@@ -300,14 +300,6 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
             dvdcol=jacob.dvdx,
             dudrow=jacob.dudy,
             dudcol=jacob.dudx)
-        # original direction times rotation matrix
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.y+dy,
-        #    col=gal[i].true_center.x+dx,
-        #    dvdrow=jacob.dvdy*np.cos(thetas[i]) - jacob.dudy*np.sin(thetas[i]),
-        #    dvdcol=jacob.dvdx*np.cos(thetas[i]) - jacob.dudx*np.sin(thetas[i]),
-        #    dudrow=jacob.dudy*np.cos(thetas[i]) + jacob.dvdy*np.sin(thetas[i]),
-        #    dudcol=jacob.dudx*np.cos(thetas[i]) + jacob.dvdx*np.sin(thetas[i]))
         #gal_jacob = Jacobian(
         #    row=gal[i].true_center.x+dx,
         #    col=gal[i].true_center.y+dy,
@@ -315,7 +307,6 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         #    dvdcol=jacob.dudy,
         #    dudrow=jacob.dvdx,
         #    dudcol=jacob.dvdy)
-        #print(gal_jacob)
         psf_jacob2 = gal_jacob
 
         mask = np.where(weight!=0)
@@ -420,7 +411,7 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
 
     return res_tot
 
-def residual_bias(res_tot, gal_num):
+def residual_bias(res_tot):
     g = 0.01
 
     new = res_tot[0]
@@ -464,10 +455,12 @@ def residual_bias(res_tot, gal_num):
       return (1+m)*x+b
 
     #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
+    gamma1_obs = new['e1']/avg_R11
     params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
     m5,b5=params2[0]
     m5err,b5err=np.sqrt(np.diagonal(params2[1]))
-    #params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
+
+    gamma2_obs = new['e2']/avg_R22
     params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
     m6,b6=params2[0]
     m6err,b6err=np.sqrt(np.diagonal(params2[1]))
@@ -476,9 +469,9 @@ def residual_bias(res_tot, gal_num):
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
     print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
-    return R11, R22, R12, R21
+    return R11, R22, R12, R21, gamma1_obs, gamma2_obs
 
-def residual_bias_correction(a, b, c, d, e, gal_num):
+def residual_bias_correction(a, b, c, d, e, fname):
     g = 0.01
     new = a
     new1p = b
@@ -486,7 +479,7 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
     new2p = d
     new2m = e
 
-    R11, R22, R12, R21 = residual_bias([a,b,c,d,e], gal_num)
+    R11, R22, R12, R21, gamma1_obs, gamma2_obs = residual_bias([a,b,c,d,e])
 
     avg_R11 = np.mean(R11)
     avg_R22 = np.mean(R22)
@@ -593,13 +586,17 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
     m4_err = []
     b4_val =[]
     b4_err = []
+    gamma1_obs_corr = np.ones_like(gamma1_obs)
+    gamma2_obs_corr = np.ones_like(gamma2_obs)
     for p in range(10):
         mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
         #mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
 
+        gamma1_obs_corr[mask] = new['e1'][mask]/tot_R11[p]
         params = curve_fit(func,new['g1'][mask],new['e1'][mask]/tot_R11[p],p0=(0.,0.))
         m1,b1=params[0]
         m1err,b1err=np.sqrt(np.diagonal(params[1]))
+        gamma2_obs_corr[mask] = new['e2'][mask]/tot_R22[p]
         params = curve_fit(func,new['g2'][mask],new['e2'][mask]/tot_R22[p],p0=(0.,0.))
         m2,b2=params[0]
         m2err,b2err=np.sqrt(np.diagonal(params[1]))
@@ -631,11 +628,13 @@ def residual_bias_correction(a, b, c, d, e, gal_num):
         b4_val += [b4]
         b4_err += [b4err]
 
-    print(m1,b1)
-    print(m1_val, b1_val)
     print('corrected m, b: ')
     print("m1="+str("%6.4f"% np.mean(m1_val))+"+-"+str("%6.4f"% np.mean(m1_err)), "b1="+str("%6.6f"% np.mean(b1_val))+"+-"+str("%6.6f"% np.mean(b1_err)))
     print("m2="+str("%6.4f"% np.mean(m2_val))+"+-"+str("%6.4f"% np.mean(m2_err)), "b2="+str("%6.6f"% np.mean(b2_val))+"+-"+str("%6.6f"% np.mean(b2_err)))
+
+    t = Table([gamma1_obs, gamma2_obs, gamma1_obs_corr, gamma2_obs_corr], names=('gamma1_obs', 'gamma2_obs', 'gamma1_obs_corr', 'gamma2_obs_corr'))
+    t.write('delta_measuredshape_'+fname+'.fits', format=fits)
+    print()
 
     values=[m1_val,b1_val,m2_val,b2_val,m3_val,b3_val,m4_val,b4_val]
     errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
@@ -739,13 +738,13 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=0.02)
+                g1=0
+                g2=0.02
             else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
-                g2=0
+                gal_model = gal_model.shear(g1=0,g2=-0.02)
+                g1=0
+                g2=-0.02
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
@@ -893,12 +892,12 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_offset_20'
+        dirr='v2_8_offset_20'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
-        bias = residual_bias(res_tot, gal_num)
+        bias = residual_bias(res_tot)
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
@@ -906,27 +905,29 @@ def main(argv):
     return None
 
 def sub(argv):
-    num = 5000000
-    dirr='v2_8_offset_10'
-    a=fio.FITS(dirr+'_sim_0.fits')[-1].read() 
-    b=fio.FITS(dirr+'_sim_1.fits')[-1].read()
-    c=fio.FITS(dirr+'_sim_2.fits')[-1].read()
-    d=fio.FITS(dirr+'_sim_3.fits')[-1].read()
-    e=fio.FITS(dirr+'_sim_4.fits')[-1].read()
+    dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
+    off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
 
-    #dirr2='v1_3'
-    #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
-    #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
-    #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
-    #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
-    #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
-    #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
+    for i in range(len(dirr)):
+        a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+        b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+        c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+        d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+        e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+
+        #dirr2='v1_3'
+        #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
+        #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
+        #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
+        #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
+        #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
+        #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
 
 
-    g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e,num)
-    #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
+        g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e,off[i])
+        #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
 
-    #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
+        #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
     return 
 
 
