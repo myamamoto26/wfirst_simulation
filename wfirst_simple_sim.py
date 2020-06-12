@@ -471,7 +471,7 @@ def residual_bias(res_tot):
 
     return R11, R22, R12, R21, gamma1_obs, gamma2_obs
 
-def residual_bias_correction(a, b, c, d, e, fname):
+def residual_bias_correction(a, b, c, d, e):
     g = 0.01
     new = a
     new1p = b
@@ -592,11 +592,11 @@ def residual_bias_correction(a, b, c, d, e, fname):
         mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
         #mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
 
-        gamma1_obs_corr[mask] = new['e1'][mask]/tot_R11[p]
+        #gamma1_obs_corr[mask] = new['e1'][mask]/tot_R11[p]
         params = curve_fit(func,new['g1'][mask],new['e1'][mask]/tot_R11[p],p0=(0.,0.))
         m1,b1=params[0]
         m1err,b1err=np.sqrt(np.diagonal(params[1]))
-        gamma2_obs_corr[mask] = new['e2'][mask]/tot_R22[p]
+        #gamma2_obs_corr[mask] = new['e2'][mask]/tot_R22[p]
         params = curve_fit(func,new['g2'][mask],new['e2'][mask]/tot_R22[p],p0=(0.,0.))
         m2,b2=params[0]
         m2err,b2err=np.sqrt(np.diagonal(params[1]))
@@ -632,9 +632,9 @@ def residual_bias_correction(a, b, c, d, e, fname):
     print("m1="+str("%6.4f"% np.mean(m1_val))+"+-"+str("%6.4f"% np.mean(m1_err)), "b1="+str("%6.6f"% np.mean(b1_val))+"+-"+str("%6.6f"% np.mean(b1_err)))
     print("m2="+str("%6.4f"% np.mean(m2_val))+"+-"+str("%6.4f"% np.mean(m2_err)), "b2="+str("%6.6f"% np.mean(b2_val))+"+-"+str("%6.6f"% np.mean(b2_err)))
 
-    t = Table([gamma1_obs, gamma2_obs, gamma1_obs_corr, gamma2_obs_corr], names=('gamma1_obs', 'gamma2_obs', 'gamma1_obs_corr', 'gamma2_obs_corr'))
-    t.write('delta_measuredshape_'+fname+'.fits', format=fits)
-    print()
+    #t = Table([gamma1_obs, gamma2_obs, gamma1_obs_corr, gamma2_obs_corr], names=('gamma1_obs', 'gamma2_obs', 'gamma1_obs_corr', 'gamma2_obs_corr'))
+    #t.write('delta_measuredshape_'+fname+'.fits', format=fits)
+    #print()
 
     values=[m1_val,b1_val,m2_val,b2_val,m3_val,b3_val,m4_val,b4_val]
     errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
@@ -905,35 +905,35 @@ def main(argv):
     return None
 
 def sub(argv):
-    dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
-    off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
+    #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
+    #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
+    dirr='v2_7_offset_20'
+    #for i in range(len(dirr)):
+    a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+    b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+    c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+    d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+    e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-    for i in range(len(dirr)):
-        a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-        b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-        c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-        d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-        e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-        #dirr2='v1_3'
-        #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
-        #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
-        #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
-        #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
-        #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
-        #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
+    #dirr2='v1_3'
+    #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
+    #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
+    #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
+    #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
+    #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
+    #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
 
 
-        g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e,off[i])
-        #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
+    g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
+    #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
 
-        #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
+    #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
     return 
 
 
 if __name__ == "__main__":
 
-    
+    """
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -947,8 +947,8 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    
-    #sub(sys.argv)
+    """
+    sub(sys.argv)
 
 
 
