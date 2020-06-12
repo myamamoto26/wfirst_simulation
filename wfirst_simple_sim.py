@@ -921,17 +921,20 @@ def sub(argv):
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
         R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
-        gamma1.append(g1_obs)
-        gamma2.append(g2_obs)
+        gamma1.append(g1_obs[0:num])
+        gamma2.append(g2_obs[0:num])
         #g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
 
         #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
-    #del_gamma1 = ()
+    del_gamma1 = (gamma1[0] - gamma1[1])
+    del_gamma2 = (gamma2[0] - gamma2[1])
+    print('The difference of the measured g1 is, '+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
+    print('The difference of the measured g2 is, '+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
     return 
 
 if __name__ == "__main__":
 
-    
+    """
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -945,8 +948,8 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    
-    #sub(sys.argv)
+    """
+    sub(sys.argv)
 
 
 
