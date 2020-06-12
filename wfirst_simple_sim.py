@@ -907,27 +907,27 @@ def main(argv):
 def sub(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr='v2_7_offset_20'
-    #for i in range(len(dirr)):
-    a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-    b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-    c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-    d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-    e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+    dirr=['v2_7_offset_20', 'v2_8_offset_20'
+    for i in range(len(dirr)):
+        a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+        b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+        c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+        d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+        e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-    #dirr2='v1_3'
-    #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
-    #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
-    #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
-    #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
-    #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
-    #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
+        #dirr2='v1_3'
+        #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
+        #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
+        #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
+        #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
+        #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
+        #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
 
 
-    g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
-    #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
+        g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
+        #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
 
-    #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
+        #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
     return 
 
 
