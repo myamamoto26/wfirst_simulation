@@ -710,7 +710,7 @@ def main(argv):
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
     position_angle1=20 #degrees
-    position_angle2=40 #degrees
+    position_angle2=65 #degrees
     wcs1, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
@@ -892,7 +892,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_8_offset_20'
+        dirr='v2_8_offset_45'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
@@ -905,9 +905,14 @@ def main(argv):
     return None
 
 def sub(argv):
+    num=3000000
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_7_offset_20', 'v2_8_offset_20']
+    dirr=['v2_7_offset_0', 'v2_7_offset_45']
+    gamma1 = []
+    gamma2 = []
+    del_gamma1 = np.ones(num)
+    del_gamma2 = np.ones(num)
     for i in range(len(dirr)):
         a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
         b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
@@ -915,24 +920,18 @@ def sub(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        #dirr2='v1_3'
-        #f=fio.FITS(dirr2+'_sim_0.fits')[-1].read() 
-        #g=fio.FITS(dirr2+'_sim_1.fits')[-1].read()
-        #h=fio.FITS(dirr2+'_sim_2.fits')[-1].read()
-        #i=fio.FITS(dirr2+'_sim_3.fits')[-1].read()
-        #j=fio.FITS(dirr2+'_sim_4.fits')[-1].read()
-        #print(np.mean(a['e1']), np.mean(b['e1']), np.mean(c['e1']), np.mean(d['e1']), np.mean(e['e1']))
-
-
-        g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
-        #g2values,g2errors,g2snr_binslist = residual_bias_correction(f,g,h,i,j,num)
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
+        gamma1.append(g1_obs)
+        gamma2.append(g2_obs)
+        #g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
 
         #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
+    #del_gamma1 = ()
     return 
 
 if __name__ == "__main__":
 
-    """
+    
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -946,8 +945,8 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    """
-    sub(sys.argv)
+    
+    #sub(sys.argv)
 
 
 
