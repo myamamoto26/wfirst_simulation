@@ -904,6 +904,21 @@ def main(argv):
     
     return None
 
+def correction(argv):
+    num=5000000
+    #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
+    #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
+    dirr=['v2_7_offset_45', 'v2_8_offset_45']
+    for i in range(len(dirr)):
+        a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+        b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+        c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+        d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+        e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias_correction(a,b,c,d,e)
+    return None
+
 def sub(argv):
     num=3000000
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
@@ -958,7 +973,7 @@ def sub(argv):
 
 if __name__ == "__main__":
 
-    
+    """
     t0 = time.time()
     
     comm = MPI.COMM_WORLD
@@ -972,7 +987,8 @@ if __name__ == "__main__":
     cat = fio.FITS('truth_mag.fits')[-1].read()
 
     main(sys.argv)
-    
+    """
+    correction(sys.argv)
     #sub(sys.argv)
 
 
