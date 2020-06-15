@@ -91,7 +91,7 @@ def main(argv):
     ax1.set_xlabel('input shear', fontsize=16)
     ax1.set_ylabel("\u0394\u03B3", fontsize=16)
     ax1.set_title('Mean difference in measured shapes (offsets 0 and 45 degrees)', fontsize=13)
-    plt.legend(loc=4, fontsize=12)
+    plt.legend(loc=7, fontsize=12)
     ax1.tick_params(labelsize=12)
     plt.savefig('delta_g_offset45.png')
     plt.show()
