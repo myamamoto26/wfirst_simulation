@@ -89,7 +89,7 @@ def main(argv):
     ax1.set_ylabel("\u0394\u03B3", fontsize=18)
     plt.legend(fontsize=14)
     ax1.tick_params(labelsize=12)
-    pls.savefig('delta_g_offset45.png')
+    plt.savefig('delta_g_offset45.png')
     plt.show()
 
     return None
