@@ -42,20 +42,12 @@ def main(argv):
         #g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
 
         #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
-    del_g_pos2 = g_pos2[1] - g_pos2[0]
-    del_g_neg2 = g_neg2[1] - g_neg2[0]
-    del_g_0 = g_0[1] - g_0[0]
+    del_g1_pos2 = g_pos2[1] - g_pos2[0]
+    del_g1_neg2 = g_neg2[1] - g_neg2[0]
+    del_g2_0 = g_0[1] - g_0[0]
     #print(del_g_neg2)
     #print('The difference of the measured g1, when sheared in g1 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
     #print('The difference of the measured g2, when sheared in g1 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
-
-    fig,ax1=plt.subplots(figsize=(10,8))
-    input_shear = [-0.02, 0, 0.02]
-    #error=[np.sqrt(np.std(g_neg2[0])**2/num + np.std(g_neg2[1])**2/num), np.sqrt(np.std(g_0[0])**2/num + np.std(g_0[1])**2/num), np.sqrt(np.std(g_pos2[0])**2/num + np.std(g_pos2[1])**2/num)]
-    error=[np.std(del_g_neg2)/np.sqrt(len(del_g_neg2)), np.std(del_g_0)/np.sqrt(len(del_g_0)), np.std(del_g_pos2)/np.sqrt(len(del_g_pos2))]
-    mean_difference = [np.mean(del_g_neg2), np.mean(del_g_0), np.mean(del_g_pos2)]
-    ax1.plot(input_shear, mean_difference, 'o', c='r', label='sheared in g1')
-    ax1.errorbar(input_shear, mean_difference, yerr=error, c='r', fmt='o')
 
     dirr=['v2_8_offset_0', 'v2_8_offset_45']
     g_pos2 = []
@@ -77,17 +69,24 @@ def main(argv):
         #g1values,g1errors,g1snr_binslist = residual_bias_correction(a,b,c,d,e)
 
         #plot_combined(g1values, g1errors, g2values, g2errors, g2snr_binslist)
-    del_g_pos2 = g_pos2[1] - g_pos2[0]
-    del_g_neg2 = g_neg2[1] - g_neg2[0]
-    del_g_0 = g_0[1] - g_0[0]
+    del_g2_pos2 = g_pos2[1] - g_pos2[0]
+    del_g2_neg2 = g_neg2[1] - g_neg2[0]
+    del_g1_0 = g_0[1] - g_0[0]
     #print(del_g_neg2)
     #print('The difference of the measured g1, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
     #print('The difference of the measured g2, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
 
-    error=[np.std(del_g_neg2)/np.sqrt(len(del_g_neg2)), np.std(del_g_0)/np.sqrt(len(del_g_0)), np.std(del_g_pos2)/np.sqrt(len(del_g_pos2))]
-    mean_difference = [np.mean(del_g_neg2), np.mean(del_g_0), np.mean(del_g_pos2)]
-    ax1.plot(input_shear, mean_difference, 'o', c='b', label='sheared in g2')
-    ax1.errorbar(input_shear, mean_difference, yerr=error, c='b', fmt='o')
+	fig,ax1=plt.subplots(figsize=(10,8))
+    input_shear = [-0.02, 0, 0.02]
+    error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_0)/np.sqrt(len(del_g1_0)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
+    mean_difference_g1 = [np.mean(del_g1_neg2), np.mean(del_g1_0), np.mean(del_g1_pos2)]
+    ax1.plot(input_shear, mean_difference_g1, 'o', c='r', label='g1')
+    ax1.errorbar(input_shear, mean_difference_g1, yerr=error_g1, c='r', fmt='o')
+
+    error_g2=[np.std(del_g2_neg2)/np.sqrt(len(del_g2_neg2)), np.std(del_g2_0)/np.sqrt(len(del_g2_0)), np.std(del_g2_pos2)/np.sqrt(len(del_g2_pos2))]
+    mean_difference_g2 = [np.mean(del_g2_neg2), np.mean(del_g2_0), np.mean(del_g2_pos2)]
+    ax1.plot(input_shear, mean_difference_g2, 'o', c='b', label='g2')
+    ax1.errorbar(input_shear, mean_difference_g2, yerr=error_g2, c='b', fmt='o')
     ax1.set_xlabel('input shear', fontsize=16)
     ax1.set_ylabel("\u0394\u03B3", fontsize=16)
     ax1.set_title('Mean difference in measured shapes (offsets 0 and 45 degrees)', fontsize=13)
