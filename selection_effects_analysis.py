@@ -284,6 +284,49 @@ def residual_bias_correction(a, b, c, d, e):
     errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
     return values, errors, snr_binslist
 
+def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
+
+    m1_val=g1values[0]
+    b1_val=g1values[1]
+    m2_val=g2values[2]
+    b2_val=g2values[3]
+    m3_val=g1values[4]
+    b3_val=g1values[5]
+    m4_val=g2values[6]
+    b4_val=g2values[7]
+
+    m1_err=g1errors[0]
+    b1_err=g1errors[1]
+    m2_err=g2errors[2]
+    b2_err=g2errors[3]
+    m3_err=g1errors[4]
+    b3_err=g1errors[5]
+    m4_err=g2errors[6]
+    b4_err=g2errors[7]
+
+    fig, ax3 = plt.subplots(figsize=(8,6))
+    bins_loc = [(snr_binslist[x]+snr_binslist[x+1])/2 for x in range(10)]
+
+    ax3.scatter(bins_loc, m1_val, c='b', marker='.', label='m1 w/ response correction')
+    ax3.scatter(bins_loc, m2_val, c='r', marker='.',  label='m2 w/ response correction')
+    ax3.errorbar(bins_loc, m1_val, c='b', yerr=m1_err, fmt='.')
+    ax3.errorbar(bins_loc, m2_val, c='r', yerr=m2_err, fmt='.')
+
+    
+    ax3.scatter(bins_loc, m3_val, c='b', marker='^', label='m1 w/o response correction')
+    ax3.scatter(bins_loc, m4_val, c='r', marker='^', label='m2 w/o response correction')
+    ax3.errorbar(bins_loc, m3_val, c='b', yerr=m3_err, fmt='^')
+    ax3.errorbar(bins_loc, m4_val, c='r', yerr=m4_err, fmt='^')
+    
+
+    ax3.legend(fontsize=9)
+    ax3.set_xlabel("log(SNR)", fontsize=18)
+    #ax3.set_xlabel("Half-Light Radius", fontsize=20)
+    #ax3.set_ylabel(r"$R_{ij}$", fontsize=20)
+    ax3.set_ylabel(r"$m_{i}$", fontsize=16)
+    ax3.tick_params(labelsize=12)
+    plt.savefig('v1_23comb_residualbias.png')
+
 def main(argv):
     num=5000000
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
