@@ -48,12 +48,12 @@ def main(argv):
     #print('The difference of the measured g1, when sheared in g1 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
     #print('The difference of the measured g2, when sheared in g1 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
 
-    fig,ax1=plt.subplots(figsize=(8,6))
+    fig,ax1=plt.subplots(figsize=(10,8))
     input_shear = [-0.02, 0, 0.02]
     error=[np.sqrt(np.std(g_neg2[0])**2/num + np.std(g_neg2[1])**2/num), np.sqrt(np.std(g_0[0])**2/num + np.std(g_0[1])**2/num), np.sqrt(np.std(g_pos2[0])**2/num + np.std(g_pos2[1])**2/num)]
     mean_difference = [del_g_neg2, del_g_0, del_g_pos2]
-    ax1.plot(input_shear, mean_difference, 'o', label='sheared g1')
-    ax1.errorbar(input_shear, mean_difference, yerr=error, fmt='o')
+    ax1.plot(input_shear, mean_difference, 'o', c='r', label='sheared g1')
+    ax1.errorbar(input_shear, mean_difference, yerr=error, c='r', fmt='o')
 
     dirr=['v2_8_offset_0', 'v2_8_offset_45']
     g_pos2 = []
@@ -83,11 +83,11 @@ def main(argv):
 
     error=[np.sqrt(np.std(g_neg2[0])**2/num + np.std(g_neg2[1])**2/num), np.sqrt(np.std(g_0[0])**2/num + np.std(g_0[1])**2/num), np.sqrt(np.std(g_pos2[0])**2/num + np.std(g_pos2[1])**2/num)]
     mean_difference = [del_g_neg2, del_g_0, del_g_pos2]
-    ax1.plot(input_shear, mean_difference, 'o', label='sheared g2')
-    ax1.errorbar(input_shear, mean_difference, yerr=error, fmt='o')
-    ax1.set_xlabel('input shear', fontsize=18)
-    ax1.set_ylabel("\u0394\u03B3", fontsize=18)
-    plt.legend(fontsize=14)
+    ax1.plot(input_shear, mean_difference, 'o', c='b', label='sheared g2')
+    ax1.errorbar(input_shear, mean_difference, yerr=error, c='b', fmt='o')
+    ax1.set_xlabel('input shear', fontsize=16)
+    ax1.set_ylabel("\u0394\u03B3", fontsize=16)
+    plt.legend(fontsize=12)
     ax1.tick_params(labelsize=12)
     plt.savefig('delta_g_offset45.png')
     plt.show()
