@@ -93,7 +93,7 @@ def main(argv):
     ax1.set_title('Mean difference in measured shapes (offsets 0 and 45 degrees)', fontsize=13)
     plt.legend(loc=7, fontsize=12)
     ax1.tick_params(labelsize=12)
-    ax1.axhline(y=0)
+    ax1.axhline(y=0,ls='--')
     plt.savefig('delta_g_offset45.png')
     plt.show()
 
