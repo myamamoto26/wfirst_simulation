@@ -72,7 +72,7 @@ def main(argv):
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
         R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
-        print(np.mean(g1_obs[0:num:2]), np.mean(g2_obs[0:num]))
+        print(np.mean(g1_obs[0:num]), np.mean(g2_obs[0:num:2]))
         g_pos2.append(g2_obs[0:num:2])
         g_neg2.append(g2_obs[1:num:2])
         g_0.append(g1_obs[0:num])
