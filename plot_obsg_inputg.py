@@ -1,46 +1,8 @@
-from __future__ import division
-from __future__ import print_function
-
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from past.builtins import basestring
-from builtins import object
-from past.utils import old_div
 import numpy as np
 #import healpy as hp
 import sys, os, io
 import math
-import logging
-import time
-import yaml
-import copy
-import galsim as galsim
-import galsim.wfirst as wfirst
-#wfirst.pixel_scale /= 4
-import galsim.config.process as process
-import galsim.des as des
-import ngmix
 import fitsio as fio
-#import pickle as pickle
-#import pickletools
-from astropy.time import Time
-from astropy.table import Table
-from mpi4py import MPI
-#from mpi_pool import MPIPool
-#import cProfile, pstats
-#import glob
-#import shutil
-from ngmix.jacobian import Jacobian
-from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
-from ngmix.galsimfit import GalsimRunner,GalsimSimple,GalsimTemplateFluxFitter
-from ngmix.guessers import R50FluxGuesser
-from ngmix.bootstrap import PSFRunner
-from ngmix import priors, joint_prior
-import mof
-import meds
-#import psc
 
 import matplotlib
 matplotlib.use ('agg')
@@ -51,7 +13,6 @@ import matplotlib.gridspec as gridspec
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import pylab
 from scipy.interpolate import interp1d
-
 from scipy.optimize import curve_fit
 
 ## import functions from other files
