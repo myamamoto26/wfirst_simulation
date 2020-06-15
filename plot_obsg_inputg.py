@@ -48,7 +48,7 @@ def main(argv):
     #print(del_g_neg2)
     #print('The difference of the measured g1, when sheared in g1 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
     #print('The difference of the measured g2, when sheared in g1 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
-
+    
     dirr=['v2_8_offset_0', 'v2_8_offset_45']
     g_pos2 = []
     g_neg2 = []
@@ -76,7 +76,7 @@ def main(argv):
     #print('The difference of the measured g1, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
     #print('The difference of the measured g2, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
 
-	fig,ax1=plt.subplots(figsize=(10,8))
+    fig,ax1=plt.subplots(figsize=(10,8))
     input_shear = [-0.02, 0, 0.02]
     error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_0)/np.sqrt(len(del_g1_0)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
     mean_difference_g1 = [np.mean(del_g1_neg2), np.mean(del_g1_0), np.mean(del_g1_pos2)]
