@@ -484,7 +484,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 5000000
+    gal_num = 3000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -498,8 +498,8 @@ def main(argv):
 
     position_angle1=20 #degrees
     position_angle2=20 #degrees
-    wcs1, sky_level = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    wcs2, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    wcs1, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+    wcs2, sky_level2 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
 
     t0 = time.time()
@@ -525,12 +525,12 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
+                gal_model = gal_model.shear(g1=0,g2=0)
+                g1=0
                 g2=0
             else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
+                gal_model = gal_model.shear(g1=0,g2=0)
+                g1=0
                 g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
@@ -606,6 +606,7 @@ def main(argv):
         random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
         sca_center=[wcs1.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs2.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
+        sky_level=[sky_level1, sky_level2]
         gal_radec = sca_center[0]
         offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
@@ -636,7 +637,7 @@ def main(argv):
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
-            im,sky_image=add_background(gal_stamp, sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False)
+            im,sky_image=add_background(gal_stamp, sky_level[i], b, thermal_backgrounds=None, filter_='H158', phot=False)
             #im.addNoise(read_noise)
             gal_stamp = add_poisson_noise(rng, im, sky_image=sky_image, phot=False)
             #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
@@ -679,7 +680,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_offset_0'
+        dirr='v2_noshear_offset_0'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
