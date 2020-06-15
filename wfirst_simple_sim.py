@@ -916,7 +916,7 @@ def correction(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias_correction(a,b,c,d,e)
+        g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e)
     return None
 
 def sub(argv):
