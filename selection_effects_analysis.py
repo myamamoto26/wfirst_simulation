@@ -82,8 +82,8 @@ def residual_bias(res_tot):
     avg_R12 = np.mean(R12)
     avg_R21 = np.mean(R21)
 
-    g1 = new['e1']/avg_R11
-    g2 = new['e2']/avg_R22
+    #g1 = new['e1']/avg_R11
+    #g2 = new['e2']/avg_R22
 
     ## some statistics
     print("Mean shear response: ")
@@ -98,7 +98,6 @@ def residual_bias(res_tot):
     def func(x,m,b):
       return (1+m)*x+b
 
-    #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
     gamma1_obs = new['e1']/avg_R11
     params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
     m5,b5=params2[0]
