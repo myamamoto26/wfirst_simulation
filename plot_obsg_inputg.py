@@ -92,7 +92,7 @@ def main(argv):
 
     fig,ax1=plt.subplots(figsize=(10,8))
     input_shear = [-0.02, 0, 0, 0, 0.02]
-    ax1.plot([0.0, 0.0], [np.mean(del_g1_0), np.mean(del_g2_0)], c='m', 'o', label='No shear')
+    ax1.plot([0.0, 0.0], [np.mean(del_g1_0), np.mean(del_g2_0)], 'o', c='m', label='No shear')
     ax1.errorbar([0.0, 0.0], [np.mean(del_g1_0), np.mean(del_g2_0)], yerr=[np.std(del_g1_0)/np.sqrt(len(del_g1_0)), np.std(del_g2_0)/np.sqrt(len(del_g2_0))], fmt='o', c='m')
 
     error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_neg0)/np.sqrt(len(del_g1_neg0)), np.std(del_g1_pos0)/np.sqrt(len(del_g1_pos0)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
