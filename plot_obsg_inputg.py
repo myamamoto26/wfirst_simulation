@@ -34,7 +34,7 @@ def main(argv):
 
         R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
         g1_0.append(g1_obs[0:num])
-        g2_0.appned(g2_obs[0:num])
+        g2_0.append(g2_obs[0:num])
 
     del_g1_0 = g1_0[1] - g1_0[0]
     del_g2_0 = g2_0[1] - g2_0[0]
