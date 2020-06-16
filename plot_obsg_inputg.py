@@ -92,7 +92,7 @@ def main(argv):
     #print('The difference of the measured g2, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
 
     fig,ax1=plt.subplots(figsize=(10,8))
-    input_shear = [-0.02, 0, 0, 0, 0.02]
+    input_shear = [-0.02, 0, 0, 0.02]
     ax1.plot([0.0, 0.0], [np.mean(del_g1_0), np.mean(del_g2_0)], 'o', c='m', label='No shear')
     ax1.errorbar([0.0, 0.0], [np.mean(del_g1_0), np.mean(del_g2_0)], yerr=[np.std(del_g1_0)/np.sqrt(len(del_g1_0)), np.std(del_g2_0)/np.sqrt(len(del_g2_0))], fmt='o', c='m')
 
