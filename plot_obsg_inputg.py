@@ -24,6 +24,7 @@ def main(argv):
     ##g1=0, g2=0
     dirr=['v2_noshear_offset_0', 'v2_noshear_offset_45']
     g1_0 = []
+    g2_0 = []
     for i in range(len(dirr)):
         a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
         b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
