@@ -99,6 +99,7 @@ def residual_bias(res_tot):
       return (1+m)*x+b
 
     gamma1_obs = new['e1']/avg_R11
+    print(gamma1_obs, np.mean(gamma1_obs))
     params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
     m5,b5=params2[0]
     m5err,b5err=np.sqrt(np.diagonal(params2[1]))
@@ -229,8 +230,7 @@ def residual_bias_correction(a, b, c, d, e):
     m4_err = []
     b4_val =[]
     b4_err = []
-    gamma1_obs_corr = np.ones_like(gamma1_obs)
-    gamma2_obs_corr = np.ones_like(gamma2_obs)
+
     for p in range(10):
         mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
         #mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
@@ -330,7 +330,7 @@ def main(argv):
     num=5000000
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_7_offset_45', 'v2_8_offset_45']
+    dirr=['v2_7_randoffset_45_test']
     for i in range(len(dirr)):
         a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
         b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
