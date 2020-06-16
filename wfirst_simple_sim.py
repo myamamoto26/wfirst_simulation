@@ -476,6 +476,7 @@ def main(argv):
     ## necessary input (noise, filters, sca number, number of galaxies, stamp sizes, ) =====> params
     random_seed = 314
     rng = galsim.BaseDeviate(random_seed)
+    random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
     dither_i = 22535
     use_SCA = 1
@@ -484,7 +485,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 10000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -496,8 +497,8 @@ def main(argv):
     res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
-    position_angle1=20 #degrees
-    position_angle2=65 #degrees
+    position_angle1=360*random_dir() #degrees
+    position_angle2=position_angle1+45 #degrees
     wcs1, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
@@ -511,6 +512,7 @@ def main(argv):
             print('rank', rank, 'object number, ', i_gal)
         
         gal_model = None
+        st_model = None
 
         if galaxy_model == "Gaussian":
             tot_mag = np.random.choice(cat)
@@ -525,12 +527,12 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0)
-                g1=0
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
                 g2=0
             else:
-                gal_model = gal_model.shear(g1=0,g2=0)
-                g1=0
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=--0.02
                 g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
@@ -554,7 +556,6 @@ def main(argv):
                 g2=-0.02
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
-        #gal_model = galsim.Convolve(gal_model, PSF)
 
         flux_ = gal_model.calculateFlux(bpass)
         #mag_ = gal_model.calculateMagnitude(bpass)
@@ -565,7 +566,6 @@ def main(argv):
         gal_model = galsim.Convolve(gal_model, PSF)
 
         st_model = galsim.DeltaFunction(flux=1.)
-        #st_model = galsim.Convolve(st_model, PSF)
         st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
         # reassign correct flux
         starflux=1.
@@ -603,7 +603,6 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        random_dir = galsim.UniformDeviate(rng)
         wcs=[wcs1,wcs2]
         sca_center=[wcs1.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs2.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
         sky_level=[sky_level1, sky_level2]
@@ -680,7 +679,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_noshear_offset_45'
+        dirr='v2_7_randoffset_45_test'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
