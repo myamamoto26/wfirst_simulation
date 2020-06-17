@@ -418,6 +418,7 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     #res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
+    print(get_flux(obs_list))
     res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
 
     iteration=0
@@ -564,7 +565,6 @@ def main(argv):
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
-            print('flux is ', sed)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
             ## making galaxy sed
             #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
