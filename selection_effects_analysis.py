@@ -328,7 +328,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_7_randoffset_45_test']
+    dirr=['v2_7_offset_45']
     for i in range(len(dirr)):
         a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
         b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
