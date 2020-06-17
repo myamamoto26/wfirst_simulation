@@ -179,7 +179,7 @@ def init_gal(gal_dist, gal_sample):
     print('-------truth catalog built-------')
 
 
-def for_wcs(dither_i, sca, filter_, stamp_size, random_angle):
+def get_wcs(dither_i, sca, filter_, stamp_size, random_angle):
     dither_i = dither_i
     sca = sca
     filter_ = filter_
@@ -485,7 +485,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 100000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -497,11 +497,20 @@ def main(argv):
     res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
 
-    position_angle1=360*random_dir() #degrees
-    position_angle2=position_angle1+45 #degrees
-    wcs1, sky_level1 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    wcs2, sky_level2 = for_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
+    wcs_cat1=[]
+    wcs_cat2=[]
+    sky_cat1=[]
+    sky_cat2=[]
+    for i in range(100):
+        position_angle1=180*random_dir() #degrees
+        position_angle2=position_angle1+45 #degrees
+        wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+        wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+        wcs_cat1.append(wcs1)
+        wcs_cat2.append(wcs2)
+        sky_cat1.append(sky_level1)
+        sky_cat2.append(sky_level2)
 
     t0 = time.time()
     for i_gal in range(gal_num):
@@ -603,12 +612,14 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        wcs=[wcs1,wcs2]
-        sca_center=[wcs1.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs2.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
-        sky_level=[sky_level1, sky_level2]
+        idx=np.random.choice([ind for ind in range(100)])
+        wcs=[wcs_cat1[idx],wcs_cat2[idx]]
+        sca_center=[wcs[0].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs[1].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
+        sky_level=[sky_cat1[idx], sky_cat2[idx]]
         gal_radec = sca_center[0]
         offsets = []
-        thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
+        #thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
+        thetas = [0,0]
         gals = []
         psfs = []
         skys = []
