@@ -195,7 +195,6 @@ def get_wcs(dither_i, sca, filter_, stamp_size, random_angle):
     #random_dir = galsim.UniformDeviate(314)
     #pa = math.pi * random_dir()
     pa=random_angle * np.pi /180.
-    print(ra, dec, date, pa)
 
     WCS = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=ra*galsim.radians, \
                                                            dec=dec*galsim.radians), 
@@ -386,7 +385,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     res_['flux'] = res_['pars'][5]
     return res_
 
-def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
+def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
@@ -410,25 +409,40 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-    res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
-    #res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
+    if shape=='metacal':
+        res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
 
-    iteration=0
-    for key in metacal_keys:
-        res_tot[iteration]['ind'][i]                       = i
-        #res_tot[iteration]['ra'][i]                        = t['ra']
-        #res_tot[iteration]['dec'][i]                       = t['dec']
-        res_tot[iteration]['g1'][i]                        = g1
-        res_tot[iteration]['g2'][i]                        = g2
+        iteration=0
+        for key in metacal_keys:
+            res_tot[iteration]['ind'][i]                       = i
+            #res_tot[iteration]['ra'][i]                        = t['ra']
+            #res_tot[iteration]['dec'][i]                       = t['dec']
+            res_tot[iteration]['g1'][i]                        = g1
+            res_tot[iteration]['g2'][i]                        = g2
+            #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
+            #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
+
+            res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+            res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+            res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+            res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+            res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
+            iteration+=1
+
+    elif shape=='ngmix':
+        res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
+        res_tot[0]['ind'][i]                       = i
+        #res_tot[iteration]['ra'][i]               = t['ra']
+        #res_tot[iteration]['dec'][i]              = t['dec']
+        res_tot[0]['g1'][i]                        = g1
+        res_tot[0]['g2'][i]                        = g2
         #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
         #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
-
-        res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
-        res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
-        res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
-        res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
-        res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
-        iteration+=1
+        res_tot[0]['snr'][i]                       = np.copy(res_['s2n_r'])
+        res_tot[0]['flux'][i]                      = np.copy(res_['flux'])
+        res_tot[0]['e1'][i]                        = np.copy(res_['pars'][2])
+        res_tot[0]['e2'][i]                        = np.copy(res_['pars'][3])
+        res_tot[0]['hlr'][i]                       = np.copy(res_['pars'][4])
 
     return res_tot
 
@@ -506,7 +520,8 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 300
+    gal_num = 1000
+    shape='ngmix'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -516,7 +531,10 @@ def main(argv):
     res_1m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_2p = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-    res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
+    if shape=='metacal':
+        res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
+    elif shape=='ngmix'
+        res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
     """
@@ -703,7 +721,9 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
-        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
+        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
+    
+    print(np.mean(res_tot[0]['e1']), np.std(res_tot[0]['e1'])/np.sqrt(len(gal_num)))
     exit()
     ## send and receive objects from one processors to others
     if rank!=0:
