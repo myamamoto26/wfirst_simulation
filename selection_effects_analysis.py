@@ -98,7 +98,7 @@ def residual_bias(res_tot):
       return (1+m)*x+b
 
     gamma1_obs = new['e1']/avg_R11
-    print(np.mean(gamma1_obs[0:N:2]), np.mean(gamma1_obs[1:N:2]))
+    print(np.mean(gamma1_obs[0:N:2]), np.std(gamma1_obs[0:N:2])/np.sqrt(len(gamma1_obs[0:N:2])), np.mean(gamma1_obs[1:N:2]), np.std(gamma1_obs[1:N:2])/np.sqrt(len(gamma1_obs[1:N:2])))
     params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
     m5,b5=params2[0]
     m5err,b5err=np.sqrt(np.diagonal(params2[1]))
