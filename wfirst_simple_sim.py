@@ -564,7 +564,7 @@ def main(argv):
             sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
             sed = sed.withMagnitude(tot_mag, bpass)
             flux = sed.calculateFlux(bpass)
-            print('flux is ', flux)
+            print('flux is ', sed)
             gal_model = galsim.Gaussian(half_light_radius=hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
             ## making galaxy sed
             #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
