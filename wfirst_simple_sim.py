@@ -383,8 +383,6 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
 
     res_ = fitter.get_result()
     res_['flux'] = res_['pars'][5]
-    print(res_['flux'])
-    exit()
     return res_
 
 def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
@@ -411,8 +409,8 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-    #res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
-    res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
+    res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
+    #res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
 
     iteration=0
     for key in metacal_keys:
@@ -507,7 +505,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 10
+    gal_num = 3000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -642,7 +640,7 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        position_angle1=180*random_dir() #degrees
+        position_angle1=360*random_dir() #degrees
         position_angle2=position_angle1+45 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
