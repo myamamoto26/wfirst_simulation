@@ -195,6 +195,7 @@ def get_wcs(dither_i, sca, filter_, stamp_size, random_angle):
     #random_dir = galsim.UniformDeviate(314)
     #pa = math.pi * random_dir()
     pa=random_angle * np.pi /180.
+    print(ra, dec, date, pa)
 
     WCS = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=ra*galsim.radians, \
                                                            dec=dec*galsim.radians), 
@@ -505,7 +506,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 300
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -644,16 +645,12 @@ def main(argv):
         position_angle2=position_angle1+45 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
-        #idx=np.random.choice([ind for ind in range(100)])
-        #wcs=[wcs_cat1[idx],wcs_cat2[idx]]
         wcs=[wcs1, wcs2]
         sky_level=[sky_level1, sky_level2]
         sca_center=[wcs[0].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs[1].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
-        #sky_level=[sky_cat1[idx], sky_cat2[idx]]
         gal_radec = sca_center[0]
-        offsets = []
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
-        #thetas = [0,0]
+        offsets = []
         gals = []
         psfs = []
         skys = []
@@ -707,7 +704,7 @@ def main(argv):
             skys.append(sky_image)
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2)
-    
+    exit()
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
