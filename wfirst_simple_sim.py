@@ -325,7 +325,7 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
     return obs_list,psf_list,np.array(w)
 
 
-def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_e=None):
+def shape_measurement_metacal(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_e=None):
     pix_range = old_div(galsim.wfirst.pixel_scale,10.)
     e_range = 0.1
     fdev = 1.
@@ -355,6 +355,44 @@ def shape_measurement(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_
 
     return res_
 
+def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
+        
+    pix_range = old_div(galsim.wfirst.pixel_scale,10.)
+    e_range = 0.1
+    fdev = 1.
+    def pixe_guess(n):
+        return 2.*n*np.random.random() - n
+
+    # possible models are 'exp','dev','bdf' galsim.wfirst.pixel_scale
+    cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
+    gp = ngmix.priors.GPriorBA(0.3)
+    hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
+    fracdevp = ngmix.priors.TruncatedGaussian(0.5, 0.5, -0.5, 1.5)
+    fluxp = ngmix.priors.FlatPrior(0, 1.0e5) # not sure what lower bound should be in general
+
+    prior = joint_prior.PriorBDFSep(cp, gp, hlrp, fracdevp, fluxp)
+    # center1 + center2 + shape + hlr + fracdev + fluxes for each object
+    # guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,0.5+pixe_guess(fdev),100.])
+    guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,pixe_guess(fdev),300.])
+
+    guesser           = R50FluxGuesser(T,flux)
+    ntry              = 5
+    runner            = GalsimRunner(obs_list,model,guesser=guesser)
+    runner.go(ntry=ntry)
+    fitter            = runner.get_fitter()
+
+    res_ = fitter.get_result()
+    """
+    if model=='exp':
+        res_['flux'] = res_['pars'][5]
+    else:
+        res_['flux'] = res_['pars'][6]
+    """
+
+    print(res_)
+    exit()
+    return res_
+
 def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
@@ -372,17 +410,6 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
 
     metacal_pars={'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
     metacal_keys=['noshear', '1p', '1m', '2p', '2m']
-    
-    """
-    if i == 0:
-        res_noshear = np.zeros(907010, dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-        res_1p = np.zeros(907010, dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-        res_1m = np.zeros(907010, dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-        res_2p = np.zeros(907010, dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-        res_2m = np.zeros(907010, dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-
-        res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
-    """
 
     #for i in range(len(gals)):
     #t = truth[i]
@@ -390,7 +417,8 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-    res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
+    #res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
+    res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
 
     iteration=0
     for key in metacal_keys:
@@ -485,7 +513,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1000000
+    gal_num = 10
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
