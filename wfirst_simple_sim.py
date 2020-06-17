@@ -382,13 +382,10 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     fitter            = runner.get_fitter()
 
     res_ = fitter.get_result()
-    """
-    if model=='exp':
-        res_['flux'] = res_['pars'][5]
-    else:
-        res_['flux'] = res_['pars'][6]
-    """
-    return res_['flux']
+    res_['flux'] = res_['pars'][5]
+    print(res_['flux'])
+    exit()
+    return res_
 
 def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
