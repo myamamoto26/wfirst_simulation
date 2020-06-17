@@ -64,7 +64,6 @@ def residual_bias(res_tot):
     new2p = res_tot[3]
     new2m = res_tot[4]
 
-    print(len(new1p["e1"]))
     #old = old[old['ra']!=0]
     #new = new[new['ra']!=0]
     #new1p = new1p[new1p['ra']!=0]
@@ -327,7 +326,6 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
     plt.savefig('v1_23comb_residualbias.png')
 
 def main(argv):
-    num=5000000
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
     dirr=['v2_7_randoffset_45_test']
