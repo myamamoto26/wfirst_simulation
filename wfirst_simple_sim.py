@@ -485,7 +485,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 1000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -504,7 +504,7 @@ def main(argv):
     sky_cat1=[]
     sky_cat2=[]
     for i in range(100):
-        position_angle1=20 #degrees
+        position_angle1=180 #degrees
         position_angle2=position_angle1+45 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
@@ -513,11 +513,12 @@ def main(argv):
         sky_cat1.append(sky_level1)
         sky_cat2.append(sky_level2)
     """
+    
 
-    position_angle1=20 #degrees
-    position_angle2=65 #degrees
-    wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    #position_angle1=20 #degrees
+    #position_angle2=65 #degrees
+    #wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+    #wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
 
     t0 = time.time()
     for i_gal in range(gal_num):
@@ -548,7 +549,7 @@ def main(argv):
                 g2=0
             else:
                 gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=--0.02
+                g1=-0.02
                 g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
@@ -619,6 +620,10 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
+        position_angle1=180*random_dir() #degrees
+        position_angle2=position_angle1+45 #degrees
+        wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+        wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
         #idx=np.random.choice([ind for ind in range(100)])
         #wcs=[wcs_cat1[idx],wcs_cat2[idx]]
         wcs=[wcs1, wcs2]
