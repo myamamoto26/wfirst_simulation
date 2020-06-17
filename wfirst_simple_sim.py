@@ -503,7 +503,7 @@ def main(argv):
     sky_cat1=[]
     sky_cat2=[]
     for i in range(100):
-        position_angle1=180*random_dir() #degrees
+        position_angle1=20*random_dir() #degrees
         position_angle2=position_angle1+45 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
