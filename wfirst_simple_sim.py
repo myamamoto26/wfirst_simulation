@@ -723,7 +723,7 @@ def main(argv):
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
     
-    print(np.mean(res_tot[0]['e1']), np.std(res_tot[0]['e1'])/np.sqrt(gal_num))
+    print(np.mean(res_tot[0]['e1'][0:gal_num:2]), np.std(res_tot[0]['e1'][0:gal_num:2])/np.sqrt(gal_num))
     exit()
     ## send and receive objects from one processors to others
     if rank!=0:
