@@ -388,10 +388,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     else:
         res_['flux'] = res_['pars'][6]
     """
-
-    print(res_['pars'])
-    exit()
-    return res_
+    return res_['flux']
 
 def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
@@ -418,7 +415,6 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     #res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
-    print(get_flux(obs_list))
     res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
 
     iteration=0
