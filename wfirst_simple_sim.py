@@ -515,7 +515,7 @@ def main(argv):
     """
 
     position_angle1=20 #degrees
-    position_angle2=position_angle1+45 #degrees
+    position_angle2=65 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
 
@@ -528,7 +528,7 @@ def main(argv):
             print('rank', rank, 'object number, ', i_gal)
         
         gal_model = None
-        st_model = None
+        #st_model = None
 
         if galaxy_model == "Gaussian":
             tot_mag = np.random.choice(cat)
@@ -627,8 +627,8 @@ def main(argv):
         #sky_level=[sky_cat1[idx], sky_cat2[idx]]
         gal_radec = sca_center[0]
         offsets = []
-        #thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
-        thetas = [0,0]
+        thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
+        #thetas = [0,0]
         gals = []
         psfs = []
         skys = []
