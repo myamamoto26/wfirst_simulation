@@ -520,7 +520,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1000
+    gal_num = 10000
     shape='ngmix'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
@@ -723,7 +723,7 @@ def main(argv):
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
     
-    print(np.mean(res_tot[0]['e1']), np.std(res_tot[0]['e1'])/np.sqrt(len(gal_num)))
+    print(np.mean(res_tot[0]['e1']), np.std(res_tot[0]['e1'])/np.sqrt(gal_num))
     exit()
     ## send and receive objects from one processors to others
     if rank!=0:
