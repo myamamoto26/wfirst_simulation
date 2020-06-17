@@ -533,7 +533,7 @@ def main(argv):
     res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     if shape=='metacal':
         res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
-    elif shape=='ngmix'
+    elif shape=='ngmix':
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
