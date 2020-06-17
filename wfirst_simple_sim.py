@@ -485,7 +485,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 1000000
+    gal_num = 3000000
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -528,7 +528,7 @@ def main(argv):
             print('rank', rank, 'object number, ', i_gal)
         
         gal_model = None
-        #st_model = None
+        st_model = None
 
         if galaxy_model == "Gaussian":
             tot_mag = np.random.choice(cat)
@@ -639,9 +639,9 @@ def main(argv):
             xy = wcs[i].toImage(gal_radec) # galaxy position 
             xyI = galsim.PositionI(int(xy.x), int(xy.y))
             b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
-                            ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
-                            xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
-                            ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
+                                ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
+                                xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
+                                ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
             gal_stamp = galsim.Image(b, wcs=wcs[i])
             psf_stamp = galsim.Image(b, wcs=wcs[i])
 
