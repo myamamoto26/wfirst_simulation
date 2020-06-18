@@ -520,7 +520,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 2
+    gal_num = 3000000
     shape='metacal'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
@@ -583,12 +583,12 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.7,g2=0)
-                g1=0.7
+                gal_model = gal_model.shear(g1=0.02,g2=0)
+                g1=0.02
                 g2=0
             else:
-                gal_model = gal_model.shear(g1=-0.7,g2=0)
-                g1=-0.7
+                gal_model = gal_model.shear(g1=-0.02,g2=0)
+                g1=-0.02
                 g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
@@ -659,7 +659,7 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        position_angle1=0#360*random_dir() #degrees
+        position_angle1=20*random_dir() #degrees
         position_angle2=position_angle1 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
@@ -714,7 +714,7 @@ def main(argv):
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
 
-            gal_stamp.write(str(i_gal)+'_test.fits')
+            #gal_stamp.write(str(i_gal)+'_test.fits')
 
             offsets.append(offset)
             gals.append(gal_stamp)
@@ -722,7 +722,7 @@ def main(argv):
             skys.append(sky_image)
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
-    exit()
+
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
@@ -738,7 +738,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_randoffset_0_test'
+        dirr='v2_7_randoffset_0_test2'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
