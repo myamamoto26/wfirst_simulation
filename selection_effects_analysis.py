@@ -54,6 +54,47 @@ from scipy.interpolate import interp1d
 
 from scipy.optimize import curve_fit
 
+def get_coeffs(g_true, g_obs, g_cov=None, cubic=False):
+
+    n_shears = len(g_true)
+    if g_cov is None:
+        g_cov = np.identity(n_shears)
+
+    if not cubic:
+        #Then we can do this analytically
+        #\theta = [b, a] #parameter vector
+        #X = [1 g_obs_0]
+        #    [1 g_obs_1]
+        #    [:    :   ]
+        #    [1 g_obs_n] #where n is number of shears
+        #Then
+        #\theta_bestfit = [X^T g_cov^-1 X]^-1 X^T g_cov^-1 g_obs
+        n_shears = len(g_true)
+        if g_cov is None:
+            g_cov = np.identity(n_shears)
+
+        X = np.zeros((2, n_shears))
+        X[0] = 1.
+        X[1] = np.array(g_true)
+        X = X.T
+        denom = np.dot(X.T, np.dot(np.linalg.inv(g_cov), X))
+        num = np.dot(X.T , np.dot(np.linalg.inv(g_cov), g_obs))
+        coeffs_cov = np.linalg.inv(denom)
+        coeffs_max = np.dot(coeffs_cov, num)
+        
+    else:
+        #Have to use a minimizer for this case unfortuneately
+        def f(g_true, *coeffs):
+            return (coeffs[2]*g_true**3
+                    +coeffs[1]*g_true
+                    +coeffs[0])
+        #initalize coefficents to 1 except for c - set to zero.
+        start = np.array([1.,1.,0.])
+
+        coeffs_max, coeffs_cov = curve_fit(f, np.array(g_true), np.array(g_obs),
+                               p0=start, sigma=g_cov)
+
+    return coeffs_max, coeffs_cov
 
 def residual_bias(res_tot):
     g = 0.01
@@ -93,6 +134,12 @@ def residual_bias(res_tot):
     print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
     print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
 
+    coeffs, coeff_cov = get_coeffs(new['g1'], new['e1']/avg_R11,
+                                   g_cov=None, cubic=False)
+    print("m = %f +- %f"%(coeffs[1]-1,
+                              np.sqrt(coeff_cov[1,1])))
+    print("c = %f +- %f"%(coeffs[0], np.sqrt(coeff_cov[0,0])))
+    exit()
 
     def func(x,m,b):
       return (1+m)*x+b
@@ -328,7 +375,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_7_randoffset_45_test', 'v2_7_randoffset_45_test2']
+    dirr=['v2_7_randoffset_45_test']#, 'v2_7_randoffset_45_test2']
     for i in range(len(dirr)):
         a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
         b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
