@@ -98,7 +98,7 @@ def residual_bias(res_tot):
       return (1+m)*x+b
 
     gamma1_obs = new['e1']/avg_R11
-    print(np.mean(gamma1_obs[0:N:2]), np.std(gamma1_obs[0:N:2])/np.sqrt(len(gamma1_obs[0:N:2])), np.mean(gamma1_obs[1:N:2]), np.std(gamma1_obs[1:N:2])/np.sqrt(len(gamma1_obs[1:N:2])))
+    #print(np.mean(gamma1_obs[0:N:2]), np.std(gamma1_obs[0:N:2])/np.sqrt(len(gamma1_obs[0:N:2])), np.mean(gamma1_obs[1:N:2]), np.std(gamma1_obs[1:N:2])/np.sqrt(len(gamma1_obs[1:N:2])))
     params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
     m5,b5=params2[0]
     m5err,b5err=np.sqrt(np.diagonal(params2[1]))
@@ -328,7 +328,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_7_offset_45']
+    dirr=['v2_7_randoffset_45_test', 'v2_7_randoffset_45_test2']
     for i in range(len(dirr)):
         a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
         b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
