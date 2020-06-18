@@ -520,7 +520,7 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 2
     shape='metacal'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
@@ -583,12 +583,12 @@ def main(argv):
             gal_model = sed * gal_model
             ## shearing
             if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
+                gal_model = gal_model.shear(g1=0.7,g2=0)
+                g1=0.7
                 g2=0
             else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
+                gal_model = gal_model.shear(g1=-0.7,g2=0)
+                g1=-0.7
                 g2=0
         elif galaxy_model == "exponential":
             tot_mag = np.random.choice(cat)
@@ -714,7 +714,7 @@ def main(argv):
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
 
-            #gal_stamp.write(str(i)+'_rotationaldithers.fits')
+            gal_stamp.write(str(i_gal)+'_test.fits')
 
             offsets.append(offset)
             gals.append(gal_stamp)
@@ -722,7 +722,7 @@ def main(argv):
             skys.append(sky_image)
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
-
+    exit()
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
