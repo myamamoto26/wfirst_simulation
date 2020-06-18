@@ -659,7 +659,7 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        position_angle1=360*random_dir() #degrees
+        position_angle1=0#360*random_dir() #degrees
         position_angle2=position_angle1 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
