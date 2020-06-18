@@ -520,8 +520,8 @@ def main(argv):
     PSF_model = 'Gaussian'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 10000
-    shape='ngmix'
+    gal_num = 3000000
+    shape='metacal'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -659,7 +659,7 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        position_angle1=360*random_dir() #degrees
+        position_angle1=20*random_dir() #degrees
         position_angle2=position_angle1+45 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
@@ -722,9 +722,7 @@ def main(argv):
             skys.append(sky_image)
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
-    
-    print(np.mean(res_tot[0]['e1'][0:gal_num:2]), np.std(res_tot[0]['e1'][0:gal_num:2])/np.sqrt(gal_num))
-    exit()
+
     ## send and receive objects from one processors to others
     if rank!=0:
         # send res_tot to rank 0 processor
@@ -740,7 +738,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_randoffset_45_test'
+        dirr='v2_7_randoffset_45_test2'
         for i in range(5):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
