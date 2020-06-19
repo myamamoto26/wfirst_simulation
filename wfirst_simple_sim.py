@@ -67,6 +67,9 @@ from scipy.interpolate import interp1d
 
 from scipy.optimize import curve_fit
 
+## import functions from other files
+from selection_effects_analysis import residual_bias, residual_bias_correction
+
 # This is a setting that decides whether or not to output differences images showing what each
 # detector effect does.  Since they take up quite a bit of space, we set this to False by default,
 # but users who want to see the difference images can change it to True.
@@ -446,66 +449,6 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
 
     return res_tot
 
-def residual_bias(res_tot):
-    g = 0.01
-
-    new = res_tot[0]
-    new1p = res_tot[1]
-    new1m = res_tot[2]
-    new2p = res_tot[3]
-    new2m = res_tot[4]
-
-    print(len(new1p["e1"]))
-    #old = old[old['ra']!=0]
-    #new = new[new['ra']!=0]
-    #new1p = new1p[new1p['ra']!=0]
-    #new1m = new1m[new1m['ra']!=0]
-    #new2p = new2p[new2p['ra']!=0]
-    #new2m = new2m[new2m['ra']!=0]
-
-    R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-    R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-    R21 = (new1p["e2"] - new1m["e2"])/(2*g)
-
-    avg_R11 = np.mean(R11)
-    avg_R22 = np.mean(R22)
-    avg_R12 = np.mean(R12)
-    avg_R21 = np.mean(R21)
-
-    g1 = new['e1']/avg_R11
-    g2 = new['e2']/avg_R22
-
-    ## some statistics
-    print("Mean shear response: ")
-    N=len(new1p['e1'])
-    print(N)
-    print("<R11> = "+str("%6.4f"% avg_R11)+"+-"+str("%6.4f"% (np.std(R11)/np.sqrt(N))))
-    print("<R22> = "+str("%6.4f"% avg_R22)+"+-"+str("%6.4f"% (np.std(R22)/np.sqrt(N))))
-    print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
-    print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
-
-
-    def func(x,m,b):
-      return (1+m)*x+b
-
-    #params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
-    gamma1_obs = new['e1']/avg_R11
-    params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
-    m5,b5=params2[0]
-    m5err,b5err=np.sqrt(np.diagonal(params2[1]))
-
-    gamma2_obs = new['e2']/avg_R22
-    params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
-    m6,b6=params2[0]
-    m6err,b6err=np.sqrt(np.diagonal(params2[1]))
-
-    print("before correction: ")
-    print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-    print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
-
-    return R11, R22, R12, R21, gamma1_obs, gamma2_obs
-
 def main(argv):
 
     ## necessary input (noise, filters, sca number, number of galaxies, stamp sizes, ) =====> params
@@ -710,7 +653,7 @@ def main(argv):
         #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
         res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
 
-    ## send and receive objects from one processors to others
+    ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
         comm.send(res_tot, dest=0)
@@ -725,12 +668,12 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_offset_45'
+        dirr='v2_11_offset_45'
         for i in range(len(res_tot)):
             fio.write(dirr+'_ngmix_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
-        bias = residual_bias(res_tot)
+        bias = residual_bias(res_tot, shape)
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
