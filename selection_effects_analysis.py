@@ -134,12 +134,14 @@ def residual_bias(res_tot):
     print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
     print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
 
+    """
     coeffs, coeff_cov = get_coeffs(new['g1'], new['e1']/avg_R11,
                                    g_cov=None, cubic=False)
     print("m = %f +- %f"%(coeffs[1]-1,
                               np.sqrt(coeff_cov[1,1])))
     print("c = %f +- %f"%(coeffs[0], np.sqrt(coeff_cov[0,0])))
     exit()
+    """
 
     def func(x,m,b):
       return (1+m)*x+b
