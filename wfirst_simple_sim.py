@@ -720,7 +720,7 @@ def main(argv):
                 continue
             # for other processors, receive res_tot. 
             res_ = comm.recv(source=i)
-            for j in range(5):
+            for j in range(len(res_tot)):
                 for col in res_tot[j].dtype.names:
                     res_tot[j][col]+=res_[j][col]
 
