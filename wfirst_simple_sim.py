@@ -521,7 +521,7 @@ def main(argv):
     stamp_size = 32
     hlr = 1.0
     gal_num = 3000000
-    shape='metacal'
+    shape='ngmix'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -537,27 +537,12 @@ def main(argv):
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-    """
-    wcs_cat1=[]
-    wcs_cat2=[]
-    sky_cat1=[]
-    sky_cat2=[]
-    for i in range(100):
-        position_angle1=180 #degrees
-        position_angle2=position_angle1+45 #degrees
-        wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-        wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
-        wcs_cat1.append(wcs1)
-        wcs_cat2.append(wcs2)
-        sky_cat1.append(sky_level1)
-        sky_cat2.append(sky_level2)
-    """
-    
-
-    #position_angle1=20 #degrees
-    #position_angle2=65 #degrees
-    #wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    #wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    position_angle1=20 #degrees
+    position_angle2=65 #degrees
+    wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+    wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    wcs=[wcs1, wcs2]
+    sky_level=[sky_level1, sky_level2]
 
     t0 = time.time()
     for i_gal in range(gal_num):
@@ -659,12 +644,14 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        position_angle1=20*random_dir() #degrees
-        position_angle2=position_angle1 #degrees
+        """
+        position_angle1=20#*random_dir() #degrees
+        position_angle2=65#position_angle1 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
         wcs=[wcs1, wcs2]
         sky_level=[sky_level1, sky_level2]
+        """
         sca_center=[wcs[0].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs[1].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
         gal_radec = sca_center[0]
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
@@ -738,9 +725,9 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_randoffset_0_test2'
-        for i in range(5):
-            fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
+        dirr='v2_7_offset_45'
+        for i in range(len(res_tot)):
+            fio.write(dirr+'_ngmix_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
         bias = residual_bias(res_tot)
