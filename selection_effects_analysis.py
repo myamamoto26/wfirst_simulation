@@ -407,8 +407,8 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_7_randoffset_45_test']#, 'v2_7_randoffset_45_test2']
-    shape='ngmix'
+    dirr=['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
+    shape=sys.argv[1]
 
     if shape=='ngmix':
         for i in range(len(dirr)):
