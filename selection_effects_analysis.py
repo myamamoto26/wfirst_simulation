@@ -96,74 +96,104 @@ def get_coeffs(g_true, g_obs, g_cov=None, cubic=False):
 
     return coeffs_max, coeffs_cov
 
-def residual_bias(res_tot):
-    g = 0.01
+def residual_bias(res_tot, shape):
 
-    new = res_tot[0]
-    new1p = res_tot[1]
-    new1m = res_tot[2]
-    new2p = res_tot[3]
-    new2m = res_tot[4]
+    if shape=='ngmix':
+        new = res_tot[0]
 
-    #old = old[old['ra']!=0]
-    #new = new[new['ra']!=0]
-    #new1p = new1p[new1p['ra']!=0]
-    #new1m = new1m[new1m['ra']!=0]
-    #new2p = new2p[new2p['ra']!=0]
-    #new2m = new2m[new2m['ra']!=0]
+        R11=None
+        R22=None
+        R12=None
+        R21=None
 
-    R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-    R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-    R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+        def func(x,m,b):
+            return (1+m)*x+b
 
-    avg_R11 = np.mean(R11)
-    avg_R22 = np.mean(R22)
-    avg_R12 = np.mean(R12)
-    avg_R21 = np.mean(R21)
+        gamma1_obs = new['e1']
+        #print(np.mean(gamma1_obs[0:N:2]), np.std(gamma1_obs[0:N:2])/np.sqrt(len(gamma1_obs[0:N:2])), np.mean(gamma1_obs[1:N:2]), np.std(gamma1_obs[1:N:2])/np.sqrt(len(gamma1_obs[1:N:2])))
+        params2 = curve_fit(func,new['g1'],new['e1'],p0=(0.,0.))
+        m5,b5=params2[0]
+        m5err,b5err=np.sqrt(np.diagonal(params2[1]))
 
-    #g1 = new['e1']/avg_R11
-    #g2 = new['e2']/avg_R22
+        gamma2_obs = new['e2']
+        params2 = curve_fit(func,new['g2'],new['e2'],p0=(0.,0.))
+        m6,b6=params2[0]
+        m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
-    ## some statistics
-    print("Mean shear response: ")
-    N=len(new1p['e1'])
-    print(N)
-    print("<R11> = "+str("%6.4f"% avg_R11)+"+-"+str("%6.4f"% (np.std(R11)/np.sqrt(N))))
-    print("<R22> = "+str("%6.4f"% avg_R22)+"+-"+str("%6.4f"% (np.std(R22)/np.sqrt(N))))
-    print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
-    print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
+        print("before correction: ")
+        print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
+        print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
-    """
-    coeffs, coeff_cov = get_coeffs(new['g1'], new['e1']/avg_R11,
-                                   g_cov=None, cubic=False)
-    print("m = %f +- %f"%(coeffs[1]-1,
-                              np.sqrt(coeff_cov[1,1])))
-    print("c = %f +- %f"%(coeffs[0], np.sqrt(coeff_cov[0,0])))
-    exit()
-    """
+        return R11, R22, R12, R21, gamma1_obs, gamma2_obs
 
-    def func(x,m,b):
-      return (1+m)*x+b
+    elif shape=='metacal':
+        g = 0.01
 
-    gamma1_obs = new['e1']/avg_R11
-    #print(np.mean(gamma1_obs[0:N:2]), np.std(gamma1_obs[0:N:2])/np.sqrt(len(gamma1_obs[0:N:2])), np.mean(gamma1_obs[1:N:2]), np.std(gamma1_obs[1:N:2])/np.sqrt(len(gamma1_obs[1:N:2])))
-    params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
-    m5,b5=params2[0]
-    m5err,b5err=np.sqrt(np.diagonal(params2[1]))
+        new = res_tot[0]
+        new1p = res_tot[1]
+        new1m = res_tot[2]
+        new2p = res_tot[3]
+        new2m = res_tot[4]
 
-    gamma2_obs = new['e2']/avg_R22
-    params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
-    m6,b6=params2[0]
-    m6err,b6err=np.sqrt(np.diagonal(params2[1]))
+        #old = old[old['ra']!=0]
+        #new = new[new['ra']!=0]
+        #new1p = new1p[new1p['ra']!=0]
+        #new1m = new1m[new1m['ra']!=0]
+        #new2p = new2p[new2p['ra']!=0]
+        #new2m = new2m[new2m['ra']!=0]
 
-    print("before correction: ")
-    print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-    print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+        R11 = (new1p["e1"] - new1m["e1"])/(2*g)
+        R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+        R12 = (new2p["e1"] - new2m["e1"])/(2*g)
+        R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
-    return R11, R22, R12, R21, gamma1_obs, gamma2_obs
+        avg_R11 = np.mean(R11)
+        avg_R22 = np.mean(R22)
+        avg_R12 = np.mean(R12)
+        avg_R21 = np.mean(R21)
 
-def residual_bias_correction(a, b, c, d, e):
+        #g1 = new['e1']/avg_R11
+        #g2 = new['e2']/avg_R22
+
+        ## some statistics
+        print("Mean shear response: ")
+        N=len(new1p['e1'])
+        print(N)
+        print("<R11> = "+str("%6.4f"% avg_R11)+"+-"+str("%6.4f"% (np.std(R11)/np.sqrt(N))))
+        print("<R22> = "+str("%6.4f"% avg_R22)+"+-"+str("%6.4f"% (np.std(R22)/np.sqrt(N))))
+        print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
+        print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
+
+        """
+        coeffs, coeff_cov = get_coeffs(new['g1'], new['e1']/avg_R11,
+                                       g_cov=None, cubic=False)
+        print("m = %f +- %f"%(coeffs[1]-1,
+                                  np.sqrt(coeff_cov[1,1])))
+        print("c = %f +- %f"%(coeffs[0], np.sqrt(coeff_cov[0,0])))
+        exit()
+        """
+
+        def func(x,m,b):
+          return (1+m)*x+b
+
+        gamma1_obs = new['e1']/avg_R11
+        #print(np.mean(gamma1_obs[0:N:2]), np.std(gamma1_obs[0:N:2])/np.sqrt(len(gamma1_obs[0:N:2])), np.mean(gamma1_obs[1:N:2]), np.std(gamma1_obs[1:N:2])/np.sqrt(len(gamma1_obs[1:N:2])))
+        params2 = curve_fit(func,new['g1'],new['e1']/avg_R11,p0=(0.,0.))
+        m5,b5=params2[0]
+        m5err,b5err=np.sqrt(np.diagonal(params2[1]))
+
+        gamma2_obs = new['e2']/avg_R22
+        params2 = curve_fit(func,new['g2'],new['e2']/avg_R22,p0=(0.,0.))
+        m6,b6=params2[0]
+        m6err,b6err=np.sqrt(np.diagonal(params2[1]))
+
+        print("before correction: ")
+        print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
+        print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+
+        return R11, R22, R12, R21, gamma1_obs, gamma2_obs
+
+def residual_bias_correction(a, b, c, d, e, shape):
     g = 0.01
     new = a
     new1p = b
@@ -171,7 +201,7 @@ def residual_bias_correction(a, b, c, d, e):
     new2p = d
     new2m = e
 
-    R11, R22, R12, R21, gamma1_obs, gamma2_obs = residual_bias([a,b,c,d,e])
+    R11, R22, R12, R21, gamma1_obs, gamma2_obs = residual_bias([a,b,c,d,e], shape)
 
     avg_R11 = np.mean(R11)
     avg_R22 = np.mean(R22)
@@ -378,14 +408,27 @@ def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
     dirr=['v2_7_randoffset_45_test']#, 'v2_7_randoffset_45_test2']
-    for i in range(len(dirr)):
-        a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-        b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-        c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-        d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-        e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+    shape='ngmix'
 
-        g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e)
+    if shape=='ngmix':
+        for i in range(len(dirr)):
+            a=fio.FITS(dirr[i]+'_ngmix_0.fits')[-1].read() 
+            b=None
+            c=None
+            d=None
+            e=None
+
+            g_values,g_errors,snr_binslist = residual_bias([a,b,c,d,e], shape)
+
+    elif shape=='metacal':
+        for i in range(len(dirr)):
+            a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+            b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+            c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+            d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+            e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+
+            g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, shape)
     return None
 
 if __name__ == "__main__":
