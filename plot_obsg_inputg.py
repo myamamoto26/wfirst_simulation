@@ -152,15 +152,16 @@ def main(argv):
     #ax1.plot(input_shear, mean_difference_g2, 'o', c='b', label='g2')
     #ax1.errorbar(input_shear, mean_difference_g2, yerr=error_g2, c='b', fmt='o')
     
+    input2=[-0.02, 0.02]
     error_randg1=[np.std(del_g1_randpos2)/np.sqrt(del_g1_randpos2), np.std(del_g1_randneg2)/np.sqrt(del_g1_randneg2)]
     mean_randdiff=[np.mean(del_g1_randpos2), np.mean(del_g1_randneg2)]
-    ax1.plot([-0.02, 0.02], mean_randdiff, 'o', c='b', label='g1, perfectly randomized orientation angles')
-    ax1.errorbar([-0.02, 0.02], mean_randdiff, yerr=error_randg1, c='b', fmt='o')
+    ax1.plot(input2, mean_randdiff, 'o', c='b', label='g1, perfectly randomized orientation angles')
+    ax1.errorbar(input2, mean_randdiff, yerr=error_randg1, c='b', fmt='o')
 
     error_rand2g1=[np.std(del_g1_rand2pos2)/np.sqrt(del_g1_rand2pos2), np.std(del_g1_rand2neg2)/np.sqrt(del_g1_rand2neg2)]
     mean_rand2diff=[np.mean(del_g1_rand2pos2), np.mean(del_g1_rand2neg2)]
-    ax1.plot([-0.02, 0.02], mean_rand2diff, 'o', c='g', label='g1, slightly randomized orientation angles')
-    ax1.errorbar([-0.02, 0.02], mean_rand2diff, yerr=error_rand2g1, c='g', fmt='o')
+    ax1.plot(input2, mean_rand2diff, 'o', c='g', label='g1, slightly randomized orientation angles')
+    ax1.errorbar(input2, mean_rand2diff, yerr=error_rand2g1, c='g', fmt='o')
 
     ax1.set_xlabel('input shear', fontsize=16)
     ax1.set_ylabel("\u0394\u03B3", fontsize=16)
