@@ -23,6 +23,7 @@ def main(argv):
 
     ##g1=0, g2=0
     dirr=['v2_noshear_offset_0', 'v2_noshear_offset_45']
+    shape=sys.argv[1]
     g1_0 = []
     g2_0 = []
     for i in range(len(dirr)):
@@ -32,7 +33,7 @@ def main(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], shape)
         g1_0.append(g1_obs[0:num])
         g2_0.append(g2_obs[0:num])
 
@@ -52,7 +53,7 @@ def main(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], shape)
         g_pos2.append(g1_obs[0:num:2])
         g_neg2.append(g1_obs[1:num:2])
         g_pos0.append(g2_obs[0:num:2])
@@ -78,7 +79,7 @@ def main(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], shape)
         g_pos2.append(g2_obs[0:num:2])
         g_neg2.append(g2_obs[1:num:2])
         g_pos0.append(g1_obs[0:num:2])
@@ -91,7 +92,7 @@ def main(argv):
     #print('The difference of the measured g1, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma1))+"+-"+str("%6.6f"% (np.std(del_gamma1)/np.sqrt(num))))
     #print('The difference of the measured g2, when sheared in g2 direction, is, \u0394\u03B3='+str("%6.6f"% np.mean(del_gamma2))+"+-"+str("%6.6f"% (np.std(del_gamma2)/np.sqrt(num))))
 	
-    dirr=['v2_7_randoffset_0_test', 'v2_7_randoffset_45_test']
+    dirr=['v2_7_offset_0_rand360', 'v2_7_offset_45_rand360']
     g_pos2 = []
     g_neg2 = []
     g_pos0 = []
@@ -103,7 +104,7 @@ def main(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], shape)
         g_pos2.append(g1_obs[0:num:2])
         g_neg2.append(g1_obs[1:num:2])
         g_pos0.append(g2_obs[0:num:2])
@@ -114,7 +115,7 @@ def main(argv):
     del_g2_randpos0 = g_pos0[1] - g_pos0[0]
     del_g2_randneg0 = g_neg0[1] - g_neg0[0]
 
-    dirr=['v2_7_randoffset_0_test2', 'v2_7_randoffset_45_test2']
+    dirr=['v2_7_offset_0_rand20', 'v2_7_offset_45_rand20']
     g_pos2 = []
     g_neg2 = []
     g_pos0 = []
@@ -126,7 +127,7 @@ def main(argv):
         d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
         e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e])
+        R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], shape)
         g_pos2.append(g1_obs[0:num:2])
         g_neg2.append(g1_obs[1:num:2])
         g_pos0.append(g2_obs[0:num:2])
