@@ -589,8 +589,8 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
-        position_angle1=360*random_dir() #degrees
-        position_angle2=position_angle1 #degrees
+        position_angle1=20*random_dir() #degrees
+        position_angle2=position_angle1+45 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
         wcs=[wcs1, wcs2]
@@ -668,7 +668,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_11_offset_0_rand360'
+        dirr='v2_11_offset_45_rand20'
         for i in range(len(res_tot)):
             fio.write(dirr+'_ngmix_'+str(i)+'.fits', res_tot[i])
             
