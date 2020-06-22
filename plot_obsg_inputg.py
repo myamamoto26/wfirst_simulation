@@ -283,18 +283,18 @@ def main(argv):
 		mean_difference_g1_neg = [np.mean(del_g1_neg2_ng20), np.mean(del_g1_neg2_ng20)]
 		error_g1_pos=[np.std(del_g1_pos2_ng20)/np.sqrt(len(del_g1_pos2_ng20)), np.std(del_g1_pos2_ng45)/np.sqrt(len(del_g1_pos2_ng45))]
 		mean_difference_g1_pos = [np.mean(del_g1_pos2_ng20), np.mean(del_g1_pos2_ng45)]
-		ax1.plot(offsets, mean_difference_g1_neg, 'o', c='r', label='ngmix g1=-0.02')
+		ax1.plot(offsets, mean_difference_g1_neg, 'o', c='r', label='ngmix')
 		ax1.errorbar(offsets, mean_difference_g1_neg, yerr=error_g1_neg, c='r', fmt='o')
-		ax1.plot(offsets, mean_difference_g1_pos, 'o', c='b', label='ngmix g1=+0.02')
-		ax1.errorbar(offsets, mean_difference_g1_pos, yerr=error_g1_pos, c='b', fmt='o')
+		ax1.plot(offsets, mean_difference_g1_pos, 'o', c='r', label='ngmix')
+		ax1.errorbar(offsets, mean_difference_g1_pos, yerr=error_g1_pos, c='r', fmt='o')
 		
 		error_g1_neg=[np.std(del_g1_neg2_mc20)/np.sqrt(len(del_g1_neg2_mc20)), np.std(del_g1_neg2_mc45)/np.sqrt(len(del_g1_neg2_mc45))]
 		mean_difference_g1_neg = [np.mean(del_g1_neg2_mc20), np.mean(del_g1_neg2_mc20)]
 		error_g1_pos=[np.std(del_g1_pos2_mc20)/np.sqrt(len(del_g1_pos2_mc20)), np.std(del_g1_pos2_mc45)/np.sqrt(len(del_g1_pos2_mc45))]
 		mean_difference_g1_pos = [np.mean(del_g1_pos2_mc20), np.mean(del_g1_pos2_mc45)]
-		ax1.plot(offsets, mean_difference_g1_neg, 'o', c='r', label='mcal g1=-0.02')
-		ax1.errorbar(offsets, mean_difference_g1_neg, yerr=error_g1_neg, c='r', fmt='o')
-		ax1.plot(offsets, mean_difference_g1_pos, 'o', c='b', label='mcal g1=+0.02')
+		ax1.plot(offsets, mean_difference_g1_neg, 'o', c='b', label='mcal')
+		ax1.errorbar(offsets, mean_difference_g1_neg, yerr=error_g1_neg, c='b', fmt='o')
+		ax1.plot(offsets, mean_difference_g1_pos, 'o', c='b', label='mcal')
 		ax1.errorbar(offsets, mean_difference_g1_pos, yerr=error_g1_pos, c='b', fmt='o')
 
 		ax1.set_xlabel('Angle offsets', fontsize=16)
