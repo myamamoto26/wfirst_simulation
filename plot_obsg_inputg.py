@@ -21,7 +21,7 @@ from selection_effects_analysis import residual_bias, residual_bias_correction
 def main(argv):
     num=3000000
 
-    if sys.argv[1]=='metacal'
+    if sys.argv[1]=='metacal':
 	    ##g1=0, g2=0
 	    dirr=['v2_noshear_offset_0', 'v2_noshear_offset_45']
 	    shape=sys.argv[1]
