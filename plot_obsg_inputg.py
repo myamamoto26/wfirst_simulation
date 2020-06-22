@@ -226,6 +226,7 @@ def main(argv):
 		del_g2_randpos0 = g_pos0[1] - g_pos0[0]
 		del_g2_randneg0 = g_neg0[1] - g_neg0[0]
 
+		"""
 		dirr=['v2_11_offset_0_rand20', 'v2_11_offset_45_rand20']
 		g_pos2 = []
 		g_neg2 = []
@@ -248,6 +249,7 @@ def main(argv):
 		del_g1_rand2neg2 = g_neg2[1] - g_neg2[0]
 		del_g2_rand2pos0 = g_pos0[1] - g_pos0[0]
 		del_g2_rand2neg0 = g_neg0[1] - g_neg0[0]
+		"""
 
 		fig,ax1=plt.subplots(figsize=(10,8))
 		input_shear = [-0.02, 0, 0, 0.02]
