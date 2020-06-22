@@ -358,7 +358,7 @@ def main(argv):
 		
 		mc_offsets=[10,20,45]
 		error_g1_neg=[np.std(del_g1_neg2_mc10)/np.sqrt(len(del_g1_neg2_mc10)), np.std(del_g1_neg2_mc20)/np.sqrt(len(del_g1_neg2_mc20)), np.std(del_g1_neg2_mc45)/np.sqrt(len(del_g1_neg2_mc45))]
-		mean_difference_g1_neg = [np.mean(del_g1_neg2_mc10), np.mean(del_g1_neg2_mc20), np.mean(del_g1_neg2_mc20)]
+		mean_difference_g1_neg = [np.mean(del_g1_neg2_mc10), np.mean(del_g1_neg2_mc20), np.mean(del_g1_neg2_mc45)]
 		error_g1_pos=[np.std(del_g1_pos2_mc10)/np.sqrt(len(del_g1_pos2_mc10)), np.std(del_g1_pos2_mc20)/np.sqrt(len(del_g1_pos2_mc20)), np.std(del_g1_pos2_mc45)/np.sqrt(len(del_g1_pos2_mc45))]
 		mean_difference_g1_pos = [np.mean(del_g1_pos2_mc10), np.mean(del_g1_pos2_mc20), np.mean(del_g1_pos2_mc45)]
 		ax1.plot(mc_offsets, mean_difference_g1_neg, 'o', c='b', label='mcal g=-0.02')
