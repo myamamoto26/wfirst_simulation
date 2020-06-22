@@ -372,7 +372,7 @@ def main(argv):
 		plt.legend(loc=5, fontsize=10)
 		ax1.tick_params(labelsize=10)
 		ax1.axhline(y=0,ls='--')
-		#plt.savefig('ngmixmcal_delta_g_offset.png')
+		plt.savefig('ngmixmcal_delta_g_offset.png')
 		plt.show()
 
 if __name__ == "__main__":
