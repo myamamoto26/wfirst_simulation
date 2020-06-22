@@ -480,14 +480,14 @@ def main(argv):
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-    """
+    
     position_angle1=20 #degrees
-    position_angle2=20 #degrees
+    position_angle2=40 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     wcs=[wcs1, wcs2]
     sky_level=[sky_level1, sky_level2]
-    """
+    
 
     t0 = time.time()
     for i_gal in range(gal_num):
@@ -589,12 +589,14 @@ def main(argv):
         #print("galaxy ", i_gal, ra, dec, int_e1, int_e2)
 
         ## translational dither check (multiple exposures)
+        """
         position_angle1=20*random_dir() #degrees
         position_angle2=position_angle1 #degrees
         wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
         wcs=[wcs1, wcs2]
         sky_level=[sky_level1, sky_level2]
+        """
         sca_center=[wcs[0].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs[1].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
         gal_radec = sca_center[0]
         thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
@@ -668,7 +670,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_11_offset_0_rand20'
+        dirr='v2_11_offset_20'
         for i in range(len(res_tot)):
             fio.write(dirr+'_ngmix_'+str(i)+'.fits', res_tot[i])
             
