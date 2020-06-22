@@ -180,7 +180,7 @@ def main(argv):
 
 	elif sys.argv[1]=='ngmix':
 		dirr=['v2_11_offset_0', 'v2_11_offset_45']
-	    shape=sys.argv[1]
+		shape=sys.argv[1]
 	    g_pos2 = []
 	    g_neg2 = []
 	    g_pos0 = []
