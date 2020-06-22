@@ -464,7 +464,7 @@ def main(argv):
     stamp_size = 32
     hlr = 1.0
     gal_num = 3000000
-    shape='ngmix'
+    shape='metacal'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
@@ -482,7 +482,7 @@ def main(argv):
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
     
     position_angle1=20 #degrees
-    position_angle2=30 #degrees
+    position_angle2=55 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     wcs=[wcs1, wcs2]
@@ -670,9 +670,9 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_11_offset_10'
+        dirr='v2_7_offset_35'
         for i in range(len(res_tot)):
-            fio.write(dirr+'_ngmix_'+str(i)+'.fits', res_tot[i])
+            fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
         bias = residual_bias(res_tot, shape)
