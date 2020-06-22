@@ -54,47 +54,57 @@ from scipy.interpolate import interp1d
 
 from scipy.optimize import curve_fit
 
-def get_coeffs(g_true, g_obs, g_cov=None, cubic=False):
+def residual_bias_quad(res_tot):
 
-    n_shears = len(g_true)
-    if g_cov is None:
-        g_cov = np.identity(n_shears)
+    g = 0.01
 
-    if not cubic:
-        #Then we can do this analytically
-        #\theta = [b, a] #parameter vector
-        #X = [1 g_obs_0]
-        #    [1 g_obs_1]
-        #    [:    :   ]
-        #    [1 g_obs_n] #where n is number of shears
-        #Then
-        #\theta_bestfit = [X^T g_cov^-1 X]^-1 X^T g_cov^-1 g_obs
-        n_shears = len(g_true)
-        if g_cov is None:
-            g_cov = np.identity(n_shears)
+    new = res_tot[0]
+    new1p = res_tot[1]
+    new1m = res_tot[2]
+    new2p = res_tot[3]
+    new2m = res_tot[4]
 
-        X = np.zeros((2, n_shears))
-        X[0] = 1.
-        X[1] = np.array(g_true)
-        X = X.T
-        denom = np.dot(X.T, np.dot(np.linalg.inv(g_cov), X))
-        num = np.dot(X.T , np.dot(np.linalg.inv(g_cov), g_obs))
-        coeffs_cov = np.linalg.inv(denom)
-        coeffs_max = np.dot(coeffs_cov, num)
-        
-    else:
-        #Have to use a minimizer for this case unfortuneately
-        def f(g_true, *coeffs):
-            return (coeffs[2]*g_true**3
-                    +coeffs[1]*g_true
-                    +coeffs[0])
-        #initalize coefficents to 1 except for c - set to zero.
-        start = np.array([1.,1.,0.])
+    #new = new[new['ra']!=0]
+    #new1p = new1p[new1p['ra']!=0]
+    #new1m = new1m[new1m['ra']!=0]
+    #new2p = new2p[new2p['ra']!=0]
+    #new2m = new2m[new2m['ra']!=0]
 
-        coeffs_max, coeffs_cov = curve_fit(f, np.array(g_true), np.array(g_obs),
-                               p0=start, sigma=g_cov)
+    R11 = (new1p["e1"] - new1m["e1"])/(2*g)
+    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+    R12 = (new2p["e1"] - new2m["e1"])/(2*g)
+    R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
-    return coeffs_max, coeffs_cov
+    avg_R11 = np.mean(R11)
+    avg_R22 = np.mean(R22)
+    avg_R12 = np.mean(R12)
+    avg_R21 = np.mean(R21)
+
+    g1_obs = new['e1']/avg_R11
+    g2_obs = new['e2']/avg_R22
+
+    ## some statistics
+    print("Mean shear response: ")
+    N=len(new1p['e1'])
+    print(N)
+    print("<R11> = "+str("%6.4f"% avg_R11)+"+-"+str("%6.4f"% (np.std(R11)/np.sqrt(N))))
+    print("<R22> = "+str("%6.4f"% avg_R22)+"+-"+str("%6.4f"% (np.std(R22)/np.sqrt(N))))
+    print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
+    print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
+
+    def f(g_true, *coeffs):
+        return (coeffs[2]*g_true**3
+                +coeffs[1]*g_true
+                +coeffs[0])
+    #initalize coefficents to 1 except for c - set to zero.
+    start = np.array([1.,1.,0.])
+
+    coeffs_max, coeffs_cov = curve_fit(f, new['g1'], g1_obs, p0=start)
+    print(coeffs_max, coeffs_cov)
+    coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start)
+    print(coeffs_max2, coeffs_cov2)
+
+    return None
 
 def residual_bias(res_tot, shape):
 
@@ -407,10 +417,20 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
+    dirr=sys.argv[2] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
     shape=sys.argv[1]
 
-    if shape=='ngmix':
+    if shape=='metacal_quad':
+        for i in range(len(dirr)):
+            a=fio.FITS(dirr[i]+'_metacal_noshear.fits')[-1].read() 
+            b=fio.FITS(dirr[i]+'_metacal_1p.fits')[-1].read()
+            c=fio.FITS(dirr[i]+'_metacal_1m.fits')[-1].read()
+            d=fio.FITS(dirr[i]+'_metacal_2p.fits')[-1].read()
+            e=fio.FITS(dirr[i]+'_metacal_2m.fits')[-1].read()
+
+            residual_bias_quad([a,b,c,d,e])
+
+    elif shape=='ngmix':
         for i in range(len(dirr)):
             a=fio.FITS(dirr[i]+'_ngmix_0.fits')[-1].read() 
             b=None
