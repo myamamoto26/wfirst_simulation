@@ -429,7 +429,7 @@ def main(argv):
             e=fio.FITS(dirr[i]+'_metacal_2m.fits')[-1].read()
 
             #residual_bias_quad([a,b,c,d,e])
-            g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, shape)
+            g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, 'metacal')
 
     elif shape=='ngmix':
         for i in range(len(dirr)):
