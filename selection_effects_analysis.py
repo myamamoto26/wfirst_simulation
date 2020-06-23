@@ -93,7 +93,7 @@ def residual_bias_quad(res_tot):
     print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
 
     def f(g_true, *coeffs):
-        return (coeffs[2]*g_true**3
+        return (coeffs[2]*(g_true**3)
                 +coeffs[1]*g_true
                 +coeffs[0])
     #initalize coefficents to 1 except for c - set to zero.
@@ -103,6 +103,13 @@ def residual_bias_quad(res_tot):
     print(coeffs_max, np.sqrt(np.diagonal(coeffs_cov)))
     coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start)
     print(coeffs_max2, np.sqrt(np.diagonal(coeffs_cov2)))
+
+    x=np.linspace(-0.1,0.1,1000)
+    y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
+    plt.plot(x,y)
+    plt.scatter(new['g1'], g1_obs, s=1)
+    plt.savefig('mcal_quad_fit.png')
+    plt.show()
 
     return None
 
