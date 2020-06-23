@@ -108,6 +108,7 @@ def residual_bias_quad(res_tot):
     y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
     plt.plot(x,y)
     plt.scatter(new['g1'], g1_obs, s=1)
+    plt.ylim(-0.1,0.1)
     plt.savefig('mcal_quad_fit.png')
     plt.show()
 
