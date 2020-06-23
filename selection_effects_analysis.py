@@ -104,13 +104,23 @@ def residual_bias_quad(res_tot):
     coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start)
     print(coeffs_max2, np.sqrt(np.diagonal(coeffs_cov2)))
 
+    def func(x,m,b):
+            return (1+m)*x+b
+
+    params2 = curve_fit(func,new['g1'],g1_obs,p0=(0.,0.))
+    m5,b5=params2[0]
+    m5err,b5err=np.sqrt(np.diagonal(params2[1]))
+
+    params2 = curve_fit(func,new['g2'],g2_obs,p0=(0.,0.))
+    m6,b6=params2[0]
+    m6err,b6err=np.sqrt(np.diagonal(params2[1]))
+
     x=np.linspace(-0.1,0.1,1000)
-    y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
+    #y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
+    y=(1+m5)*x + b5
     plt.plot(x,y)
     plt.scatter(new['g1'], g1_obs, s=1)
-    plt.ylim(-0.1,0.1)
-    plt.savefig('mcal_quad_fit.png')
-    plt.show()
+    plt.savefig('mcal_lin_fit.png')
 
     return None
 
