@@ -70,8 +70,10 @@ def residual_bias_quad(res_tot):
     new2p = new2p[new2p['ra']!=0]
     new2m = new2m[new2m['ra']!=0]
 
-    R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+    R11 = (new1p["e1"] - 2*new['e1'] + new1m["e1"])/(g**2)
+    R22 = (new2p["e2"] - 2*new['e2'] + new2m["e2"])/(g**2)
+    #R11 = (new1p["e1"] - new1m["e1"])/(2*g)
+    #R22 = (new2p["e2"] - new2m["e2"])/(2*g)
     R12 = (new2p["e1"] - new2m["e1"])/(2*g)
     R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
@@ -120,7 +122,7 @@ def residual_bias_quad(res_tot):
     y=(1+m5)*x + b5
     plt.plot(x,y)
     plt.scatter(new['g1'], g1_obs, s=1)
-    plt.savefig('mcal_lin_fit.png')
+    #plt.savefig('mcal_lin_fit.png')
 
     return None
 
