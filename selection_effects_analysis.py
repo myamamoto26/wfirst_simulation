@@ -100,9 +100,9 @@ def residual_bias_quad(res_tot):
     start = np.array([1.,1.,0.])
 
     coeffs_max, coeffs_cov = curve_fit(f, new['g1'], g1_obs, p0=start)
-    print(coeffs_max, coeffs_cov)
+    print(coeffs_max, np.sqrt(np.diagonal(coeffs_cov)))
     coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start)
-    print(coeffs_max2, coeffs_cov2)
+    print(coeffs_max2, np.sqrt(np.diagonal(coeffs_cov2)))
 
     return None
 
@@ -417,7 +417,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['fiducial_H158'] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
+    dirr=['../fiducial_H158'] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
     shape=sys.argv[1]
 
     if shape=='metacal_quad':
@@ -428,8 +428,8 @@ def main(argv):
             d=fio.FITS(dirr[i]+'_metacal_2p.fits')[-1].read()
             e=fio.FITS(dirr[i]+'_metacal_2m.fits')[-1].read()
 
-            #residual_bias_quad([a,b,c,d,e])
-            g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, 'metacal')
+            residual_bias_quad([a,b,c,d,e])
+            #g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, 'metacal')
 
     elif shape=='ngmix':
         for i in range(len(dirr)):
