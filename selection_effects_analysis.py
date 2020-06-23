@@ -70,10 +70,8 @@ def residual_bias_quad(res_tot):
     new2p = new2p[new2p['ra']!=0]
     new2m = new2m[new2m['ra']!=0]
 
-    R11 = (new1p["e1"] - 2*new['e1'] + new1m["e1"])/(g**2)
-    R22 = (new2p["e2"] - 2*new['e2'] + new2m["e2"])/(g**2)
-    #R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    #R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+    R11 = (new1p["e1"] - new1m["e1"])/(2*g)
+    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
     R12 = (new2p["e1"] - new2m["e1"])/(2*g)
     R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
@@ -94,6 +92,7 @@ def residual_bias_quad(res_tot):
     print("<R12> = "+str("%6.4f"% avg_R12)+"+-"+str("%6.4f"% (np.std(R12)/np.sqrt(N))))
     print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
 
+    print(np.mean(g1_obs), np.std(g1_obs)/np.sqrt(N))
     def f(g_true, *coeffs):
         return (coeffs[2]*(g_true**3)
                 +coeffs[1]*g_true
