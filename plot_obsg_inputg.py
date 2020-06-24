@@ -272,6 +272,28 @@ def main(argv):
 		del_g2_pos0_ng10 = g_pos0[1] - g_pos0[0]
 		del_g2_neg0_ng10 = g_neg0[1] - g_neg0[0]
 
+		dirr=['v2_7_offset_0', 'v2_7_offset_60']
+		g_pos2 = []
+		g_neg2 = []
+		g_pos0 = []
+		g_neg0 = []
+		for i in range(len(dirr)):
+			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+
+			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
+			g_pos2.append(g1_obs[0:num:2])
+			g_neg2.append(g1_obs[1:num:2])
+			g_pos0.append(g2_obs[0:num:2])
+			g_neg0.append(g2_obs[1:num:2])
+		del_g1_pos2_mc60 = g_pos2[1] - g_pos2[0]
+		del_g1_neg2_mc60 = g_neg2[1] - g_neg2[0]
+		del_g2_pos0_mc60 = g_pos0[1] - g_pos0[0]
+		del_g2_neg0_mc60 = g_neg0[1] - g_neg0[0]
+
 		dirr=['v2_7_offset_0', 'v2_7_offset_45']
 		g_pos2 = []
 		g_neg2 = []
@@ -289,8 +311,6 @@ def main(argv):
 			g_neg2.append(g1_obs[1:num:2])
 			g_pos0.append(g2_obs[0:num:2])
 			g_neg0.append(g2_obs[1:num:2])
-		print('offset45 pos', np.mean(g_pos2[0]), np.std(g_pos2[0])/np.sqrt(len(g_pos2[0])), np.mean(g_pos2[1]), np.std(g_pos2[1])/np.sqrt(len(g_pos2[1])))
-		print('offset45 neg', np.mean(g_neg2[0]), np.std(g_neg2[0])/np.sqrt(len(g_neg2[0])), np.mean(g_neg2[1]), np.std(g_neg2[1])/np.sqrt(len(g_neg2[1])))
 		del_g1_pos2_mc45 = g_pos2[1] - g_pos2[0]
 		del_g1_neg2_mc45 = g_neg2[1] - g_neg2[0]
 		del_g2_pos0_mc45 = g_pos0[1] - g_pos0[0]
@@ -313,8 +333,6 @@ def main(argv):
 			g_neg2.append(g1_obs[1:num:2])
 			g_pos0.append(g2_obs[0:num:2])
 			g_neg0.append(g2_obs[1:num:2])
-		print('offset45 pos', np.mean(g_pos2[0]), np.std(g_pos2[0])/np.sqrt(len(g_pos2[0])), np.mean(g_pos2[1]), np.std(g_pos2[1])/np.sqrt(len(g_pos2[1])))
-		print('offset45 neg', np.mean(g_neg2[0]), np.std(g_neg2[0])/np.sqrt(len(g_neg2[0])), np.mean(g_neg2[1]), np.std(g_neg2[1])/np.sqrt(len(g_neg2[1])))
 		del_g1_pos2_mc35 = g_pos2[1] - g_pos2[0]
 		del_g1_neg2_mc35 = g_neg2[1] - g_neg2[0]
 		del_g2_pos0_mc35 = g_pos0[1] - g_pos0[0]
@@ -337,8 +355,6 @@ def main(argv):
 			g_neg2.append(g1_obs[1:num:2])
 			g_pos0.append(g2_obs[0:num:2])
 			g_neg0.append(g2_obs[1:num:2])
-		print('offset20 pos', np.mean(g_pos2[0]), np.std(g_pos2[0])/np.sqrt(len(g_pos2[0])), np.mean(g_pos2[1]), np.std(g_pos2[1])/np.sqrt(len(g_pos2[1])))
-		print('offset20 neg', np.mean(g_neg2[0]), np.std(g_neg2[0])/np.sqrt(len(g_neg2[0])), np.mean(g_neg2[1]), np.std(g_neg2[1])/np.sqrt(len(g_neg2[1])))
 		del_g1_pos2_mc20 = g_pos2[1] - g_pos2[0]
 		del_g1_neg2_mc20 = g_neg2[1] - g_neg2[0]
 		del_g2_pos0_mc20 = g_pos0[1] - g_pos0[0]
@@ -361,8 +377,6 @@ def main(argv):
 			g_neg2.append(g1_obs[1:num:2])
 			g_pos0.append(g2_obs[0:num:2])
 			g_neg0.append(g2_obs[1:num:2])
-		print('offset10 pos', np.mean(g_pos2[0]), np.std(g_pos2[0])/np.sqrt(len(g_pos2[0])), np.mean(g_pos2[1]), np.std(g_pos2[1])/np.sqrt(len(g_pos2[1])))
-		print('offset10 neg', np.mean(g_neg2[0]), np.std(g_neg2[0])/np.sqrt(len(g_neg2[0])), np.mean(g_neg2[1]), np.std(g_neg2[1])/np.sqrt(len(g_neg2[1])))
 		del_g1_pos2_mc10 = g_pos2[1] - g_pos2[0]
 		del_g1_neg2_mc10 = g_neg2[1] - g_neg2[0]
 		del_g2_pos0_mc10 = g_pos0[1] - g_pos0[0]
@@ -380,11 +394,11 @@ def main(argv):
 		ax1.plot(ng_offsets, mean_difference_g1_pos, 'o', c='m', label='ngmix g=+0.02')
 		ax1.errorbar(ng_offsets, mean_difference_g1_pos, yerr=error_g1_pos, c='m', fmt='o')
 		
-		mc_offsets=[10,20,35,45]
-		error_g1_neg=[np.std(del_g1_neg2_mc10)/np.sqrt(len(del_g1_neg2_mc10)), np.std(del_g1_neg2_mc20)/np.sqrt(len(del_g1_neg2_mc20)), np.std(del_g1_neg2_mc35)/np.sqrt(len(del_g1_neg2_mc35)), np.std(del_g1_neg2_mc45)/np.sqrt(len(del_g1_neg2_mc45))]
-		mean_difference_g1_neg = [np.mean(del_g1_neg2_mc10), np.mean(del_g1_neg2_mc20), np.mean(del_g1_neg2_mc35), np.mean(del_g1_neg2_mc45)]
-		error_g1_pos=[np.std(del_g1_pos2_mc10)/np.sqrt(len(del_g1_pos2_mc10)), np.std(del_g1_pos2_mc20)/np.sqrt(len(del_g1_pos2_mc20)), np.std(del_g1_pos2_mc35)/np.sqrt(len(del_g1_pos2_mc35)), np.std(del_g1_pos2_mc45)/np.sqrt(len(del_g1_pos2_mc45))]
-		mean_difference_g1_pos = [np.mean(del_g1_pos2_mc10), np.mean(del_g1_pos2_mc20), np.mean(del_g1_pos2_mc35), np.mean(del_g1_pos2_mc45)]
+		mc_offsets=[10,20,35,45,60]
+		error_g1_neg=[np.std(del_g1_neg2_mc10)/np.sqrt(len(del_g1_neg2_mc10)), np.std(del_g1_neg2_mc20)/np.sqrt(len(del_g1_neg2_mc20)), np.std(del_g1_neg2_mc35)/np.sqrt(len(del_g1_neg2_mc35)), np.std(del_g1_neg2_mc45)/np.sqrt(len(del_g1_neg2_mc45)), np.std(del_g1_neg2_mc60)/np.sqrt(len(del_g1_neg2_mc60))]
+		mean_difference_g1_neg = [np.mean(del_g1_neg2_mc10), np.mean(del_g1_neg2_mc20), np.mean(del_g1_neg2_mc35), np.mean(del_g1_neg2_mc45), np.mean(del_g1_neg2_mc60)]
+		error_g1_pos=[np.std(del_g1_pos2_mc10)/np.sqrt(len(del_g1_pos2_mc10)), np.std(del_g1_pos2_mc20)/np.sqrt(len(del_g1_pos2_mc20)), np.std(del_g1_pos2_mc35)/np.sqrt(len(del_g1_pos2_mc35)), np.std(del_g1_pos2_mc45)/np.sqrt(len(del_g1_pos2_mc45)), np.std(del_g1_pos2_mc60)/np.sqrt(len(del_g1_pos2_mc60))]
+		mean_difference_g1_pos = [np.mean(del_g1_pos2_mc10), np.mean(del_g1_pos2_mc20), np.mean(del_g1_pos2_mc35), np.mean(del_g1_pos2_mc45), np.mean(del_g1_pos2_mc60)]
 		ax1.plot(mc_offsets, mean_difference_g1_neg, 'o', c='b', label='mcal g=-0.02')
 		ax1.errorbar(mc_offsets, mean_difference_g1_neg, yerr=error_g1_neg, c='b', fmt='o')
 		ax1.plot(mc_offsets, mean_difference_g1_pos, 'o', c='g', label='mcal g=+0.02')
@@ -396,7 +410,7 @@ def main(argv):
 		plt.legend(loc=5, fontsize=10)
 		ax1.tick_params(labelsize=10)
 		ax1.axhline(y=0,ls='--')
-		plt.savefig('ngmixmcal_delta_g_offset.png')
+		plt.savefig('ngmixmcal_delta_g_offset_add60.png')
 		plt.show()
 
 if __name__ == "__main__":
