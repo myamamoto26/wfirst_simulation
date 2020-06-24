@@ -94,7 +94,7 @@ def residual_bias_quad(res_tot):
 
     print(np.mean(g1_obs), np.std(g1_obs)/np.sqrt(N))
     def f(g_true, *coeffs):
-        return (coeffs[2]*(g_true**2)
+        return (coeffs[2]*(g_true**3)
                 +coeffs[1]*g_true
                 +coeffs[0])
     #initalize coefficents to 1 except for c - set to zero.
@@ -117,7 +117,7 @@ def residual_bias_quad(res_tot):
     m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
     x=np.linspace(-0.1,0.1,1000)
-    y=coeffs_max[2]*(x**2)+coeffs_max[1]*x+coeffs_max[0]
+    y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
     y2=(1+m5)*x + b5
     plt.plot(x,y)
     plt.plot(x,y2)
