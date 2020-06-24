@@ -100,9 +100,9 @@ def residual_bias_quad(res_tot):
     #initalize coefficents to 1 except for c - set to zero.
     start = np.array([1.,1.,0.])
 
-    coeffs_max, coeffs_cov = curve_fit(f, new['g1'], g1_obs, p0=start)
+    coeffs_max, coeffs_cov = curve_fit(f, new['g1'], g1_obs, p0=start, sigma=np.std(g1_obs)/np.sqrt(N))
     print(coeffs_max, np.sqrt(np.diagonal(coeffs_cov)))
-    coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start)
+    coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start, sigma=np.std(g2_obs)/np.sqrt(N))
     print(coeffs_max2, np.sqrt(np.diagonal(coeffs_cov2)))
 
     def func(x,m,b):
