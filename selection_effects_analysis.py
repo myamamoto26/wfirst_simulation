@@ -64,11 +64,11 @@ def residual_bias_quad(res_tot):
     new2p = res_tot[3]
     new2m = res_tot[4]
 
-    new = new[new['ra']!=0]
-    new1p = new1p[new1p['ra']!=0]
-    new1m = new1m[new1m['ra']!=0]
-    new2p = new2p[new2p['ra']!=0]
-    new2m = new2m[new2m['ra']!=0]
+    #new = new[new['ra']!=0]
+    #new1p = new1p[new1p['ra']!=0]
+    #new1m = new1m[new1m['ra']!=0]
+    #new2p = new2p[new2p['ra']!=0]
+    #new2m = new2m[new2m['ra']!=0]
 
     R11 = (new1p["e1"] - new1m["e1"])/(2*g)
     R22 = (new2p["e2"] - new2m["e2"])/(2*g)
@@ -100,9 +100,9 @@ def residual_bias_quad(res_tot):
     #initalize coefficents to 1 except for c - set to zero.
     start = np.array([1.,1.,0.])
 
-    coeffs_max, coeffs_cov = curve_fit(f, new['g1'], g1_obs, p0=start, sigma=np.std(g1_obs)/np.sqrt(N))
+    coeffs_max, coeffs_cov = curve_fit(f, new['g1'], g1_obs, p0=start)
     print(coeffs_max, np.sqrt(np.diagonal(coeffs_cov)))
-    coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start, sigma=np.std(g2_obs)/np.sqrt(N))
+    coeffs_max2, coeffs_cov2 = curve_fit(f, new['g2'], g2_obs, p0=start)
     print(coeffs_max2, np.sqrt(np.diagonal(coeffs_cov2)))
 
     def func(x,m,b):
@@ -437,7 +437,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['../fiducial_H158'] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
+    dirr=['v2_7_offset_0'] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
     shape=sys.argv[1]
 
     if shape=='metacal_quad':
@@ -468,8 +468,8 @@ def main(argv):
             c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
             d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
             e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-            g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, shape)
+            residual_bias_quad([a,b,c,d,e])
+            #g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, shape)
     return None
 
 if __name__ == "__main__":
