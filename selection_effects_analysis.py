@@ -122,7 +122,7 @@ def residual_bias_quad(res_tot):
     plt.plot(x,y)
     plt.plot(x,y2)
     plt.scatter(new['g1'], g1_obs, s=1)
-    #plt.savefig('mcal_lin_fit.png')
+    plt.savefig('mcal_quad_fit.png')
 
     return None
 
