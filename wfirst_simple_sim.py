@@ -286,7 +286,7 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
     psf_list=ObsList()
 
     w = []
-    for i in range(2):
+    for i in range(1):
         im = gal[i].array
         im_psf = psf[i].array
         im_psf2 = psf2[i].array
@@ -460,10 +460,10 @@ def main(argv):
     use_SCA = 1
     filter_ = 'H158'
     galaxy_model = 'Gaussian'
-    PSF_model = 'Gaussian'
+    PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 3000000
+    gal_num = 5000000
     shape='metacal'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
@@ -480,13 +480,15 @@ def main(argv):
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-    
-    position_angle1=20 #degrees
-    position_angle2=70 #degrees
+    position_angle1=0
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
-    wcs=[wcs1, wcs2]
-    sky_level=[sky_level1, sky_level2]
+    
+    #position_angle1=20 #degrees
+    #position_angle2=70 #degrees
+    #wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
+    #wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    wcs=[wcs1]
+    sky_level=[sky_level1]
     
 
     t0 = time.time()
@@ -596,24 +598,29 @@ def main(argv):
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
         wcs=[wcs1, wcs2]
         sky_level=[sky_level1, sky_level2]
-        """
+        
         sca_center=[wcs[0].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs[1].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
         gal_radec = sca_center[0]
-        thetas = [position_angle1*(np.pi/180)*galsim.radians, position_angle2*(np.pi/180)*galsim.radians]
+        """
+        thetas = [position_angle1*(np.pi/180)*galsim.radians]
         offsets = []
         gals = []
         psfs = []
         skys = []
-        for i in range(2): 
+        for i in range(1): 
             gal_stamp=None
             psf_stamp=None
             ## use pixel scale for now. 
-            xy = wcs[i].toImage(gal_radec) # galaxy position 
-            xyI = galsim.PositionI(int(xy.x), int(xy.y))
-            b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
-                                ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
-                                xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
-                                ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
+            # turn on for rotations,xy = wcs[i].toImage(gal_radec) # galaxy position 
+            # turn on for rotations,xyI = galsim.PositionI(int(xy.x), int(xy.y))
+            # turn on for rotations,b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
+            #                    ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
+            #                    xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
+            #                    ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
+            b = galsim.BoundsI( xmin=1,
+                                xmax=int(stamp_size_factor*stamp_size),
+                                ymin=1,
+                                ymax=int(stamp_size_factor*stamp_size))
             gal_stamp = galsim.Image(b, wcs=wcs[i])
             psf_stamp = galsim.Image(b, wcs=wcs[i])
 
@@ -621,9 +628,9 @@ def main(argv):
             #dy = 0 #random_dir() - 0.5
             #offset = np.array((dx,dy))
 
-            offset = xy-gal_stamp.true_center # original galaxy position - stamp center
-            gal_model.drawImage(image=gal_stamp, offset=offset)
-            st_model.drawImage(image=psf_stamp, offset=offset)
+            # turn on for rotations, offset = xy-gal_stamp.true_center # original galaxy position - stamp center
+            gal_model.drawImage(image=gal_stamp)#, offset=offset)
+            st_model.drawImage(image=psf_stamp)#, offset=offset)
 
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
@@ -636,6 +643,7 @@ def main(argv):
 
             # set a simple jacobian to the stamps before sending them to ngmix
             # old center of the stamp
+            """# turn on for rotations,
             origin_x = gal_stamp.origin.x
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
@@ -645,6 +653,7 @@ def main(argv):
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
+            """
 
             #gal_stamp.write(str(i_gal)+'_test.fits')
 
@@ -670,7 +679,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_offset_50'
+        dirr='v2_3_redo'
         for i in range(len(res_tot)):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
