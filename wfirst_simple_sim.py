@@ -483,7 +483,7 @@ def main(argv):
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
     position_angle1=20 #degrees
-    position_angle2=70 #degrees
+    position_angle2=65 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     wcs=[wcs1, wcs2]
@@ -655,7 +655,7 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-        return gals
+        print(gals, psfs, offsets, skys)
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
     exit()
     ## send and receive objects from one processor to others
