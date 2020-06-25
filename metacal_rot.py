@@ -24,7 +24,7 @@ from ngmix import priors, joint_prior
 import mof
 import meds
 
-import wfirst_simple_sim
+from wfirst_simple_sim import get_exp_list
 
 """
 #---------------------------------------------------------------
@@ -41,6 +41,11 @@ import wfirst_simple_sim
 
 def Observation():
 	# Obtain observation list, psf list, weight from wfirst_simple_sim.py
-	obs_list, psf_list, w = wfirst_simple_sim.main([None, 1, 'Gaussian', 'Gaussian', 'metacal', True])
+	gals=[fio.FITS('mcal_gal_0.fits')[-1].read(), fio.FITS('mcal_gal_1.fits')[-1].read()]
+	psfs=[fio.FITS('mcal_psf_0.fits')[-1].read(), fio.FITS('mcal_psf_1.fits')[-1].read()]
+	offsets=[galsim.PositionD(-0.5,-0.5), galsim.PositionD(0.23248147187155155,0.3059909382209298)]
+	sky_image=[fio.FITS('mcal_sky_0.fits')[-1].read(), fio.FITS('mcal_sky_1.fits')[-1].read()]
+	obs_list, psf_list, w = get_exp_list(gals, psfs, offsets, sky_stamp, psf2=None)
+	print(obs_list, psf_list, w)
 
 Observation()
