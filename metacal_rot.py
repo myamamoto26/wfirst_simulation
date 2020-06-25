@@ -42,7 +42,8 @@ from wfirst_simple_sim import get_exp_list
 
 def Observation():
 	# Obtain observation list, psf list, weight from wfirst_simple_sim.py
-	gals=wfirst_simple_sim.main([1, 'Gaussian', "Gaussian", 'metacal'])
+	sys.argv=[None, 1, 'Gaussian', 'Gaussian', 'metacal']
+	gals=wfirst_simple_sim.main(sys.argv)
 
 	gals=[fio.FITS('mcal_gal_0.fits')[-1].read(), fio.FITS('mcal_gal_1.fits')[-1].read()]
 	psfs=[fio.FITS('mcal_psf_0.fits')[-1].read(), fio.FITS('mcal_psf_1.fits')[-1].read()]
