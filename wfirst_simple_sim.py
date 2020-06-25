@@ -286,15 +286,15 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
     psf_list=ObsList()
 
     w = []
-    for i in range(1):
+    for i in range(len(gal)):
         im = gal[i].array
         im_psf = psf[i].array
         im_psf2 = psf2[i].array
         weight = 1/sky_stamp[i].array
 
         jacob = gal[i].wcs.jacobian()
-        dx = 0#offsets[i].x
-        dy = 0#offsets[i].y
+        dx = offsets[i].x
+        dy = offsets[i].y
         
         gal_jacob = Jacobian(
             row=gal[i].true_center.y+dy,
@@ -388,7 +388,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     res_['flux'] = res_['pars'][5]
     return res_
 
-def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
+def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape, want_obs=True):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
@@ -410,6 +410,8 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
     obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
+    if want_obs==True:
+        return obs_list, psf_list, w
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     if shape=='metacal':
@@ -451,7 +453,7 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
 
 def main(argv):
 
-    ## necessary input (noise, filters, sca number, number of galaxies, stamp sizes, ) =====> params
+    ## fixed parameters
     random_seed = 314
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
@@ -459,14 +461,16 @@ def main(argv):
     dither_i = 22535
     use_SCA = 1
     filter_ = 'H158'
-    galaxy_model = 'Gaussian'
-    PSF_model = 'wfirst'
     stamp_size = 32
     hlr = 1.0
-    gal_num = 5000000
-    shape='metacal'
     bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
+
+    ## variable arguments
+    gal_num = sys.argv[1]
+    galaxy_model = sys.argv[2]
+    PSF_model = sys.argv[3]
+    shape=sys.argv[4]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -480,15 +484,12 @@ def main(argv):
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-    position_angle1=0
+    position_angle1=20 #degrees
+    position_angle2=70 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    
-    #position_angle1=20 #degrees
-    #position_angle2=70 #degrees
-    #wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    #wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
-    wcs=[wcs1]
-    sky_level=[sky_level1]
+    wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    wcs=[wcs1, wcs2]
+    sky_level=[sky_level1, sky_level2]
     
 
     t0 = time.time()
@@ -578,10 +579,6 @@ def main(argv):
         """
         #xyI = galsim.PositionI(int(stamp_size_factor*stamp_size), int(stamp_size_factor*stamp_size))
         #b = galsim.BoundsI( xmin=1,
-        #                    xmax=int(stamp_size_factor*stamp_size),
-        #                    ymin=1,
-        #                    ymax=int(stamp_size_factor*stamp_size))
-        #b = galsim.BoundsI( xmin=1,
         #                    xmax=xyI.x,
         #                    ymin=1,
         #                    ymax=xyI.y)
@@ -598,10 +595,10 @@ def main(argv):
         wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
         wcs=[wcs1, wcs2]
         sky_level=[sky_level1, sky_level2]
+        """
         
         sca_center=[wcs[0].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2))), wcs[1].toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))]
         gal_radec = sca_center[0]
-        """
         thetas = [position_angle1*(np.pi/180)*galsim.radians]
         offsets = []
         gals = []
@@ -610,25 +607,28 @@ def main(argv):
         for i in range(1): 
             gal_stamp=None
             psf_stamp=None
-            ## use pixel scale for now. 
-            # turn on for rotations,xy = wcs[i].toImage(gal_radec) # galaxy position 
-            # turn on for rotations,xyI = galsim.PositionI(int(xy.x), int(xy.y))
-            # turn on for rotations,b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
-            #                    ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
-            #                    xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
-            #                    ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
-            b = galsim.BoundsI( xmin=1,
-                                xmax=int(stamp_size_factor*stamp_size),
-                                ymin=1,
-                                ymax=int(stamp_size_factor*stamp_size))
-            gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)#wcs=wcs[i])
-            psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)#wcs=wcs[i])
+            xy = wcs[i].toImage(gal_radec) # galaxy position 
+            xyI = galsim.PositionI(int(xy.x), int(xy.y))
+            b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
+                                ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
+                                xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
+                                ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
+            #---------------------------------------#
+            # if the image does not use a real wcs. #
+            #---------------------------------------#
+            #b = galsim.BoundsI( xmin=1,
+            #                    xmax=int(stamp_size_factor*stamp_size),
+            #                    ymin=1,
+            #                    ymax=int(stamp_size_factor*stamp_size))
+            gal_stamp = galsim.Image(b, wcs=wcs[i]) #scale=wfirst.pixel_scale)
+            psf_stamp = galsim.Image(b, wcs=wcs[i]) #scale=wfirst.pixel_scale)
 
-            dx = 0 #random_dir() - 0.5
-            dy = 0 #random_dir() - 0.5
-            offset = np.array((dx,dy))
+            ## translational dithering test
+            #dx = 0 #random_dir() - 0.5
+            #dy = 0 #random_dir() - 0.5
+            #offset = np.array((dx,dy))
 
-            # turn on for rotations, offset = xy-gal_stamp.true_center # original galaxy position - stamp center
+            offset = xy-gal_stamp.true_center # original galaxy position - stamp center
             gal_model.drawImage(image=gal_stamp, offset=offset)
             st_model.drawImage(image=psf_stamp, offset=offset)
 
@@ -643,7 +643,6 @@ def main(argv):
 
             # set a simple jacobian to the stamps before sending them to ngmix
             # old center of the stamp
-            """# turn on for rotations,
             origin_x = gal_stamp.origin.x
             origin_y = gal_stamp.origin.y
             gal_stamp.setOrigin(0,0)
@@ -653,7 +652,6 @@ def main(argv):
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
-            """
 
             #gal_stamp.write(str(i_gal)+'_test.fits')
 
@@ -661,8 +659,7 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-        #res_tot = get_coadd_shape(cat, gal_stamp, psf_stamp, sky_image, i_gal, hlr, res_tot, g1, g2)
-        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
+        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape, want_obs=sys.argv[5])
 
     ## send and receive objects from one processor to others
     if rank!=0:
