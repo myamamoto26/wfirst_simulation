@@ -654,8 +654,8 @@ def main(argv):
             if i_gal==0:
                 gal_stamp.write('mcal_gal_'+str(i)+'.fits')
                 psf_stamp.write('mcal_psf_'+str(i)+'.fits')
+                sky_image.write('mcal_sky_'+str(i)+'.fits')
                 print(offset)
-                print(sky_image)
 
             offsets.append(offset)
             gals.append(gal_stamp)
