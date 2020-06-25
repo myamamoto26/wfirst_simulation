@@ -24,12 +24,20 @@ from ngmix import priors, joint_prior
 import mof
 import meds
 
+import wfirst_simple_sim
+
 """
 #---------------------------------------------------------------
 ## Try to build metacalibration from scratch with simpler codes.|
 #---------------------------------------------------------------
 ## The order of operations
-1. 
-2. 
+1. Deconvolve the original stamp.
+	Obs_list: 
+2. Shearing of the image. 
+
+3. Reconvolve it by a new PSF. 
 
 """
+
+# Obtain observation list, psf list, weight from wfirst_simple_sim.py
+obs_list, psf_list, w = wfirst_simple_sim.main([None, 1, 'Gaussian', 'Gaussian', 'metacal', True])
