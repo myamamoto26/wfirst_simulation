@@ -286,7 +286,7 @@ def main(argv):
 			g_pos0 = []
 			g_neg0 = []
 			for name in d:
-				a=fio.FITS(dirr[i]+'_ngmix_0.fits')[-1].read() 
+				a=fio.FITS(name+'_ngmix_0.fits')[-1].read() 
 				b=None
 				c=None
 				d=None
