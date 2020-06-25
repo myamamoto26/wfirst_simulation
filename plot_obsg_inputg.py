@@ -272,169 +272,52 @@ def main(argv):
 		del_g1_neg2_ng10 = g_neg2[1] - g_neg2[0]
 		del_g2_pos0_ng10 = g_pos0[1] - g_pos0[0]
 		del_g2_neg0_ng10 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_60']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc60 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc60 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc60 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc60 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_50']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc50 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc50 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc50 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc50 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_45']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc45 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc45 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc45 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc45 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_40']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc40 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc40 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc40 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc40 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_35']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc35 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc35 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc35 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc35 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_20']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc20 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc20 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc20 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc20 = g_neg0[1] - g_neg0[0]
-
-		dirr=['v2_7_offset_0', 'v2_7_offset_10']
-		g_pos2 = []
-		g_neg2 = []
-		g_pos0 = []
-		g_neg0 = []
-		for i in range(len(dirr)):
-			a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-			b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-			c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-			d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-			e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
-
-			R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
-			g_pos2.append(g1_obs[0:num:2])
-			g_neg2.append(g1_obs[1:num:2])
-			g_pos0.append(g2_obs[0:num:2])
-			g_neg0.append(g2_obs[1:num:2])
-		del_g1_pos2_mc10 = g_pos2[1] - g_pos2[0]
-		del_g1_neg2_mc10 = g_neg2[1] - g_neg2[0]
-		del_g2_pos0_mc10 = g_pos0[1] - g_pos0[0]
-		del_g2_neg0_mc10 = g_neg0[1] - g_neg0[0]
 		"""
+		## ngmix plot
+		dirr=[['v2_11_offset_0', 'v2_11_offset_10'], ['v2_11_offset_0', 'v2_11_offset_20'], ['v2_11_offset_0', 'v2_11_offset_35'], 
+				['v2_11_offset_0', 'v2_11_offset_45']]
+		angles=[10,20,35,45]
+		ind=0
+		## g1 difference
+		fig,ax1=plt.subplots(figsize=(10,8))
+		for d in dirr:
+			g_pos2 = []
+			g_neg2 = []
+			g_pos0 = []
+			g_neg0 = []
+			for name in d:
+				a=fio.FITS(dirr[i]+'_ngmix_0.fits')[-1].read() 
+				b=None
+				c=None
+				d=None
+				e=None
 
+				R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'ngmix')
+				g_pos2.append(g1_obs[0:num:2])
+				g_neg2.append(g1_obs[1:num:2])
+				g_pos0.append(g2_obs[0:num:2])
+				g_neg0.append(g2_obs[1:num:2])
+			del_g1_pos2 = g_pos2[1] - g_pos2[0]
+			del_g1_neg2 = g_neg2[1] - g_neg2[0]
+			del_g2_pos0 = g_pos0[1] - g_pos0[0]
+			del_g2_neg0 = g_neg0[1] - g_neg0[0]
+
+			mean_g1=[np.mean(del_g1_neg2), np.mean(del_g1_pos2)]
+			error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
+
+			l3,=ax1.plot(angles[ind], mean_g1[0], 'o', c='b')
+			ax1.errorbar(angles[ind], mean_g1[0], yerr=error_g1[0], c='b', fmt='o')
+			l4,=ax1.plot(angles[ind], mean_g1[1], 'o', c='g')
+			ax1.errorbar(angles[ind], mean_g1[1], yerr=error_g1[1], c='g', fmt='o') 
+			ind+=1
+
+		## metacal plot
 		dirr=[['v2_7_offset_0', 'v2_7_offset_10'], ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
 				['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], ['v2_7_offset_0', 'v2_7_offset_50'], 
 				['v2_7_offset_0', 'v2_7_offset_60']]
 		angles=[10,20,35,40,45,50,60]
 		ind=0
 		## g1 difference
-		fig,ax1=plt.subplots(figsize=(10,8))
 		for d in dirr:
 			g_pos2 = []
 			g_neg2 = []
@@ -470,6 +353,8 @@ def main(argv):
 		ax1.set_title('Mean difference in measured shapes for different shape measurement techniques', fontsize=13)
 		l1.set_label('mcal g=-0.02')
 		l2.set_label('mcal g=+0.02')
+		l3.set_label('ngmix g=-0.02')
+		l4.set_label('ngmix g=+0.02')
 		plt.legend(loc=5, fontsize=10)
 		ax1.tick_params(labelsize=10)
 		ax1.axhline(y=0,ls='--')
