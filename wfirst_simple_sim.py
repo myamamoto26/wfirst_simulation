@@ -388,7 +388,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     res_['flux'] = res_['pars'][5]
     return res_
 
-def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape, want_obs=True):
+def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape, want_obs):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
@@ -411,6 +411,7 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
     obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
     if want_obs==True:
+        print('preparing observation list...')
         return obs_list, psf_list, w
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
@@ -659,7 +660,8 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape, want_obs=sys.argv[5])
+            print('passing images to ngmix...')
+        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape, sys.argv[5])
 
     ## send and receive objects from one processor to others
     if rank!=0:
