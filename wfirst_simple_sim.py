@@ -410,7 +410,7 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
     obs_list,psf_list,w = get_exp_list(gals,psfs,offsets,sky_stamp,psf2=None)
-    print(obs_list(), psf_list(), w)
+    print(obs_list, psf_list, w)
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     if shape=='metacal':
