@@ -276,7 +276,7 @@ def make_sed_model(model, sed, filter_, bpass):
     return model * sed_
 
 ## metacal shapemeasurement
-def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
+def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
     #def get_exp_list(gal, psf, sky_stamp, psf2=None):
 
     if psf2 is None:
@@ -388,7 +388,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     res_['flux'] = res_['pars'][5]
     return res_
 
-def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape, want_obs):
+def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
     def get_flux(obj):
@@ -409,10 +409,7 @@ def get_coadd_shape(cat, gals, psfs, thetas, offsets, sky_stamp, i, hlr, res_tot
     #for i in range(len(gals)):
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    obs_list,psf_list,w = get_exp_list(gals,psfs,thetas,offsets,sky_stamp,psf2=None)
-    if want_obs==True:
-        print('preparing observation list...')
-        return obs_list, psf_list, w
+    obs_list,psf_list,w = get_exp_list(gals,psfs,offsets,sky_stamp,psf2=None)
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     if shape=='metacal':
@@ -605,7 +602,7 @@ def main(argv):
         gals = []
         psfs = []
         skys = []
-        for i in range(1): 
+        for i in range(2): 
             gal_stamp=None
             psf_stamp=None
             xy = wcs[i].toImage(gal_radec) # galaxy position 
@@ -654,15 +651,18 @@ def main(argv):
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
 
-            #gal_stamp.write(str(i_gal)+'_test.fits')
+            if i_gal==0:
+                gal_stamp.write('mcal_gal_'+str(i)+'.fits')
+                psf_stamp.write('mcal_psf_'+str(i)+'.fits')
+                print(offset)
+                print(sky_image)
 
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
-            print('passing images to ngmix...')
-        res_tot = get_coadd_shape(cat, gals, psfs, thetas, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape, sys.argv[5])
-
+        res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
+    exit()
     ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
