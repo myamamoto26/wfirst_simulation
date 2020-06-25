@@ -465,7 +465,7 @@ def main(argv):
     galaxy_sed_n = galsim.SED('Mrk_33_spec.dat',  wave_type='Ang', flux_type='flambda')
 
     ## variable arguments
-    gal_num = sys.argv[1]
+    gal_num = int(sys.argv[1])
     galaxy_model = sys.argv[2]
     PSF_model = sys.argv[3]
     shape=sys.argv[4]
