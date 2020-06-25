@@ -293,8 +293,8 @@ def get_exp_list(gal, psf, thetas, offsets, sky_stamp, psf2=None):
         weight = 1/sky_stamp[i].array
 
         jacob = gal[i].wcs.jacobian()
-        dx = offsets[i].x
-        dy = offsets[i].y
+        dx = 0#offsets[i].x
+        dy = 0#offsets[i].y
         
         gal_jacob = Jacobian(
             row=gal[i].true_center.y+dy,
