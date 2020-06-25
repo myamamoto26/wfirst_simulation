@@ -2,7 +2,9 @@
 
 1. For the main simulation, use wfirst_simple_sim.py (includes multiple parameters; half-light radius, galaxy number,
    input shear, galaxy model, PSF model, shear measurement methods, etc... )
-   Main simulation returns the ngmix output or the metacalibration output (noshear, 1p, 1m, 2p, 2m) in fits format. 
+   Main simulation returns the ngmix output or the metacalibration output (noshear, 1p, 1m, 2p, 2m) in fits format.  
+   To use wfirst_simple_sim.py, "python wfirst_simple_sim.py galaxy_number galaxy_profile psf_profile shape_measurement"(e.g.,
+   python wfirst_simple_sim.py 3000000 'Gaussian' 'Gaussian' 'metacal') 
 
 2. To analyze the shear response and observed shear, use selection_effects.py, which prints out the before and after
    we take care of selection effects on shear response. 
