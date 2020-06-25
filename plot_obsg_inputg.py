@@ -440,12 +440,12 @@ def main(argv):
 			g_neg2 = []
 			g_pos0 = []
 			g_neg0 = []
-			for i in range(len(dirr)):
-				a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-				b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-				c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-				d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-				e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+			for i in range(len(d)):
+				a=fio.FITS(d[i]+'_sim_0.fits')[-1].read() 
+				b=fio.FITS(d[i]+'_sim_1.fits')[-1].read()
+				c=fio.FITS(d[i]+'_sim_2.fits')[-1].read()
+				d=fio.FITS(d[i]+'_sim_3.fits')[-1].read()
+				e=fio.FITS(d[i]+'_sim_4.fits')[-1].read()
 
 				R11, R22, R12, R21, g1_obs, g2_obs = residual_bias([a,b,c,d,e], 'metacal')
 				g_pos2.append(g1_obs[0:num:2])
