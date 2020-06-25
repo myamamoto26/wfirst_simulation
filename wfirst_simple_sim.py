@@ -410,7 +410,6 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
     #t = truth[i]
     #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
     obs_list,psf_list,w = get_exp_list(gals,psfs,offsets,sky_stamp,psf2=None)
-    print(obs_list, psf_list, w)
     #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
     #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     if shape=='metacal':
@@ -652,16 +651,11 @@ def main(argv):
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
 
-            if i_gal==0:
-                gal_stamp.write('mcal_gal_'+str(i)+'.fits')
-                psf_stamp.write('mcal_psf_'+str(i)+'.fits')
-                sky_image.write('mcal_sky_'+str(i)+'.fits')
-                print(offset)
-
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
+        return gals
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
     exit()
     ## send and receive objects from one processor to others
