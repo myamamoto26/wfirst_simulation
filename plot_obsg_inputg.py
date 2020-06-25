@@ -433,7 +433,7 @@ def main(argv):
 				['v2_7_offset_0', 'v2_7_offset_60']]
 		angles=[10,20,35,40,45,50,60]
 		ind=0
-		## g1
+		## g1 difference
 		fig,ax1=plt.subplots(figsize=(10,8))
 		for d in dirr:
 			g_pos2 = []
