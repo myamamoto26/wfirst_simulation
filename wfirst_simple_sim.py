@@ -621,8 +621,8 @@ def main(argv):
                                 xmax=int(stamp_size_factor*stamp_size),
                                 ymin=1,
                                 ymax=int(stamp_size_factor*stamp_size))
-            gal_stamp = galsim.Image(b, wcs=wcs[i])
-            psf_stamp = galsim.Image(b, wcs=wcs[i])
+            gal_stamp = galsim.Image(b, scale=wfirst.pixel_scale)#wcs=wcs[i])
+            psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)#wcs=wcs[i])
 
             dx = 0 #random_dir() - 0.5
             dy = 0 #random_dir() - 0.5
