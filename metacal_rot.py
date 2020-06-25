@@ -39,5 +39,8 @@ import wfirst_simple_sim
 
 """
 
-# Obtain observation list, psf list, weight from wfirst_simple_sim.py
-obs_list, psf_list, w = wfirst_simple_sim.main([None, 1, 'Gaussian', 'Gaussian', 'metacal', True])
+def Observation():
+	# Obtain observation list, psf list, weight from wfirst_simple_sim.py
+	obs_list, psf_list, w = wfirst_simple_sim.main([None, 1, 'Gaussian', 'Gaussian', 'metacal', True])
+
+Observation()
