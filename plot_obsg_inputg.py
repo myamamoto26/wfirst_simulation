@@ -460,14 +460,16 @@ def main(argv):
 			mean_g1=[np.mean(del_g1_neg2), np.mean(del_g1_pos2)]
 			error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
 
-			ax1.plot(angles[ind], mean_g1[0], 'o', c='r', label='ngmix g=-0.02')
+			l1,=ax1.plot(angles[ind], mean_g1[0], 'o', c='r')
 			ax1.errorbar(angles[ind], mean_g1[0], yerr=error_g1[0], c='r', fmt='o')
-			ax1.plot(angles[ind], mean_g1[1], 'o', c='m', label='ngmix g=+0.02')
+			l2,=ax1.plot(angles[ind], mean_g1[1], 'o', c='m')
 			ax1.errorbar(angles[ind], mean_g1[1], yerr=error_g1[1], c='m', fmt='o') 
 			ind+=1
 		ax1.set_xlabel('Angle offsets', fontsize=16)
 		ax1.set_ylabel("\u0394\u03B3", fontsize=16)
 		ax1.set_title('Mean difference in measured shapes for different shape measurement techniques', fontsize=13)
+		l1.set_label('mcal g=-0.02')
+		l2.set_label('mcal g=+0.02')
 		plt.legend(loc=5, fontsize=10)
 		ax1.tick_params(labelsize=10)
 		ax1.axhline(y=0,ls='--')
