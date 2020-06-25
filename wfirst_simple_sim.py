@@ -624,13 +624,13 @@ def main(argv):
             gal_stamp = galsim.Image(b, wcs=wcs[i])
             psf_stamp = galsim.Image(b, wcs=wcs[i])
 
-            #dx = 0 #random_dir() - 0.5
-            #dy = 0 #random_dir() - 0.5
-            #offset = np.array((dx,dy))
+            dx = 0 #random_dir() - 0.5
+            dy = 0 #random_dir() - 0.5
+            offset = np.array((dx,dy))
 
             # turn on for rotations, offset = xy-gal_stamp.true_center # original galaxy position - stamp center
-            gal_model.drawImage(image=gal_stamp)#, offset=offset)
-            st_model.drawImage(image=psf_stamp)#, offset=offset)
+            gal_model.drawImage(image=gal_stamp, offset=offset)
+            st_model.drawImage(image=psf_stamp, offset=offset)
 
             sigma=wfirst.read_noise
             read_noise = galsim.GaussianNoise(rng, sigma=sigma)
