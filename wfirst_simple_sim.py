@@ -482,8 +482,8 @@ def main(argv):
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-    position_angle1=20 #degrees
-    position_angle2=65 #degrees
+    position_angle1=70 #degrees
+    position_angle2=115 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     wcs=[wcs1, wcs2]
@@ -651,18 +651,19 @@ def main(argv):
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
 
+            '''
             if i_gal==0:
                 gal_stamp.write('mcal_gal_'+str(i)+'.fits')
                 psf_stamp.write('mcal_psf_'+str(i)+'.fits')
                 sky_image.write('mcal_sky_'+str(i)+'.fits')
             print(gal_stamp.wcs.jacobian(), gal_stamp.true_center, offset)
+            '''
 
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
-    exit()
     ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
@@ -678,7 +679,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_3_redo'
+        dirr='v2_7_fix70_offset_45'
         for i in range(len(res_tot)):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
