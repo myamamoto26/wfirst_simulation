@@ -30,7 +30,7 @@ import meds
 #---------------------------------------------------------------
 ## Try to build metacalibration from scratch with simpler codes.|
 #---------------------------------------------------------------
-## The order of operations
+## The order of operations (want odict returned by get_all_metacal)
 1. Deconvolve the original stamp.
 	Obs_list: 
 2. Shearing of the image. 
@@ -80,7 +80,6 @@ def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jaco
         obs_list.append(obs)
         psf_list.append(psf_obs2)
 
-    #print(obs_list)
     return obs_list,psf_list,np.array(w)
 
 def exposures():
@@ -94,6 +93,30 @@ def exposures():
 				galsim.JacobianWCS(0.04693577579580337, -0.09835662875798407, 0.09984826919988712, 0.045587756760917426)]
 
 	obs_list, psf_list, w = get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jacobs, psf2=None)
-	print(obs_list, psf_list, w)
+	return obs_list,psf_list,np.array(w)
 
-exposures()
+def metacal():
+	obs_list,psf_list,np.array(w) = exposures()
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+metacal()
