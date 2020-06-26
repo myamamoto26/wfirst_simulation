@@ -72,7 +72,6 @@ def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jaco
         mask = np.where(weight!=0)
         w.append(np.mean(weight[mask]))
         noise = old_div(np.ones_like(weight),w[-1])
-        print(psf_obs)
         psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
         psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
         obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
@@ -84,7 +83,7 @@ def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jaco
     #print(obs_list)
     return obs_list,psf_list,np.array(w)
 
-def Observation():
+def exposures():
 	# Obtain observation list, psf list, weight from wfirst_simple_sim.py
 	gals_array=[fio.FITS('mcal_gal_0.fits')[-1].read(), fio.FITS('mcal_gal_1.fits')[-1].read()]
 	psfs_array=[fio.FITS('mcal_psf_0.fits')[-1].read(), fio.FITS('mcal_psf_1.fits')[-1].read()]
@@ -97,4 +96,4 @@ def Observation():
 	obs_list, psf_list, w = get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jacobs, psf2=None)
 	print(obs_list, psf_list, w)
 
-Observation()
+exposures()
