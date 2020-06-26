@@ -41,7 +41,7 @@ from wfirst_simple_sim import get_exp_list
 
 """
 
-def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jacob, psf2=None):
+def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jacobs, psf2=None):
     #def get_exp_list(gal, psf, sky_stamp, psf2=None):
 
     if psf2 is None:
@@ -57,7 +57,7 @@ def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jaco
         im_psf2 = psf2[i]
         weight = 1/skys_array[i]
 
-        jacob = gal_jacob[i]
+        jacob = gal_jacobs[i]
         dx = offsets[i].x
         dy = offsets[i].y
         
