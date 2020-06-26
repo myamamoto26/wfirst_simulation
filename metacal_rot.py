@@ -25,8 +25,6 @@ from ngmix import priors, joint_prior
 import mof
 import meds
 
-import wfirst_simple_sim
-from wfirst_simple_sim import get_exp_list
 
 """
 #---------------------------------------------------------------
@@ -69,11 +67,12 @@ def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jaco
             dudrow=jacob.dudy,
             dudcol=jacob.dudx)
         psf_jacob2 = gal_jacob
+        print(gal_jacob)
 
         mask = np.where(weight!=0)
         w.append(np.mean(weight[mask]))
         noise = old_div(np.ones_like(weight),w[-1])
-
+        print(psf_obs)
         psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
         psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
         obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
