@@ -7,6 +7,7 @@ import yaml
 import copy
 import galsim as galsim
 import galsim.wfirst as wfirst
+from past.utils import old_div
 #wfirst.pixel_scale /= 4
 import galsim.config.process as process
 import galsim.des as des
