@@ -655,7 +655,7 @@ def main(argv):
                 gal_stamp.write('mcal_gal_'+str(i)+'.fits')
                 psf_stamp.write('mcal_psf_'+str(i)+'.fits')
                 sky_image.write('mcal_sky_'+str(i)+'.fits')
-            print(gal_stamp, psf_stamp, sky_image, offset)
+            print(gal_stamp.wcs.jacobian, gal_stamp.true_center, offset)
 
             offsets.append(offset)
             gals.append(gal_stamp)
