@@ -92,10 +92,10 @@ def Observation():
 	offsets=[galsim.PositionD(-0.5,-0.5), galsim.PositionD(0.48010974293083564,0.24526554339263384)]
 	skys_array=[fio.FITS('mcal_sky_0.fits')[-1].read(), fio.FITS('mcal_sky_1.fits')[-1].read()]
 	gal_true=[galsim.PositionD(31.5,31.5), galsim.PositionD(31.5,31.5)]
-	gal_jacob=[galsim.JacobianWCS(0.10379201786865774, -0.037313406917181026, 0.03741492083530528, 0.1017841347351108), 
+	gal_jacobs=[galsim.JacobianWCS(0.10379201786865774, -0.037313406917181026, 0.03741492083530528, 0.1017841347351108), 
 				galsim.JacobianWCS(0.04693577579580337, -0.09835662875798407, 0.09984826919988712, 0.045587756760917426)]
 
-	obs_list, psf_list, w = get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jacob, psf2=None)
+	obs_list, psf_list, w = get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jacobs, psf2=None)
 	print(obs_list, psf_list, w)
 
 Observation()
