@@ -50,7 +50,7 @@ def get_exp_list(gals_array, psfs_array, offsets, skys_array, gal_true, gal_jaco
     psf_list=ObsList()
 
     w = []
-    for i in range(len(gal)):
+    for i in range(len(gals_array)):
         im = gals_array[i]
         im_psf = psfs_array[i]
         im_psf2 = psf2[i]
