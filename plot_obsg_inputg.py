@@ -219,9 +219,9 @@ def main(argv):
 
 		## metacal plot
 		dirr=[['v2_7_offset_0', 'v2_7_offset_10'], ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
-				['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], ['v2_7_offset_0', 'v2_7_offset_50'], 
-				['v2_7_offset_0', 'v2_7_offset_60']]
-		angles=[10,20,35,40,45,50,60]
+				['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], ['v2_7_fix70_offset_0', 'v2_7_fix70_offset_45'], 
+				['v2_7_offset_0', 'v2_7_offset_50'], ['v2_7_offset_0', 'v2_7_offset_60']]
+		angles=[10,20,35,40,45,45,50,60]
 		ind=0
 		## g1 difference
 		for d in dirr:
