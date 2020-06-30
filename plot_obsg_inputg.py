@@ -252,7 +252,7 @@ def main(argv):
 			boot=bootstrap(del_g1_neg2,100)
 			boot_mean=np.mean([np.mean(sample) for sample in boot])
 			print(boot_mean)
-			sigma=(np.sum([(sample-boot_mean)**2 for sample in boot])/99)**(1/2)
+			sigma=(np.sum([(np.mean(sample)-boot_mean)**2 for sample in boot])/99)**(1/2)
 			print(sigma)
 			exit()
 			#error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
