@@ -396,8 +396,7 @@ def ngmix_nobootstrap(obs_list,hlr,flux):
         mobs = obsdict[key]
         res_= measure_shape_ngmix(mobs,hlr,flux)
         results_metacal[key] = res_
-        print(results_metacal[key])
-    exit()
+    return results_metacal
         #save_obj(results_metacal, 'metacal_dict_full')
 
 def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
@@ -446,6 +445,23 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
     elif shape=='noboot':
         flux_=get_flux(obs_list)
         res_=ngmix_nobootstrap(obs_list,hlr,flux_)
+        iteration=0
+        for key in metacal_keys:
+            res_tot[iteration]['ind'][i]                       = i
+            #res_tot[iteration]['ra'][i]                        = t['ra']
+            #res_tot[iteration]['dec'][i]                       = t['dec']
+            res_tot[iteration]['g1'][i]                        = g1
+            res_tot[iteration]['g2'][i]                        = g2
+            #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
+            #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
+            res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+            res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+            res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+            res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+            res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
+            iteration+=1
+        print(res_tot)
+        exit()
 
     elif shape=='ngmix':
         res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
