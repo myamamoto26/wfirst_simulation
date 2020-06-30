@@ -461,7 +461,6 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
             res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
             iteration+=1
         print(res_tot)
-        exit()
 
     elif shape=='ngmix':
         res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
@@ -697,6 +696,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
+    exit()
     ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
