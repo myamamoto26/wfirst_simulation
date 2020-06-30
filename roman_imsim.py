@@ -565,11 +565,11 @@ def main(argv):
         if i_gal%2 == 0:
             g1=0.02
             g2=0
-            gal_model = Model.draw_galaxy().shear(g1=g1,g2=g2)
+            gal_model = profile.draw_galaxy().shear(g1=g1,g2=g2)
         else:
             g1=-0.02
             g2=0
-            gal_model = Model.draw_galaxy().shear(g1=g1,g2=g2)
+            gal_model = profile.draw_galaxy().shear(g1=g1,g2=g2)
         print(gal_model)
         exit()
 
