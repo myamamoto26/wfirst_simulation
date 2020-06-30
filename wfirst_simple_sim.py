@@ -494,9 +494,12 @@ def main(argv):
 
     ## variable arguments
     gal_num = int(sys.argv[1])
-    galaxy_model = sys.argv[2]
-    PSF_model = sys.argv[3]
-    shape=sys.argv[4]
+    PA1 = int(sys.argv[2])
+    PA2 = int(sys.argv[3])
+    galaxy_model = sys.argv[4]
+    PSF_model = sys.argv[5]
+    shape = sys.argv[6]
+    output_name = sys.argv[7]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -512,8 +515,8 @@ def main(argv):
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
-    position_angle1=20 #degrees
-    position_angle2=65 #degrees
+    position_angle1=PA1 #degrees
+    position_angle2=PA2 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     wcs=[wcs1, wcs2]
@@ -711,7 +714,7 @@ def main(argv):
                     res_tot[j][col]+=res_[j][col]
 
     if rank==0:
-        dirr='v2_7_offset_20_redo'
+        dirr=output_name
         for i in range(len(res_tot)):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
