@@ -14,6 +14,7 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 import pylab
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
+from astropy.stats import bootstrap
 
 ## import functions from other files
 from selection_effects_analysis import residual_bias, residual_bias_correction
@@ -180,6 +181,7 @@ def main(argv):
 
 	elif sys.argv[1]=='ngmix':  
 		## ngmix plot
+		"""
 		dirr=[['v2_11_offset_0', 'v2_11_offset_10'], ['v2_11_offset_0', 'v2_11_offset_20'], ['v2_11_offset_0', 'v2_11_offset_35'], 
 				['v2_11_offset_0', 'v2_11_offset_45']]
 		angles=[10,20,35,45]
@@ -216,11 +218,11 @@ def main(argv):
 			l4,=ax1.plot(angles[ind], mean_g1[1], 'o', c='g')
 			ax1.errorbar(angles[ind], mean_g1[1], yerr=error_g1[1], c='g', fmt='o') 
 			ind+=1
-
+		"""
 		## metacal plot
-		dirr=[['v2_7_offset_0', 'v2_7_offset_10'], ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
-				['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], 
-				['v2_7_offset_0', 'v2_7_offset_50'], ['v2_7_offset_0', 'v2_7_offset_60']]
+		dirr=[['v2_7_offset_0', 'v2_7_offset_10']]#, ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
+		#		['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], 
+		#		['v2_7_offset_0', 'v2_7_offset_50'], ['v2_7_offset_0', 'v2_7_offset_60']]
 		angles=[10,20,35,40,45,50,60]
 		ind=0
 		## g1 difference
@@ -247,7 +249,10 @@ def main(argv):
 			del_g2_neg0 = g_neg0[1] - g_neg0[0]
 
 			mean_g1=[np.mean(del_g1_neg2), np.mean(del_g1_pos2)]
-			error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
+			boot=bootstrap(del_g1_neg2,100)
+			print(boot)
+			exit()
+			#error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
 
 			l1,=ax1.plot(angles[ind], mean_g1[0], 'o', c='r')
 			ax1.errorbar(angles[ind], mean_g1[0], yerr=error_g1[0], c='r', fmt='o')
