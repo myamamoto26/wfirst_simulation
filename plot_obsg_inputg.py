@@ -220,9 +220,9 @@ def main(argv):
 			ind+=1
 		"""
 		## metacal plot
-		dirr=[['v2_7_offset_0', 'v2_7_offset_10']]#, ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
-		#		['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], 
-		#		['v2_7_offset_0', 'v2_7_offset_50'], ['v2_7_offset_0', 'v2_7_offset_60']]
+		dirr=[['v2_7_offset_0', 'v2_7_offset_10'], ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
+				['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], 
+				['v2_7_offset_0', 'v2_7_offset_50'], ['v2_7_offset_0', 'v2_7_offset_60']]
 		angles=[10,20,35,40,45,50,60]
 		ind=0
 		## g1 difference
@@ -249,18 +249,15 @@ def main(argv):
 			del_g2_neg0 = g_neg0[1] - g_neg0[0]
 
 			mean_g1=[np.mean(del_g1_neg2), np.mean(del_g1_pos2)]
-			boot=bootstrap(del_g1_neg2,100)
-			boot_mean=np.mean([np.mean(sample) for sample in boot])
-			print(boot_mean)
-			sigma=(np.sum([(np.mean(sample)-boot_mean)**2 for sample in boot])/99)**(1/2)
-			print(sigma)
-			exit()
+			boot=[bootstrap(del_g1_neg2,100), bootstrap(del_g1_pos2,100)
+			boot_mean=[np.mean([np.mean(sample) for sample in boot[0]]), np.mean([np.mean(sample) for sample in boot[1]])]
+			sigma=[(np.sum([(np.mean(sample)-boot_mean[0])**2 for sample in boot[0]])/99)**(1/2), (np.sum([(np.mean(sample)-boot_mean[1])**2 for sample in boot[1]])/99)**(1/2)]
 			#error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
 
 			l1,=ax1.plot(angles[ind], mean_g1[0], 'o', c='r')
-			ax1.errorbar(angles[ind], mean_g1[0], yerr=error_g1[0], c='r', fmt='o')
+			ax1.errorbar(angles[ind], mean_g1[0], yerr=sigma[0], c='r', fmt='o')
 			l2,=ax1.plot(angles[ind], mean_g1[1], 'o', c='m')
-			ax1.errorbar(angles[ind], mean_g1[1], yerr=error_g1[1], c='m', fmt='o') 
+			ax1.errorbar(angles[ind], mean_g1[1], yerr=sigma[1], c='m', fmt='o') 
 			ind+=1
 		ax1.set_xlabel('Angle offsets', fontsize=16)
 		ax1.set_ylabel("\u0394\u03B3", fontsize=16)
@@ -272,7 +269,7 @@ def main(argv):
 		plt.legend(loc=5, fontsize=10)
 		ax1.tick_params(labelsize=10)
 		ax1.axhline(y=0,ls='--')
-		plt.savefig('ngmixmcal_delta_g.png')
+		plt.savefig('ngmixmcal_delta_g_booterr.png')
 		plt.show()
 
 if __name__ == "__main__":
