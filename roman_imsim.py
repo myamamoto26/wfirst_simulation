@@ -197,7 +197,7 @@ class Pointing:
                                     date        = self.date,
                                     SCAs        = self.sca,
                                     PA_is_FPA   = True
-                                    )[sca]
+                                    )[self.sca]
 
         sky_level = wfirst.getSkyLevel(self.bpass, 
                                                 world_pos=WCS.toWorld(
@@ -477,7 +477,7 @@ def main(argv):
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
     dither_i = 22535
-    use_SCA = 1
+    SCA = 1
     filter_ = 'H158'
     stamp_size = 32
     hlr = 1.0
@@ -506,11 +506,11 @@ def main(argv):
     elif shape=='ngmix':
         res_tot=[res_noshear]
 
-    PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
+    PSF = getPSF(PSF_model, SCA, filter_, bpass)
     position_angle1=PA1 #degrees
     position_angle2=PA2 #degrees
-    pointing1=Pointing(dither_i, use_SCA, filter_, stamp_size, position_angle1)
-    pointing2=Pointing(dither_i, use_SCA, filter_, stamp_size, position_angle2)
+    pointing1=Pointing(dither_i, SCA, filter_, stamp_size, position_angle1)
+    pointing2=Pointing(dither_i, SCA, filter_, stamp_size, position_angle2)
     wcs1, sky_level1 = pointing1.get_wcs()
     wcs2, sky_level2 = pointing2.get_wcs()
     wcs=[wcs1, wcs2]
