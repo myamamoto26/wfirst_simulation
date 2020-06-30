@@ -203,7 +203,7 @@ class Pointing:
                                                 world_pos=WCS.toWorld(
                                                             galsim.PositionI(old_div(wfirst.n_pix,2),
                                                                             old_div(wfirst.n_pix,2))), 
-                                                date=date)
+                                                date=self.date)
         sky_level *= (1.0 + wfirst.stray_light_fraction)*(wfirst.pixel_scale)**2 # adds stray light and converts to photons/cm^2
         sky_level *= self.stamp_size*self.stamp_size
 
