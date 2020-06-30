@@ -250,7 +250,7 @@ def main(argv):
 
 			mean_g1=[np.mean(del_g1_neg2), np.mean(del_g1_pos2)]
 			boot=bootstrap(del_g1_neg2,100)
-			print(boot)
+			print(len(boot), len(boot[0]))
 			exit()
 			#error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
 
