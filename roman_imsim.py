@@ -230,22 +230,22 @@ class Model:
         return psf
 
     def make_sed_model(self, model, sed):
-    """
-    Modifies input SED to be at appropriate redshift and magnitude, then applies it to the object model.
+        """
+        Modifies input SED to be at appropriate redshift and magnitude, then applies it to the object model.
 
-    Input
-    model : Galsim object model
-    sed   : Template SED for object
-    flux  : flux fraction in this sed
-    """
+        Input
+        model : Galsim object model
+        sed   : Template SED for object
+        flux  : flux fraction in this sed
+        """
 
-    # Apply correct flux from magnitude for filter bandpass
-    sed_ = sed.atRedshift(0) #picking z=0 for now. 
-    target_mag = sed_.calculateMagnitude(bpass)
-    sed_ = sed_.withMagnitude(target_mag, bpass)
+        # Apply correct flux from magnitude for filter bandpass
+        sed_ = sed.atRedshift(0) #picking z=0 for now. 
+        target_mag = sed_.calculateMagnitude(bpass)
+        sed_ = sed_.withMagnitude(target_mag, bpass)
 
-    # Return model with SED applied
-    return model * sed_
+        # Return model with SED applied
+        return model * sed_
 
     def flux_model(self):
         tot_mag = np.random.choice(self.cat)
