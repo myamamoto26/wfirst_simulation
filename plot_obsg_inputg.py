@@ -220,6 +220,7 @@ def main(argv):
 			ind+=1
 		"""
 		## metacal plot
+		fig,ax1=plt.subplots(figsize=(10,8))
 		dirr=[['v2_7_offset_0', 'v2_7_offset_10'], ['v2_7_offset_0', 'v2_7_offset_20'], ['v2_7_offset_0', 'v2_7_offset_35'],
 				['v2_7_offset_0', 'v2_7_offset_40'], ['v2_7_offset_0', 'v2_7_offset_45'], 
 				['v2_7_offset_0', 'v2_7_offset_50'], ['v2_7_offset_0', 'v2_7_offset_60']]
