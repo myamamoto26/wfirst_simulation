@@ -385,7 +385,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     fitter            = runner.get_fitter()
 
     res_ = fitter.get_result()
-    res_['flux'] = res_['pars'][5]
+    #res_['flux'] = res_['pars'][5]
     return res_
 
 def ngmix_nobootstrap(obs_list,hlr,flux):
@@ -397,7 +397,6 @@ def ngmix_nobootstrap(obs_list,hlr,flux):
         res_= measure_shape_ngmix(mobs,hlr,flux)
         results_metacal[key] = res_
     return results_metacal
-        #save_obj(results_metacal, 'metacal_dict_full')
 
 def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
@@ -460,7 +459,6 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
             res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
             res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
             iteration+=1
-        print(res_tot)
 
     elif shape=='ngmix':
         res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
@@ -696,6 +694,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_image)
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
+    print(res_tot)
     exit()
     ## send and receive objects from one processor to others
     if rank!=0:
