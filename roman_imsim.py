@@ -265,7 +265,7 @@ class Model:
         #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
         #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
         #gal_model = galsim.Add([gal_model, knots])
-        self.sed=flux_model(self)
+        self.sed=self.flux_model()
         gal_model = self.sed * gal_model
 
         return gal_model
