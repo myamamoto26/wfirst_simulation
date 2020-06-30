@@ -385,7 +385,7 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     fitter            = runner.get_fitter()
 
     res_ = fitter.get_result()
-    #res_['flux'] = res_['pars'][5]
+    res_['flux'] = res_['pars'][5]
     return res_
 
 def ngmix_nobootstrap(obs_list,hlr,flux):
