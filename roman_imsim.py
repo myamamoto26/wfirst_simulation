@@ -209,6 +209,67 @@ class Pointing:
 
         return WCS, sky_level
 
+class Model:
+    def __init__(self, cat, gal_prof, psf_prof, sca, filter_, bpass):
+        self.cat=cat
+        self.gal_prof=gal_prof
+        self.psf_prof=psf_prof
+        self.sca=sca
+        self.filter_=filter_
+        self.bpass=bpass
+
+
+    def getPSF(self):
+    
+        if self.psf_prof == "Gaussian":
+            psf = galsim.Gaussian(fwhm=0.178)
+        #elif PSF_model == 'exponential':
+        elif self.psf_prof == 'wfirst':
+            psf = wfirst.getPSF(self.sca, self.filter_, SCA_pos=None, approximate_struts=True, wavelength=self.bpass.effective_wavelength, high_accuracy=False)
+
+        return psf
+
+    def make_sed_model(self, model, sed):
+    """
+    Modifies input SED to be at appropriate redshift and magnitude, then applies it to the object model.
+
+    Input
+    model : Galsim object model
+    sed   : Template SED for object
+    flux  : flux fraction in this sed
+    """
+
+    # Apply correct flux from magnitude for filter bandpass
+    sed_ = sed.atRedshift(0) #picking z=0 for now. 
+    target_mag = sed_.calculateMagnitude(bpass)
+    sed_ = sed_.withMagnitude(target_mag, bpass)
+
+    # Return model with SED applied
+    return model * sed_
+
+    def flux_model(self):
+        tot_mag = np.random.choice(self.cat)
+        sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
+        sed = self.sed.withMagnitude(tot_mag, self.bpass)
+        #flux = sed.calculateFlux(self.bpass)
+
+        return sed
+
+    def draw_galaxy(self):
+        if self.gal_prof=='Gaussian':
+            gal_model = galsim.Gaussian(half_light_radius=hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
+        elif self.gal_prof=='exponential':
+            gal_model = galsim.Exponential(half_light_radius=hlr, flux=1.)
+        ## making galaxy sed
+        #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
+        #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
+        #gal_model = galsim.Add([gal_model, knots])
+        self.sed=flux_model(self)
+        gal_model = self.sed * gal_model
+
+        return gal_model
+
+
 def add_background(im,  sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False):
     sky_stamp = galsim.Image(bounds=b, scale=wfirst.pixel_scale)
     #local_wcs.makeSkyImage(sky_stamp, sky_level)
@@ -226,16 +287,6 @@ def add_background(im,  sky_level, b, thermal_backgrounds=None, filter_='H158', 
     
     return im,sky_stamp
 
-def getPSF(PSF_model, sca, filter_, bpass):
-    
-    if PSF_model == "Gaussian":
-        psf = galsim.Gaussian(fwhm=0.178)
-    #elif PSF_model == 'exponential':
-    elif PSF_model == 'wfirst':
-        psf = wfirst.getPSF(sca, filter_, SCA_pos=None, approximate_struts=True, wavelength=bpass.effective_wavelength, high_accuracy=False)
-
-    return psf
-
 def add_poisson_noise(rng, im, sky_image, phot=False):
 
     noise = galsim.PoissonNoise(rng)
@@ -248,24 +299,6 @@ def add_poisson_noise(rng, im, sky_image, phot=False):
         im.addNoise(noise)
 
     return im
-
-def make_sed_model(model, sed, filter_, bpass):
-    """
-    Modifies input SED to be at appropriate redshift and magnitude, then applies it to the object model.
-
-    Input
-    model : Galsim object model
-    sed   : Template SED for object
-    flux  : flux fraction in this sed
-    """
-
-    # Apply correct flux from magnitude for filter bandpass
-    sed_ = sed.atRedshift(0) #picking z=0 for now. 
-    target_mag = sed_.calculateMagnitude(bpass)
-    sed_ = sed_.withMagnitude(target_mag, bpass)
-
-    # Return model with SED applied
-    return model * sed_
 
 ## metacal shapemeasurement
 def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
@@ -488,8 +521,8 @@ def main(argv):
     gal_num = int(sys.argv[1])
     PA1 = int(sys.argv[2])
     PA2 = int(sys.argv[3])
-    galaxy_model = sys.argv[4]
-    PSF_model = sys.argv[5]
+    gal_prof = sys.argv[4]
+    psf_prof = sys.argv[5]
     shape = sys.argv[6]
     output_name = sys.argv[7]
 
@@ -506,7 +539,6 @@ def main(argv):
     elif shape=='ngmix':
         res_tot=[res_noshear]
 
-    PSF = getPSF(PSF_model, SCA, filter_, bpass)
     position_angle1=PA1 #degrees
     position_angle2=PA2 #degrees
     pointing1=Pointing(dither_i, SCA, filter_, stamp_size, position_angle1)
@@ -515,9 +547,9 @@ def main(argv):
     wcs2, sky_level2 = pointing2.get_wcs()
     wcs=[wcs1, wcs2]
     sky_level=[sky_level1, sky_level2]
-    print(wcs)
-    exit()
-    
+
+    profile=Model(cat, gal_prof, psf_model, SCA, filter_, bpass)
+    PSF = profile.getPSF()
 
     t0 = time.time()
     for i_gal in range(gal_num):
@@ -530,46 +562,16 @@ def main(argv):
         gal_model = None
         st_model = None
 
-        if galaxy_model == "Gaussian":
-            tot_mag = np.random.choice(cat)
-            sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
-            sed = sed.withMagnitude(tot_mag, bpass)
-            flux = sed.calculateFlux(bpass)
-            gal_model = galsim.Gaussian(half_light_radius=hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
-            ## making galaxy sed
-            #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
-            #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
-            #gal_model = galsim.Add([gal_model, knots])
-            gal_model = sed * gal_model
-            ## shearing
-            if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0.02,g2=0)
-                g1=0.02
-                g2=0
-            else:
-                gal_model = gal_model.shear(g1=-0.02,g2=0)
-                g1=-0.02
-                g2=0
-        elif galaxy_model == "exponential":
-            tot_mag = np.random.choice(cat)
-            sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
-            sed = sed.withMagnitude(tot_mag, bpass)
-            flux = sed.calculateFlux(bpass)
-            gal_model = galsim.Exponential(half_light_radius=hlr, flux=1.)
-            ## making galaxy sed ## random knots should be used for bdf model
-            #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=1.)
-            #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
-            #gal_model = galsim.Add([gal_model, knots])
-            gal_model = sed * gal_model
-            ## shearing
-            if i_gal%2 == 0:
-                gal_model = gal_model.shear(g1=0,g2=0.02)
-                g1=0
-                g2=0.02
-            else:
-                gal_model = gal_model.shear(g1=0,g2=-0.02)
-                g1=0
-                g2=-0.02
+        if i_gal%2 == 0:
+            g1=0.02
+            g2=0
+            gal_model = Model.draw_galaxy().shear(g1=g1,g2=g2)
+        else:
+            g1=-0.02
+            g2=0
+            gal_model = Model.draw_galaxy().shear(g1=g1,g2=g2)
+        print(gal_model)
+        exit()
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
 
