@@ -251,7 +251,7 @@ class Model:
     def flux_model(self):
         tot_mag = np.random.choice(self.cat)
         sed = galsim.SED('CWW_E_ext.sed', 'A', 'flambda')
-        sed = self.sed.withMagnitude(tot_mag, self.bpass)
+        sed = sed.withMagnitude(tot_mag, self.bpass)
         #flux = sed.calculateFlux(self.bpass)
 
         return sed
