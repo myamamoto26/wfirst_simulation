@@ -548,7 +548,7 @@ def main(argv):
     wcs=[wcs1, wcs2]
     sky_level=[sky_level1, sky_level2]
 
-    profile=Model(cat, gal_prof, psf_model, SCA, filter_, bpass)
+    profile=Model(cat, gal_prof, psf_prof, SCA, filter_, bpass)
     PSF = profile.getPSF()
 
     t0 = time.time()
