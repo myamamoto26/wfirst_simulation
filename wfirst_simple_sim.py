@@ -388,6 +388,18 @@ def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
     res_['flux'] = res_['pars'][5]
     return res_
 
+def ngmix_nobootstrap(obs_list,hlr,flux):
+    mcal_keys=['noshear', '1p', '1m', '2p', '2m']
+    obsdict = ngmix.metacal.get_all_metacal(obs_list, psf='gauss')
+    results_metacal = {}
+    for key in mcal_keys:
+        mobs = obsdict[key]
+        res_= measure_shape_ngmix(mobs,hlr,flux)
+        results_metacal[key] = res_
+        print(results_metacal[key])
+    exit()
+        #save_obj(results_metacal, 'metacal_dict_full')
+
 def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
     #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
 
@@ -431,6 +443,9 @@ def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2
             res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
             res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
             iteration+=1
+    elif shape=='noboot':
+        flux_=get_flux(obs_list)
+        res_=ngmix_nobootstrap(obs_list,hlr,flux_)
 
     elif shape=='ngmix':
         res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
@@ -478,12 +493,14 @@ def main(argv):
     res_2m = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
     if shape=='metacal':
         res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
+    elif shape=='noboot'+
+        res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
     elif shape=='ngmix':
         res_tot=[res_noshear]
 
     PSF = getPSF(PSF_model, use_SCA, filter_, bpass)
     position_angle1=20 #degrees
-    position_angle2=40 #degrees
+    position_angle2=65 #degrees
     wcs1, sky_level1 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle1)
     wcs2, sky_level2 = get_wcs(dither_i, use_SCA, filter_, stamp_size, position_angle2)
     wcs=[wcs1, wcs2]
