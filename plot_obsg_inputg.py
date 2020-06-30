@@ -250,7 +250,7 @@ def main(argv):
 			del_g2_neg0 = g_neg0[1] - g_neg0[0]
 
 			mean_g1=[np.mean(del_g1_neg2), np.mean(del_g1_pos2)]
-			boot=[bootstrap(del_g1_neg2,100), bootstrap(del_g1_pos2,100)]
+			boot=[bootstrap(del_g1_neg2,500), bootstrap(del_g1_pos2,500)]
 			boot_mean=[np.mean([np.mean(sample) for sample in boot[0]]), np.mean([np.mean(sample) for sample in boot[1]])]
 			sigma=[(np.sum([(np.mean(sample)-boot_mean[0])**2 for sample in boot[0]])/99)**(1/2), (np.sum([(np.mean(sample)-boot_mean[1])**2 for sample in boot[1]])/99)**(1/2)]
 			#error_g1=[np.std(del_g1_neg2)/np.sqrt(len(del_g1_neg2)), np.std(del_g1_pos2)/np.sqrt(len(del_g1_pos2))]
