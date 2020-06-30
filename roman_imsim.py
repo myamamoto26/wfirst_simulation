@@ -210,13 +210,14 @@ class Pointing:
         return WCS, sky_level
 
 class Model:
-    def __init__(self, cat, gal_prof, psf_prof, sca, filter_, bpass):
+    def __init__(self, cat, gal_prof, psf_prof, sca, filter_, bpass,hlr):
         self.cat=cat
         self.gal_prof=gal_prof
         self.psf_prof=psf_prof
         self.sca=sca
         self.filter_=filter_
         self.bpass=bpass
+        self.hlr=hlr
 
 
     def getPSF(self):
@@ -257,9 +258,9 @@ class Model:
 
     def draw_galaxy(self):
         if self.gal_prof=='Gaussian':
-            gal_model = galsim.Gaussian(half_light_radius=hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
+            gal_model = galsim.Gaussian(half_light_radius=self.hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
         elif self.gal_prof=='exponential':
-            gal_model = galsim.Exponential(half_light_radius=hlr, flux=1.)
+            gal_model = galsim.Exponential(half_light_radius=self.hlr, flux=1.)
         ## making galaxy sed
         #knots = galsim.RandomKnots(10, half_light_radius=1.3, flux=100)
         #knots = make_sed_model(galsim.ChromaticObject(knots), galaxy_sed_n, filter_, bpass)
@@ -548,7 +549,7 @@ def main(argv):
     wcs=[wcs1, wcs2]
     sky_level=[sky_level1, sky_level2]
 
-    profile=Model(cat, gal_prof, psf_prof, SCA, filter_, bpass)
+    profile=Model(cat, gal_prof, psf_prof, SCA, filter_, bpass, hlr)
     PSF = profile.getPSF()
 
     t0 = time.time()
