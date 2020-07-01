@@ -435,209 +435,213 @@ class Image:
 
         return gal_stamp, psf_stamp
 
+class shape_measurement:
+
+    def __init__(self, cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot):
+        self.cat=cat
+        self.gals=gals
+        self.psfs=psfs
+        self.skys=skys
+        self.offsets=offsets
+        self.i_gal=i_gal
+        self.g1=g1
+        self.g2=g2
+        self.hlr=hlr
+        self.shape=shape
+        self.res_tot=res_tot
+
+    def get_exp_list(self, psf2=None):
+
+        if psf2 is None:
+            psf2 = self.psfs
+
+        obs_list=ObsList()
+        psf_list=ObsList()
+
+        w = []
+        for i in range(len(self.gals)):
+            im = self.gals[i].array
+            im_psf = self.psfs[i].array
+            im_psf2 = psf2[i].array
+            weight = 1/self.skys[i].array
+
+            jacob = self.gals[i].wcs.jacobian()
+            dx = self.offsets[i].x
+            dy = self.offsets[i].y
+            
+            gal_jacob = Jacobian(
+                row=self.gals[i].true_center.y+dy,
+                col=self.gals[i].true_center.x+dx,
+                dvdrow=jacob.dvdy,
+                dvdcol=jacob.dvdx,
+                dudrow=jacob.dudy,
+                dudcol=jacob.dudx)
+            psf_jacob2 = gal_jacob
+
+            mask = np.where(weight!=0)
+            w.append(np.mean(weight[mask]))
+            noise = old_div(np.ones_like(weight),w[-1])
+
+            psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
+            psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
+            obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
+            obs.set_noise(noise)
+
+            obs_list.append(obs)
+            psf_list.append(psf_obs2)
+
+        return obs_list,psf_list,np.array(w)
 
 
-## metacal shapemeasurement
-def get_exp_list(gal, psf, offsets, sky_stamp, psf2=None):
-    #def get_exp_list(gal, psf, sky_stamp, psf2=None):
+    def shape_measurement_metacal(self, obs_list, metacal_pars, flux=1000.0, fracdev=None, use_e=None):
+        T = self.hlr
+        pix_range = old_div(galsim.wfirst.pixel_scale,10.)
+        e_range = 0.1
+        fdev = 1.
+        def pixe_guess(n):
+            return 2.*n*np.random.random() - n
 
-    if psf2 is None:
-        psf2 = psf
+        cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
+        gp = ngmix.priors.GPriorBA(0.3)
+        hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
+        fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
+        fluxp = ngmix.priors.FlatPrior(0, 1.0e5)
 
-    obs_list=ObsList()
-    psf_list=ObsList()
+        prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
+        guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
 
-    w = []
-    for i in range(len(gal)):
-        im = gal[i].array
-        im_psf = psf[i].array
-        im_psf2 = psf2[i].array
-        weight = 1/sky_stamp[i].array
+        boot = ngmix.bootstrap.MaxMetacalBootstrapper(obs_list)
+        psf_model = "gauss"
+        gal_model = "gauss"
 
-        jacob = gal[i].wcs.jacobian()
-        dx = offsets[i].x
-        dy = offsets[i].y
-        
-        gal_jacob = Jacobian(
-            row=gal[i].true_center.y+dy,
-            col=gal[i].true_center.x+dx,
-            dvdrow=jacob.dvdy,
-            dvdcol=jacob.dvdx,
-            dudrow=jacob.dudy,
-            dudcol=jacob.dudx)
-        #gal_jacob = Jacobian(
-        #    row=gal[i].true_center.x+dx,
-        #    col=gal[i].true_center.y+dy,
-        #    dvdrow=jacob.dudx,
-        #    dvdcol=jacob.dudy,
-        #    dudrow=jacob.dvdx,
-        #    dudcol=jacob.dvdy)
-        psf_jacob2 = gal_jacob
+        lm_pars={'maxfev':2000, 'xtol':5.0e-5, 'ftol':5.0e-5}
+        max_pars={'method': 'lm', 'lm_pars':lm_pars}
 
-        mask = np.where(weight!=0)
-        w.append(np.mean(weight[mask]))
-        noise = old_div(np.ones_like(weight),w[-1])
+        Tguess=T**2/(2*np.log(2))
+        ntry=2
+        boot.fit_metacal(psf_model, gal_model, max_pars, Tguess, prior=prior, ntry=ntry, metacal_pars=metacal_pars) 
+        res_ = boot.get_metacal_result()
 
-        psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
-        psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
-        obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
-        obs.set_noise(noise)
+        return res_
 
-        obs_list.append(obs)
-        psf_list.append(psf_obs2)
+    def measure_shape_ngmix(self, obs_list, flux=1000.0, model='gauss'):
+        T = self.hlr
+        pix_range = old_div(galsim.wfirst.pixel_scale,10.)
+        e_range = 0.1
+        fdev = 1.
+        def pixe_guess(n):
+            return 2.*n*np.random.random() - n
 
-    #print(obs_list)
-    return obs_list,psf_list,np.array(w)
+        # possible models are 'exp','dev','bdf' galsim.wfirst.pixel_scale
+        cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
+        gp = ngmix.priors.GPriorBA(0.3)
+        hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
+        fracdevp = ngmix.priors.TruncatedGaussian(0.5, 0.5, -0.5, 1.5)
+        fluxp = ngmix.priors.FlatPrior(0, 1.0e5) # not sure what lower bound should be in general
 
+        prior = joint_prior.PriorBDFSep(cp, gp, hlrp, fracdevp, fluxp)
+        # center1 + center2 + shape + hlr + fracdev + fluxes for each object
+        # guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,0.5+pixe_guess(fdev),100.])
+        guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,pixe_guess(fdev),300.])
 
-def shape_measurement_metacal(obs_list, metacal_pars, T, flux=1000.0, fracdev=None, use_e=None):
-    pix_range = old_div(galsim.wfirst.pixel_scale,10.)
-    e_range = 0.1
-    fdev = 1.
-    def pixe_guess(n):
-        return 2.*n*np.random.random() - n
+        guesser           = R50FluxGuesser(T,flux)
+        ntry              = 5
+        runner            = GalsimRunner(obs_list,model,guesser=guesser)
+        runner.go(ntry=ntry)
+        fitter            = runner.get_fitter()
 
-    cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
-    gp = ngmix.priors.GPriorBA(0.3)
-    hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
-    fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
-    fluxp = ngmix.priors.FlatPrior(0, 1.0e5)
+        res_ = fitter.get_result()
+        res_['flux'] = res_['pars'][5]
+        return res_
 
-    prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
-    guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
+    def ngmix_nobootstrap(self, obs_list, flux):
+        mcal_keys=['noshear', '1p', '1m', '2p', '2m']
+        obsdict = ngmix.metacal.get_all_metacal(obs_list, psf='gauss')
+        results_metacal = {}
+        for key in mcal_keys:
+            mobs = obsdict[key]
+            res_= self.measure_shape_ngmix(mobs,flux)
+            results_metacal[key] = res_
+        return results_metacal
 
-    boot = ngmix.bootstrap.MaxMetacalBootstrapper(obs_list)
-    psf_model = "gauss"
-    gal_model = "gauss"
+    def get_coadd_shape(self):
 
-    lm_pars={'maxfev':2000, 'xtol':5.0e-5, 'ftol':5.0e-5}
-    max_pars={'method': 'lm', 'lm_pars':lm_pars}
+        def get_flux(obj):
+            flux=0.
+            for obs in obj:
+                flux += obs.image.sum()
+            flux /= len(obj)
+            if flux<0:
+                flux = 10.
+            return flux
 
-    Tguess=T**2/(2*np.log(2))
-    ntry=2
-    boot.fit_metacal(psf_model, gal_model, max_pars, Tguess, prior=prior, ntry=ntry, metacal_pars=metacal_pars) 
-    res_ = boot.get_metacal_result()
+        #truth = cat
+        #res = np.zeros(len(gals), dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
 
-    return res_
+        metacal_pars={'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
+        metacal_keys=['noshear', '1p', '1m', '2p', '2m']
 
-def measure_shape_ngmix(obs_list,T,flux=1000.0,model='gauss'):
-        
-    pix_range = old_div(galsim.wfirst.pixel_scale,10.)
-    e_range = 0.1
-    fdev = 1.
-    def pixe_guess(n):
-        return 2.*n*np.random.random() - n
+        #for i in range(len(gals)):
+        #t = truth[i]
+        #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
+        obs_list,psf_list,w = self.get_exp_list(self.gals, self.psfs, self.offsets, self.skys, psf2=None)
+        #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
+        #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+        if self.shape=='metacal':
+            res_ = self.shape_measurement_metacal(obs_list, metacal_pars, flux=get_flux(obs_list), fracdev=None, use_e=None)
 
-    # possible models are 'exp','dev','bdf' galsim.wfirst.pixel_scale
-    cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
-    gp = ngmix.priors.GPriorBA(0.3)
-    hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
-    fracdevp = ngmix.priors.TruncatedGaussian(0.5, 0.5, -0.5, 1.5)
-    fluxp = ngmix.priors.FlatPrior(0, 1.0e5) # not sure what lower bound should be in general
+            iteration=0
+            for key in metacal_keys:
+                res_tot[iteration]['ind'][i]                       = self.i_gal
+                #res_tot[iteration]['ra'][i]                        = t['ra']
+                #res_tot[iteration]['dec'][i]                       = t['dec']
+                res_tot[iteration]['g1'][i]                        = self.g1
+                res_tot[iteration]['g2'][i]                        = self.g2
+                #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
+                #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
 
-    prior = joint_prior.PriorBDFSep(cp, gp, hlrp, fracdevp, fluxp)
-    # center1 + center2 + shape + hlr + fracdev + fluxes for each object
-    # guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,0.5+pixe_guess(fdev),100.])
-    guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,pixe_guess(fdev),300.])
+                res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+                res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+                res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+                res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+                res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
+                iteration+=1
+        elif self.shape=='noboot':
+            flux_ = get_flux(obs_list)
+            res_ = self.ngmix_nobootstrap(obs_list,flux_)
+            iteration=0
+            for key in metacal_keys:
+                res_tot[iteration]['ind'][i]                       = self.i_gal
+                #res_tot[iteration]['ra'][i]                        = t['ra']
+                #res_tot[iteration]['dec'][i]                       = t['dec']
+                res_tot[iteration]['g1'][i]                        = self.g1
+                res_tot[iteration]['g2'][i]                        = self.g2
+                #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
+                #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
+                res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+                res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+                res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+                res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+                res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
+                iteration+=1
 
-    guesser           = R50FluxGuesser(T,flux)
-    ntry              = 5
-    runner            = GalsimRunner(obs_list,model,guesser=guesser)
-    runner.go(ntry=ntry)
-    fitter            = runner.get_fitter()
-
-    res_ = fitter.get_result()
-    res_['flux'] = res_['pars'][5]
-    return res_
-
-def ngmix_nobootstrap(obs_list,hlr,flux):
-    mcal_keys=['noshear', '1p', '1m', '2p', '2m']
-    obsdict = ngmix.metacal.get_all_metacal(obs_list, psf='gauss')
-    results_metacal = {}
-    for key in mcal_keys:
-        mobs = obsdict[key]
-        res_= measure_shape_ngmix(mobs,hlr,flux)
-        results_metacal[key] = res_
-    return results_metacal
-
-def get_coadd_shape(cat, gals, psfs, offsets, sky_stamp, i, hlr, res_tot, g1, g2, shape):
-    #def get_coadd_shape(cat, gals, psfs, sky_stamp, i, hlr, res_tot, g1, g2):
-
-    def get_flux(obj):
-        flux=0.
-        for obs in obj:
-            flux += obs.image.sum()
-        flux /= len(obj)
-        if flux<0:
-            flux = 10.
-        return flux
-
-    #truth = cat
-    #res = np.zeros(len(gals), dtype=[('ind', int), ('ra', float), ('dec', float), ('int_e1', float), ('int_e2', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
-
-    metacal_pars={'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
-    metacal_keys=['noshear', '1p', '1m', '2p', '2m']
-
-    #for i in range(len(gals)):
-    #t = truth[i]
-    #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-    obs_list,psf_list,w = get_exp_list(gals,psfs,offsets,sky_stamp,psf2=None)
-    #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
-    #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-    if shape=='metacal':
-        res_ = shape_measurement_metacal(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=None,use_e=None)
-
-        iteration=0
-        for key in metacal_keys:
-            res_tot[iteration]['ind'][i]                       = i
-            #res_tot[iteration]['ra'][i]                        = t['ra']
-            #res_tot[iteration]['dec'][i]                       = t['dec']
-            res_tot[iteration]['g1'][i]                        = g1
-            res_tot[iteration]['g2'][i]                        = g2
+        elif self.shape=='ngmix':
+            flux_=get_flux(obs_list)
+            res_ = self.measure_shape_ngmix(obs_list, flux_, model='gauss')
+            res_tot[0]['ind'][i]                       = self.i_gal
+            #res_tot[iteration]['ra'][i]               = t['ra']
+            #res_tot[iteration]['dec'][i]              = t['dec']
+            res_tot[0]['g1'][i]                        = self.g1
+            res_tot[0]['g2'][i]                        = self.g2
             #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
             #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
+            res_tot[0]['snr'][i]                       = np.copy(res_['s2n_r'])
+            res_tot[0]['flux'][i]                      = np.copy(res_['flux'])
+            res_tot[0]['e1'][i]                        = np.copy(res_['pars'][2])
+            res_tot[0]['e2'][i]                        = np.copy(res_['pars'][3])
+            res_tot[0]['hlr'][i]                       = np.copy(res_['pars'][4])
 
-            res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
-            res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
-            res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
-            res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
-            res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
-            iteration+=1
-    elif shape=='noboot':
-        flux_=get_flux(obs_list)
-        res_=ngmix_nobootstrap(obs_list,hlr,flux_)
-        iteration=0
-        for key in metacal_keys:
-            res_tot[iteration]['ind'][i]                       = i
-            #res_tot[iteration]['ra'][i]                        = t['ra']
-            #res_tot[iteration]['dec'][i]                       = t['dec']
-            res_tot[iteration]['g1'][i]                        = g1
-            res_tot[iteration]['g2'][i]                        = g2
-            #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
-            #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
-            res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
-            res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
-            res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
-            res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
-            res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
-            iteration+=1
-
-    elif shape=='ngmix':
-        res_ = measure_shape_ngmix(obs_list, hlr, model='gauss')
-        res_tot[0]['ind'][i]                       = i
-        #res_tot[iteration]['ra'][i]               = t['ra']
-        #res_tot[iteration]['dec'][i]              = t['dec']
-        res_tot[0]['g1'][i]                        = g1
-        res_tot[0]['g2'][i]                        = g2
-        #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
-        #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
-        res_tot[0]['snr'][i]                       = np.copy(res_['s2n_r'])
-        res_tot[0]['flux'][i]                      = np.copy(res_['flux'])
-        res_tot[0]['e1'][i]                        = np.copy(res_['pars'][2])
-        res_tot[0]['e2'][i]                        = np.copy(res_['pars'][3])
-        res_tot[0]['hlr'][i]                       = np.copy(res_['pars'][4])
-
-    return res_tot
+        return res_tot
 
 def main(argv):
 
@@ -714,8 +718,6 @@ def main(argv):
             pointing=Pointing(dither_i, SCA, filter_, stamp_size, PAs[i], random_angle=False)
             image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center)
 
-            #gal_stamp, psf_stamp = image.make_stamp(sca_ceter)
-
             translation=False
             if translation==True:
                 offset=image.translational_dithering()
@@ -728,9 +730,9 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_stamp)
-        print(gals)
-        exit()
-        res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
+        res_tot = shape_measurement(cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot).get_coadd_shape()
+    print(res_tot)
+    exit()
 
     ## send and receive objects from one processor to others
     if rank!=0:
