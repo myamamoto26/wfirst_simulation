@@ -406,7 +406,7 @@ class Image:
 
     def add_noise(self, rng, gal_stamp):
         self.make_stamp()
-        print(self.gal_stamp)
+
         sigma=wfirst.read_noise
         read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
@@ -415,7 +415,7 @@ class Image:
         gal_stamp = self.add_poisson_noise(rng, im, sky_image=sky_stamp, phot=False)
         #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
         gal_stamp -= sky_stamp
-        print(self.gal_stamp, gal_stamp)
+        print(self.gal_stamp==gal_stamp)
         exit()
 
         return gal_stamp, sky_stamp
