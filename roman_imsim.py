@@ -295,7 +295,7 @@ class Model:
         gal_model  = gal_model.withFlux(flux_)
         gal_model = galsim.Convolve(gal_model, self.getPSF())
 
-        return gal_model
+        return gal_model, g1, g2
 
     def draw_star(self):
         st_model = galsim.DeltaFunction(flux=1.)
@@ -687,21 +687,12 @@ def main(argv):
 
         if i_gal % 100 == 0:
             print('rank', rank, 'object number, ', i_gal)
-
-        """
-        pointing1=Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PA1)
-        pointing2=Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PA2)
-        wcs1, sky_level1 = pointing1.get_wcs()
-        wcs2, sky_level2 = pointing2.get_wcs()
-        wcs=[wcs1, wcs2]
-        sky_level=[sky_level1, sky_level2]
-        """
         
         gal_model = None
         st_model = None
 
         profile=Model(cat, gal_prof, psf_prof, SCA, filter_, bpass, hlr, i_gal)
-        gal_model = profile.draw_galaxy()
+        gal_model, g1, g2 = profile.draw_galaxy()
         st_model = profile.draw_star()
 
         sca_center = Pointing(dither_i, SCA, filter_, stamp_size, PA1, random_angle=False).find_sca_center()
