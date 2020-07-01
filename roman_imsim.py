@@ -702,8 +702,8 @@ def main(argv):
         gal_model = profile.draw_galaxy()
         st_model = profile.draw_star()
 
-        sca_center = Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PA1).find_sca_center()
-        PAs=[PA1,PA2]
+        p = Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PA1)
+        PAs = [PA1,PA2]
         thetas = [PA1*(np.pi/180)*galsim.radians, PA2*(np.pi/180)*galsim.radians]
         offsets = []
         gals = []
