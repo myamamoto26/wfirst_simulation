@@ -324,7 +324,7 @@ class Image:
     def make_stamp(self):
         ra=self.pointing.ra
         dec=self.pointing.dec
-        wcs, sky_level=self.pointing.get_wcs()
+        wcs, self.sky_level=self.pointing.get_wcs()
 
         # Galsim world coordinate object (ra,dec)
         """
@@ -410,7 +410,7 @@ class Image:
         sigma=wfirst.read_noise
         read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
-        im,sky_stamp = self.add_background(gal_stamp, sky_level, self.b, thermal_backgrounds=None, filter_='H158', phot=False)
+        im,sky_stamp = self.add_background(gal_stamp, self.sky_level, self.b, thermal_backgrounds=None, filter_='H158', phot=False)
         #im.addNoise(read_noise)
         gal_stamp = self.add_poisson_noise(rng, im, sky_image=sky_stamp, phot=False)
         #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
