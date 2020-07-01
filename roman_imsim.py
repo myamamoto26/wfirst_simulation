@@ -433,8 +433,6 @@ class Image:
         gal_stamp.wcs=new_wcs
         psf_stamp.wcs=new_wcs
 
-        print(gal_stamp, psf_stamp)
-        exit()
         return gal_stamp, psf_stamp
 
 
@@ -730,6 +728,8 @@ def main(argv):
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
+        print(gals)
+        exit()
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
 
     ## send and receive objects from one processor to others
