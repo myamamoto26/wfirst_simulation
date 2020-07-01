@@ -683,20 +683,12 @@ def main(argv):
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
-            print(gal_stamp, psf_stamp)
-            exit()
-            '''
-            if i_gal==0:
-                gal_stamp.write('mcal_gal_'+str(i)+'.fits')
-                psf_stamp.write('mcal_psf_'+str(i)+'.fits')
-                sky_image.write('mcal_sky_'+str(i)+'.fits')
-            print(gal_stamp.wcs.jacobian(), gal_stamp.true_center, offset)
-            '''
 
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_image)
+        print(gals)
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
     print(res_tot)
     ## send and receive objects from one processor to others
