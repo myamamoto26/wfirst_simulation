@@ -703,6 +703,7 @@ def main(argv):
         st_model = profile.draw_star()
 
         p = Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PA1)
+        sca_center = p.find_sca_center()
         PAs = [PA1,PA2]
         thetas = [PA1*(np.pi/180)*galsim.radians, PA2*(np.pi/180)*galsim.radians]
         offsets = []
@@ -722,7 +723,7 @@ def main(argv):
             if translation==True:
                 offset=image.translational_dithering()
 
-            gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model, sca_ceter)
+            gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model, sca_center)
             gal_stamp, sky_stamp = image.add_noise(rng, sca_center, gal_stamp)
             gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp, sca_center)
 
