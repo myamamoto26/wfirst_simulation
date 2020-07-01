@@ -592,56 +592,56 @@ class shape_measurement:
 
             iteration=0
             for key in metacal_keys:
-                res_tot[iteration]['ind'][i]                       = self.i_gal
+                self.res_tot[iteration]['ind'][i]                       = self.i_gal
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
-                res_tot[iteration]['g1'][i]                        = self.g1
-                res_tot[iteration]['g2'][i]                        = self.g2
+                self.res_tot[iteration]['g1'][i]                        = self.g1
+                self.res_tot[iteration]['g2'][i]                        = self.g2
                 #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
                 #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
 
-                res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
-                res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
-                res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
-                res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
-                res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
+                self.res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+                self.res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+                self.res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+                self.res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+                self.res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
                 iteration+=1
         elif self.shape=='noboot':
             flux_ = get_flux(obs_list)
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
             iteration=0
             for key in metacal_keys:
-                res_tot[iteration]['ind'][i]                       = self.i_gal
+                self.res_tot[iteration]['ind'][i]                       = self.i_gal
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
-                res_tot[iteration]['g1'][i]                        = self.g1
-                res_tot[iteration]['g2'][i]                        = self.g2
+                self.res_tot[iteration]['g1'][i]                        = self.g1
+                self.res_tot[iteration]['g2'][i]                        = self.g2
                 #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
                 #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
-                res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
-                res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
-                res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
-                res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
-                res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
+                self.res_tot[iteration]['snr'][i]                       = np.copy(res_[key]['s2n_r'])
+                self.res_tot[iteration]['flux'][i]                      = np.copy(res_[key]['flux'])
+                self.res_tot[iteration]['e1'][i]                        = np.copy(res_[key]['pars'][2])
+                self.res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
+                self.res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
                 iteration+=1
 
         elif self.shape=='ngmix':
             flux_=get_flux(obs_list)
             res_ = self.measure_shape_ngmix(obs_list, flux_, model='gauss')
-            res_tot[0]['ind'][i]                       = self.i_gal
+            self.res_tot[0]['ind'][i]                       = self.i_gal
             #res_tot[iteration]['ra'][i]               = t['ra']
             #res_tot[iteration]['dec'][i]              = t['dec']
-            res_tot[0]['g1'][i]                        = self.g1
-            res_tot[0]['g2'][i]                        = self.g2
+            self.res_tot[0]['g1'][i]                        = self.g1
+            self.res_tot[0]['g2'][i]                        = self.g2
             #res_tot[iteration]['int_e1'][i]                    = t['int_e1']
             #res_tot[iteration]['int_e2'][i]                    = t['int_e2']
-            res_tot[0]['snr'][i]                       = np.copy(res_['s2n_r'])
-            res_tot[0]['flux'][i]                      = np.copy(res_['flux'])
-            res_tot[0]['e1'][i]                        = np.copy(res_['pars'][2])
-            res_tot[0]['e2'][i]                        = np.copy(res_['pars'][3])
-            res_tot[0]['hlr'][i]                       = np.copy(res_['pars'][4])
+            self.res_tot[0]['snr'][i]                       = np.copy(res_['s2n_r'])
+            self.res_tot[0]['flux'][i]                      = np.copy(res_['flux'])
+            self.res_tot[0]['e1'][i]                        = np.copy(res_['pars'][2])
+            self.res_tot[0]['e2'][i]                        = np.copy(res_['pars'][3])
+            self.res_tot[0]['hlr'][i]                       = np.copy(res_['pars'][4])
 
-        return res_tot
+        return self.res_tot
 
 def main(argv):
 
