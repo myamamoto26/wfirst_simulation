@@ -683,7 +683,8 @@ def main(argv):
             new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
             gal_stamp.wcs=new_wcs
             psf_stamp.wcs=new_wcs
-
+            print(gal_stamp, psf_stamp)
+            exit()
             '''
             if i_gal==0:
                 gal_stamp.write('mcal_gal_'+str(i)+'.fits')
