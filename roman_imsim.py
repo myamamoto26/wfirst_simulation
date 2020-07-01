@@ -189,13 +189,11 @@ class Pointing:
 
         if self.random_angle==False:
             self.pa=self.position_angle * np.pi /180.
-            print(self.pa)
         elif self.random_angle==True:
             random_dir = galsim.UniformDeviate(314)
             self.pa=(self.position_angle*random_dir()) * np.pi /180.
 
     def find_sca_center(self):
-        print(self.pa)
         wcs_ref,sky_ref=self.get_wcs()
         return wcs_ref.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))
 
@@ -311,22 +309,22 @@ class Model:
 
 class Image:
 
-    def __init__(self, i_gal, stamp_size, gal_model, st_model, pointing):
+    def __init__(self, i_gal, stamp_size, gal_model, st_model, pointing, sca_center):
         self.i_gal=i_gal
         self.stamp_size=stamp_size
         self.gal_model=gal_model
         self.st_model=st_model
         self.pointing=pointing
+        self.sca_center=sca_center
 
         self.stamp_size_factor = old_div(int(self.gal_model.getGoodImageSize(wfirst.pixel_scale)), self.stamp_size)
         if self.stamp_size_factor == 0:
             self.stamp_size_factor = 1
 
-    def make_stamp(self, sca_center):
+    def make_stamp(self):
         ra=self.pointing.ra
         dec=self.pointing.dec
-        self.sca_center=sca_center
-        self.wcs, self.sky_level=self.pointing.get_wcs()
+        wcs, sky_level=self.pointing.get_wcs()
 
         # Galsim world coordinate object (ra,dec)
         """
@@ -342,12 +340,12 @@ class Image:
         #                    xmax=xyI.x,
         #                    ymin=1,
         #                    ymax=xyI.y)
-        self.xy = self.wcs.toImage(self.sca_center) # galaxy position 
+        self.xy = wcs.toImage(self.sca_center) # galaxy position 
         xyI = galsim.PositionI(int(self.xy.x), int(self.xy.y))
-        self.b = galsim.BoundsI( xmin=xyI.x-old_div(int(stamp_size_factor*stamp_size),2)+1,
-                            ymin=xyI.y-old_div(int(stamp_size_factor*stamp_size),2)+1,
-                            xmax=xyI.x+old_div(int(stamp_size_factor*stamp_size),2),
-                            ymax=xyI.y+old_div(int(stamp_size_factor*stamp_size),2))
+        self.b = galsim.BoundsI( xmin=xyI.x-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
+                            ymin=xyI.y-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
+                            xmax=xyI.x+old_div(int(self.stamp_size_factor*self.stamp_size),2),
+                            ymax=xyI.y+old_div(int(self.stamp_size_factor*self.stamp_size),2))
         #---------------------------------------#
         # if the image does not use a real wcs. #
         #---------------------------------------#
@@ -356,8 +354,8 @@ class Image:
         #                    ymin=1,
         #                    ymax=int(stamp_size_factor*stamp_size))
 
-        self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
-        self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
+        self.gal_stamp = galsim.Image(self.b, wcs=wcs) #scale=wfirst.pixel_scale)
+        self.psf_stamp = galsim.Image(self.b, wcs=wcs) #scale=wfirst.pixel_scale)
 
     def translational_dithering(self):
         ## translational dithering test
@@ -367,8 +365,8 @@ class Image:
         offset = np.array((dx,dy))
         return offset
 
-    def draw_image(self, gal_model, st_model, sca_center):
-        self.make_stamp(sca_center)
+    def draw_image(self, gal_model, st_model):
+        self.make_stamp()
 
         offset = self.xy-self.gal_stamp.true_center # original galaxy position - stamp center
         gal_model.drawImage(image=self.gal_stamp, offset=offset)
@@ -406,8 +404,8 @@ class Image:
 
         return im
 
-    def add_noise(self, rng, sca_center, gal_stamp):
-        self.make_stamp(sca_center)
+    def add_noise(self, rng, gal_stamp):
+        self.make_stamp()
         print(self.gal_stamp)
         sigma=wfirst.read_noise
         read_noise = galsim.GaussianNoise(rng, sigma=sigma)
@@ -422,8 +420,8 @@ class Image:
 
         return gal_stamp, sky_stamp
 
-    def wcs_approx(self, gal_stamp, psf_stamp, sca_center):
-        self.make_stamp(sca_center)
+    def wcs_approx(self, gal_stamp, psf_stamp):
+        self.make_stamp()
         # set a simple jacobian to the stamps before sending them to ngmix
         # old center of the stamp
         origin_x = gal_stamp.origin.x
@@ -715,7 +713,7 @@ def main(argv):
             psf_stamp=None
 
             pointing=Pointing(dither_i, SCA, filter_, stamp_size, PAs[i], random_angle=False)
-            image=Image(i_gal, stamp_size, gal_model, st_model, pointing)
+            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_ceter)
 
             #gal_stamp, psf_stamp = image.make_stamp(sca_ceter)
 
@@ -723,9 +721,9 @@ def main(argv):
             if translation==True:
                 offset=image.translational_dithering()
 
-            gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model, sca_center)
-            gal_stamp, sky_stamp = image.add_noise(rng, sca_center, gal_stamp)
-            gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp, sca_center)
+            gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
+            gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
+            gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
             offsets.append(offset)
             gals.append(gal_stamp)
