@@ -698,7 +698,6 @@ def main(argv):
             skys.append(sky_image)
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
     print(res_tot)
-    exit()
     ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
