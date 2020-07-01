@@ -171,7 +171,7 @@ def init_gal(gal_dist, gal_sample):
 
 class Pointing:
 
-    def __init__(self, dither_i, sca, filter_, stamp_size, random_angle, position_angle):
+    def __init__(self, dither_i, sca, filter_, stamp_size, random_angle=False, position_angle):
         self.dither_i=dither_i
         self.sca=sca
         self.filter_=filter_
@@ -189,11 +189,13 @@ class Pointing:
 
         if self.random_angle==False:
             self.pa=self.position_angle * np.pi /180.
+            print(self.pa)
         elif self.random_angle==True:
             random_dir = galsim.UniformDeviate(314)
             self.pa=(self.position_angle*random_dir()) * np.pi /180.
 
     def find_sca_center(self):
+        print(self.pa)
         wcs_ref,sky_ref=self.get_wcs()
         return wcs_ref.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))
 
@@ -657,13 +659,12 @@ def main(argv):
 
     ## variable arguments
     gal_num = int(sys.argv[1])
-    random_angle = sys.argv[2]
-    PA1 = int(sys.argv[3])
-    PA2 = int(sys.argv[4])
-    gal_prof = sys.argv[5]
-    psf_prof = sys.argv[6]
-    shape = sys.argv[7]
-    output_name = sys.argv[8]
+    PA1 = int(sys.argv[2])
+    PA2 = int(sys.argv[3])
+    gal_prof = sys.argv[4]
+    psf_prof = sys.argv[5]
+    shape = sys.argv[6]
+    output_name = sys.argv[7]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -702,8 +703,7 @@ def main(argv):
         gal_model = profile.draw_galaxy()
         st_model = profile.draw_star()
 
-        p = Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PA1)
-        sca_center = p.find_sca_center()
+        sca_center = Pointing(dither_i, SCA, filter_, stamp_size, random_angle=False, PA1).find_sca_center()
         PAs = [PA1,PA2]
         thetas = [PA1*(np.pi/180)*galsim.radians, PA2*(np.pi/180)*galsim.radians]
         offsets = []
@@ -714,7 +714,7 @@ def main(argv):
             gal_stamp=None
             psf_stamp=None
 
-            pointing=Pointing(dither_i, SCA, filter_, stamp_size, random_angle, PAs[i])
+            pointing=Pointing(dither_i, SCA, filter_, stamp_size, random_angle=False, PAs[i])
             image=Image(i_gal, stamp_size, gal_model, st_model, pointing)
 
             #gal_stamp, psf_stamp = image.make_stamp(sca_ceter)
