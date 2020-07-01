@@ -727,7 +727,7 @@ def main(argv):
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
-            skys.append(sky_image)
+            skys.append(sky_stamp)
         print(gals)
         exit()
         res_tot = get_coadd_shape(cat, gals, psfs, offsets, skys, i_gal, hlr, res_tot, g1, g2, shape)
