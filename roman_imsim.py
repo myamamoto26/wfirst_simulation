@@ -713,7 +713,7 @@ def main(argv):
             psf_stamp=None
 
             pointing=Pointing(dither_i, SCA, filter_, stamp_size, PAs[i], random_angle=False)
-            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_ceter)
+            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center)
 
             #gal_stamp, psf_stamp = image.make_stamp(sca_ceter)
 
