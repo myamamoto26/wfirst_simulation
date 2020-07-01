@@ -171,7 +171,7 @@ def init_gal(gal_dist, gal_sample):
 
 class Pointing:
 
-    def __init__(self, dither_i, sca, filter_, stamp_size, random_angle=False, position_angle):
+    def __init__(self, dither_i, sca, filter_, stamp_size, position_angle, random_angle=False):
         self.dither_i=dither_i
         self.sca=sca
         self.filter_=filter_
@@ -703,7 +703,7 @@ def main(argv):
         gal_model = profile.draw_galaxy()
         st_model = profile.draw_star()
 
-        sca_center = Pointing(dither_i, SCA, filter_, stamp_size, random_angle=False, PA1).find_sca_center()
+        sca_center = Pointing(dither_i, SCA, filter_, stamp_size, PA1, random_angle=False).find_sca_center()
         PAs = [PA1,PA2]
         thetas = [PA1*(np.pi/180)*galsim.radians, PA2*(np.pi/180)*galsim.radians]
         offsets = []
@@ -714,7 +714,7 @@ def main(argv):
             gal_stamp=None
             psf_stamp=None
 
-            pointing=Pointing(dither_i, SCA, filter_, stamp_size, random_angle=False, PAs[i])
+            pointing=Pointing(dither_i, SCA, filter_, stamp_size, PAs[i], random_angle=False)
             image=Image(i_gal, stamp_size, gal_model, st_model, pointing)
 
             #gal_stamp, psf_stamp = image.make_stamp(sca_ceter)
