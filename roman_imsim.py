@@ -321,10 +321,17 @@ class Image:
         if self.stamp_size_factor == 0:
             self.stamp_size_factor = 1
 
+        self.wcs, self.sky_level=self.pointing.get_wcs()
+        self.xy = self.wcs.toImage(self.sca_center) # galaxy position 
+        self.xyI = galsim.PositionI(int(self.xy.x), int(self.xy.y))
+        self.b = galsim.BoundsI( xmin=self.xyI.x-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
+                            ymin=self.xyI.y-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
+                            xmax=self.xyI.x+old_div(int(self.stamp_size_factor*self.stamp_size),2),
+                            ymax=self.xyI.y+old_div(int(self.stamp_size_factor*self.stamp_size),2))
+
     def make_stamp(self):
         ra=self.pointing.ra
         dec=self.pointing.dec
-        wcs, self.sky_level=self.pointing.get_wcs()
 
         # Galsim world coordinate object (ra,dec)
         """
@@ -340,12 +347,6 @@ class Image:
         #                    xmax=xyI.x,
         #                    ymin=1,
         #                    ymax=xyI.y)
-        self.xy = wcs.toImage(self.sca_center) # galaxy position 
-        xyI = galsim.PositionI(int(self.xy.x), int(self.xy.y))
-        self.b = galsim.BoundsI( xmin=xyI.x-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
-                            ymin=xyI.y-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
-                            xmax=xyI.x+old_div(int(self.stamp_size_factor*self.stamp_size),2),
-                            ymax=xyI.y+old_div(int(self.stamp_size_factor*self.stamp_size),2))
         #---------------------------------------#
         # if the image does not use a real wcs. #
         #---------------------------------------#
@@ -354,8 +355,8 @@ class Image:
         #                    ymin=1,
         #                    ymax=int(stamp_size_factor*stamp_size))
 
-        self.gal_stamp = galsim.Image(self.b, wcs=wcs) #scale=wfirst.pixel_scale)
-        self.psf_stamp = galsim.Image(self.b, wcs=wcs) #scale=wfirst.pixel_scale)
+        self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
+        self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
 
     def translational_dithering(self):
         ## translational dithering test
@@ -374,8 +375,8 @@ class Image:
 
         return self.gal_stamp, self.psf_stamp, offset
 
-    def add_background(self, im,  sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False):
-        sky_stamp = galsim.Image(bounds=b, scale=wfirst.pixel_scale)
+    def add_background(self, im, thermal_backgrounds=None, filter_='H158', phot=False):
+        sky_stamp = galsim.Image(bounds=self.b, scale=wfirst.pixel_scale)
         #local_wcs.makeSkyImage(sky_stamp, sky_level)
 
         # This image is in units of e-/pix. Finally we add the expected thermal backgrounds in this
@@ -405,23 +406,21 @@ class Image:
         return im
 
     def add_noise(self, rng, gal_stamp):
-        self.make_stamp()
+        #self.make_stamp()
 
         sigma=wfirst.read_noise
         read_noise = galsim.GaussianNoise(rng, sigma=sigma)
 
-        im,sky_stamp = self.add_background(gal_stamp, self.sky_level, self.b, thermal_backgrounds=None, filter_='H158', phot=False)
+        im,sky_stamp = self.add_background(gal_stamp, thermal_backgrounds=None, filter_='H158', phot=False)
         #im.addNoise(read_noise)
         gal_stamp = self.add_poisson_noise(rng, im, sky_image=sky_stamp, phot=False)
         #sky_image = add_poisson_noise(rng, sky_image, sky_image=sky_image, phot=False)
         gal_stamp -= sky_stamp
-        print(self.gal_stamp==gal_stamp)
-        exit()
 
         return gal_stamp, sky_stamp
 
     def wcs_approx(self, gal_stamp, psf_stamp):
-        self.make_stamp()
+        #self.make_stamp()
         # set a simple jacobian to the stamps before sending them to ngmix
         # old center of the stamp
         origin_x = gal_stamp.origin.x
@@ -434,6 +433,8 @@ class Image:
         gal_stamp.wcs=new_wcs
         psf_stamp.wcs=new_wcs
 
+        print(gal_stamp, psf_stamp)
+        exit()
         return gal_stamp, psf_stamp
 
 
