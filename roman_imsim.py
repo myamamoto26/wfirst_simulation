@@ -585,6 +585,7 @@ class shape_measurement:
         #t = truth[i]
         #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
         obs_list,psf_list,w = self.get_exp_list(psf2=None)
+        i = self.i_gal
         #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
         #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
         if self.shape=='metacal':
@@ -592,7 +593,7 @@ class shape_measurement:
 
             iteration=0
             for key in metacal_keys:
-                self.res_tot[iteration]['ind'][i]                       = self.i_gal
+                self.res_tot[iteration]['ind'][i]                       = i
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
                 self.res_tot[iteration]['g1'][i]                        = self.g1
@@ -611,7 +612,7 @@ class shape_measurement:
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
             iteration=0
             for key in metacal_keys:
-                self.res_tot[iteration]['ind'][i]                       = self.i_gal
+                self.res_tot[iteration]['ind'][i]                       = i
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
                 self.res_tot[iteration]['g1'][i]                        = self.g1
@@ -628,7 +629,7 @@ class shape_measurement:
         elif self.shape=='ngmix':
             flux_=get_flux(obs_list)
             res_ = self.measure_shape_ngmix(obs_list, flux_, model='gauss')
-            self.res_tot[0]['ind'][i]                       = self.i_gal
+            self.res_tot[0]['ind'][i]                       = i
             #res_tot[iteration]['ra'][i]               = t['ra']
             #res_tot[iteration]['dec'][i]              = t['dec']
             self.res_tot[0]['g1'][i]                        = self.g1
