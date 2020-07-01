@@ -404,7 +404,7 @@ class Image:
 
         return im
 
-    def add_noise(self, rng, sca_center, gal_stamp)
+    def add_noise(self, rng, sca_center, gal_stamp):
         self.make_stamp(sca_center)
         print(self.gal_stamp)
         sigma=wfirst.read_noise
