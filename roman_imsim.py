@@ -372,7 +372,7 @@ class Image:
         gal_model.drawImage(image=self.gal_stamp, offset=offset)
         st_model.drawImage(image=self.psf_stamp, offset=offset)
 
-        return gal_stamp, psf_stamp, offset
+        return self.gal_stamp, self.psf_stamp, offset
 
     def add_background(self, im,  sky_level, b, thermal_backgrounds=None, filter_='H158', phot=False):
         sky_stamp = galsim.Image(bounds=b, scale=wfirst.pixel_scale)
