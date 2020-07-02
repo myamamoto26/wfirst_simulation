@@ -723,8 +723,6 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_stamp)
         res_tot = shape_measurement(cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot).get_coadd_shape()
-    print(res_tot)
-    exit()
 
     ## send and receive objects from one processor to others
     if rank!=0:
