@@ -196,7 +196,7 @@ class Pointing:
         d=fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][self.dither]
         self.ra     = d['ra']
         self.dec    = d['dec']
-        self.date   = Time(self.d['date'],format='mjd').datetime
+        self.date   = Time(d['date'],format='mjd').datetime
         
     def find_coordinates(self):
         self.dither_i = find_dither_number(patch=True)
