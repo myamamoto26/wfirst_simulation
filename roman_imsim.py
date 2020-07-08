@@ -168,39 +168,60 @@ def init_gal(gal_dist, gal_sample):
 
     print('-------truth catalog built-------')
 
+def find_pa(filename):
+    dither_number = open(filename).readlines()
+    pa_list = []
+    dither_list = []
+    for i in range(len(dither_number)):
+        dither = int(dither_number[i])
+        data = fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][dither]
+        pa_list.append(data['pa'] * np.pi / 180.)
+        dither_list.append(dither)
+
+    return pa_list, dither_list
+
+
 
 class Pointing:
 
-    def __init__(self, dither_i, sca, filter_, stamp_size, position_angle, random_angle=False):
-        self.dither_i=dither_i
+    def __init__(self, dither, sca, filter_, stamp_size, position_angle, random_angle=False):
+        self.dither=dither
         self.sca=sca
         self.filter_=filter_
         self.stamp_size=stamp_size
         self.random_angle=random_angle
         self.position_angle=position_angle
 
+        ## create reference ra, dec
+        d=fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][self.dither]
+        self.ra     = d['ra']
+        self.dec    = d['dec']
+        self.date   = Time(self.d['date'],format='mjd').datetime
+        
+    def find_coordinates(self):
+        self.dither_i = find_dither_number(patch=True)
+
         self.bpass=wfirst.getBandpasses(AB_zeropoint=True)[self.filter_]
         self.d=fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][self.dither_i]
 
         self.ra     = self.d['ra']  * np.pi / 180. # RA of pointing
         self.dec    = self.d['dec'] * np.pi / 180. # Dec of pointing
-        #self.pa     = self.d['pa']  * np.pi / 180.  # Position angle of pointing
+        self.pa     = self.d['pa']  * np.pi / 180.  # Position angle of pointing
         self.date   = Time(self.d['date'],format='mjd').datetime
 
-        if self.random_angle==False:
-            self.pa=self.position_angle * np.pi /180.
-        elif self.random_angle==True:
-            random_dir = galsim.UniformDeviate(314)
-            self.pa=(self.position_angle*random_dir()) * np.pi /180.
+        if (self.ra >= self.ref_ra-2.5) and (self.ra < self.ref_ra+2.5):
+            if (self.dec >= self.ref_dec-2.5) and (self.dec < self.ref_dec+2.5):
+                return self.pa
 
     def find_sca_center(self):
         wcs_ref,sky_ref=self.get_wcs()
         return wcs_ref.toWorld(galsim.PositionI(old_div(wfirst.n_pix,2),old_div(wfirst.n_pix,2)))
 
     def get_wcs(self):
+        #self.find_coordinates()
         WCS = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=self.ra*galsim.radians, \
                                                                dec=self.dec*galsim.radians), 
-                                    PA          = self.pa*galsim.radians, 
+                                    PA          = self.position_angle*galsim.radians, 
                                     date        = self.date,
                                     SCAs        = self.sca,
                                     PA_is_FPA   = True
@@ -217,7 +238,7 @@ class Pointing:
         return WCS, sky_level
 
 class Model:
-    def __init__(self, cat, gal_prof, psf_prof, sca, filter_, bpass,hlr,i_gal):
+    def __init__(self, cat, gal_prof, psf_prof, sca, filter_, bpass, hlr, i_gal):
         self.cat=cat
         self.gal_prof=gal_prof
         self.psf_prof=psf_prof
@@ -651,7 +672,8 @@ def main(argv):
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
-    dither_i = 22535
+    dither_file = '/hpc/group/cosmology/phy-lsst/dc2_truth/dc2_cen1deg.txt'
+    reference_dither = 30592
     SCA = 1
     filter_ = 'H158'
     stamp_size = 32
@@ -661,12 +683,18 @@ def main(argv):
 
     ## variable arguments
     gal_num = int(sys.argv[1])
-    PA1 = int(sys.argv[2])
-    PA2 = int(sys.argv[3])
-    gal_prof = sys.argv[4]
-    psf_prof = sys.argv[5]
-    shape = sys.argv[6]
-    output_name = sys.argv[7]
+    #PA1 = int(sys.argv[2])
+    #PA2 = int(sys.argv[3])
+    gal_prof = sys.argv[2]
+    psf_prof = sys.argv[3]
+    shape = sys.argv[4]
+    output_name = sys.argv[5]
+
+    #PA_list, D_list = find_pa(dither_file)
+    #exposures = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
+    #selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
+    exposures = [20, 65]
+    selected_dithers = [22535, 22535]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -692,22 +720,21 @@ def main(argv):
         gal_model = None
         st_model = None
 
-        profile=Model(cat, gal_prof, psf_prof, SCA, filter_, bpass, hlr, i_gal)
+        profile = Model(cat, gal_prof, psf_prof, SCA, filter_, bpass, hlr, i_gal)
+
         gal_model, g1, g2 = profile.draw_galaxy()
         st_model = profile.draw_star()
 
-        sca_center = Pointing(dither_i, SCA, filter_, stamp_size, PA1, random_angle=False).find_sca_center()
-        PAs = [PA1,PA2]
-        thetas = [PA1*(np.pi/180)*galsim.radians, PA2*(np.pi/180)*galsim.radians]
+        sca_center = Pointing(SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
         offsets = []
         gals = []
         psfs = []
         skys = []
-        for i in range(2): 
+        for exp in range(len(exposures)): 
             gal_stamp=None
             psf_stamp=None
 
-            pointing=Pointing(dither_i, SCA, filter_, stamp_size, PAs[i], random_angle=False)
+            pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, exposures[exp], random_angle=False)
             image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center)
 
             translation=False
