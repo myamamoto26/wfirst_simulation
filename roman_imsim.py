@@ -725,7 +725,7 @@ def main(argv):
         gal_model, g1, g2 = profile.draw_galaxy()
         st_model = profile.draw_star()
 
-        sca_center = Pointing(SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
+        sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
         offsets = []
         gals = []
         psfs = []
