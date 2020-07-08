@@ -193,6 +193,7 @@ class Pointing:
         self.position_angle=position_angle
 
         ## create reference ra, dec
+        self.bpass=wfirst.getBandpasses(AB_zeropoint=True)[self.filter_]
         d=fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][self.dither]
         self.ra     = d['ra'] * np.pi / 180.
         self.dec    = d['dec'] * np.pi / 180.
