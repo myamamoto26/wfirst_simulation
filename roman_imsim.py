@@ -194,10 +194,10 @@ class Pointing:
 
         ## create reference ra, dec
         d=fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][self.dither]
-        self.ra     = d['ra']
-        self.dec    = d['dec']
+        self.ra     = d['ra'] * np.pi / 180.
+        self.dec    = d['dec'] * np.pi / 180.
         self.date   = Time(d['date'],format='mjd').datetime
-        
+    """
     def find_coordinates(self):
         self.dither_i = find_dither_number(patch=True)
 
@@ -212,6 +212,7 @@ class Pointing:
         if (self.ra >= self.ref_ra-2.5) and (self.ra < self.ref_ra+2.5):
             if (self.dec >= self.ref_dec-2.5) and (self.dec < self.ref_dec+2.5):
                 return self.pa
+    """
 
     def find_sca_center(self):
         wcs_ref,sky_ref=self.get_wcs()
