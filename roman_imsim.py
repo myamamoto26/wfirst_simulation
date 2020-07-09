@@ -675,8 +675,7 @@ class shape_measurement:
                 iteration+=1
 
         elif self.shape=='ngmix':
-            flux_=get_flux(obs_list)
-            res_ = self.measure_shape_ngmix(obs_list, flux_, model='gauss')
+            res_ = self.measure_shape_ngmix(obs_list, flux_=get_flux(obs_list), model='gauss')
             self.res_tot[0]['ind'][i]                       = i
             #res_tot[iteration]['ra'][i]               = t['ra']
             #res_tot[iteration]['dec'][i]              = t['dec']
