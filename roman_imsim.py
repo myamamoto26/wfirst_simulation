@@ -55,7 +55,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
 ## import functions from other files
-from selection_effects_analysis import residual_bias, residual_bias_correction
+#from selection_effects_analysis import residual_bias, residual_bias_correction
 
 # This is a setting that decides whether or not to output differences images showing what each
 # detector effect does.  Since they take up quite a bit of space, we set this to False by default,
@@ -798,7 +798,7 @@ def main(argv):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
-        bias = residual_bias(res_tot, 'metacal')
+        #bias = residual_bias(res_tot, 'metacal')
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
