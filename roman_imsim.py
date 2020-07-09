@@ -477,6 +477,7 @@ class shape_measurement:
 
         size = res['pars'][4]
         flux = res['flux']
+        print(size, flux)
 
         model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-res['pars'][5])) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*res['pars'][5])
         for i in range(len(obs_list)):
@@ -570,7 +571,7 @@ class shape_measurement:
 
         return res_
 
-    def measure_shape_ngmix(self, obs_list, flux=1000.0, model='gauss'):
+    def measure_shape_ngmix(self, obs_list, flux_=1000.0, model='gauss'):
         T = self.hlr
         pix_range = old_div(galsim.wfirst.pixel_scale,10.)
         e_range = 0.1
@@ -590,7 +591,7 @@ class shape_measurement:
         # guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,0.5+pixe_guess(fdev),100.])
         guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,pixe_guess(fdev),300.])
 
-        guesser           = R50FluxGuesser(T,flux)
+        guesser           = R50FluxGuesser(T,flux_)
         ntry              = 5
         runner            = GalsimRunner(obs_list,model,guesser=guesser)
         runner.go(ntry=ntry)
@@ -602,13 +603,13 @@ class shape_measurement:
         res_['s2n_r'] = self.get_snr(obs_list,res_)
         return res_
 
-    def ngmix_nobootstrap(self, obs_list, flux):
+    def ngmix_nobootstrap(self, obs_list, flux_):
         mcal_keys=['noshear', '1p', '1m', '2p', '2m']
         obsdict = ngmix.metacal.get_all_metacal(obs_list, psf='gauss')
         results_metacal = {}
         for key in mcal_keys:
             mobs = obsdict[key]
-            res_= self.measure_shape_ngmix(mobs,flux)
+            res_= self.measure_shape_ngmix(mobs,flux_)
             results_metacal[key] = res_
         return results_metacal
 
