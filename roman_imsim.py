@@ -597,10 +597,8 @@ class shape_measurement:
         fitter            = runner.get_fitter()
 
         res_ = fitter.get_result()
-        res_['flux'] = flux_#res_['pars'][5]
-        print(res_['s2n_r'], self.get_snr(obs_list,res_))
-        res_['s2n_r'] = self.get_snr(obs_list,res_)
-        print(res_)
+        res_['flux'] = res_['pars'][5]
+        #res_['s2n_r'] = self.get_snr(obs_list,res_)
         return res_
 
     def ngmix_nobootstrap(self, obs_list, flux_):
@@ -659,6 +657,8 @@ class shape_measurement:
         elif self.shape=='noboot':
             flux_ = get_flux(obs_list)
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
+            if 's2n_r' not in res_:
+                res_['s2n_r'] = -999.
             iteration=0
             for key in metacal_keys:
                 self.res_tot[iteration]['ind'][i]                       = i
@@ -777,8 +777,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_stamp)
         res_tot = shape_measurement(cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot).get_coadd_shape()
-    print(res_tot)
-    exit()
+
     ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
