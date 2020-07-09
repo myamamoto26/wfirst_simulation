@@ -473,6 +473,30 @@ class shape_measurement:
         self.shape=shape
         self.res_tot=res_tot
 
+    def get_snr(self,obs_list,res):
+
+        size = res['pars'][4]
+        flux = res['flux']
+
+        model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-res['pars'][5])) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*res['pars'][5])
+        for i in range(len(obs_list)):
+            obs = obs_list[i]
+            im = obs.psf.image.copy()
+            im *= 1.0/im.sum()/len(obs_list)
+            psf_gsimage = galsim.Image(im,wcs=obs.psf.jacobian.get_galsim_wcs())
+            psf_ii = galsim.InterpolatedImage(psf_gsimage,x_interpolant='lanczos15')
+
+            model = galsim.Convolve(model_,psf_ii)
+            gal_stamp = galsim.Image(np.shape(obs.image)[0],np.shape(obs.image)[1], wcs=obs.jacobian.get_galsim_wcs())
+
+            model.drawImage(image=gal_stamp)
+            if i==0:
+                image = gal_stamp.array*obs.weight
+            else:
+                image += gal_stamp.array*obs.weight
+
+        return image.sum()
+
     def get_exp_list(self, psf2=None):
 
         if psf2 is None:
@@ -514,7 +538,6 @@ class shape_measurement:
             psf_list.append(psf_obs2)
 
         return obs_list,psf_list,np.array(w)
-
 
     def shape_measurement_metacal(self, obs_list, metacal_pars, flux=1000.0, fracdev=None, use_e=None):
         T = self.hlr
@@ -575,6 +598,7 @@ class shape_measurement:
 
         res_ = fitter.get_result()
         res_['flux'] = res_['pars'][5]
+        res_['s2n_r'] = self.get_snr(obs_list,res_)
         return res_
 
     def ngmix_nobootstrap(self, obs_list, flux):
