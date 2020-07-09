@@ -598,6 +598,7 @@ class shape_measurement:
 
         res_ = fitter.get_result()
         res_['flux'] = res_['pars'][5]
+        print(res_['s2n_r'], self.get_snr(obs_list,res_))
         res_['s2n_r'] = self.get_snr(obs_list,res_)
         return res_
 
@@ -659,7 +660,6 @@ class shape_measurement:
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
             iteration=0
             for key in metacal_keys:
-                print(res_[key]['s2n_r'])
                 self.res_tot[iteration]['ind'][i]                       = i
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
