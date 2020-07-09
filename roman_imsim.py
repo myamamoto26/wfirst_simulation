@@ -601,6 +601,7 @@ class shape_measurement:
         res_['flux'] = flux_#res_['pars'][5]
         print(res_['s2n_r'], self.get_snr(obs_list,res_))
         res_['s2n_r'] = self.get_snr(obs_list,res_)
+        print(res_)
         return res_
 
     def ngmix_nobootstrap(self, obs_list, flux_):
