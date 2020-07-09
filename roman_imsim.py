@@ -798,7 +798,7 @@ def main(argv):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
-        bias = residual_bias(res_tot, shape)
+        bias = residual_bias(res_tot, 'metacal')
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
