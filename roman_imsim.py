@@ -477,7 +477,7 @@ class shape_measurement:
 
         size = res['pars'][4]
         flux = res['flux']
-        print(size, flux)
+        print(flux, res['pars'][5])
 
         model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-res['pars'][5])) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*res['pars'][5])
         for i in range(len(obs_list)):
