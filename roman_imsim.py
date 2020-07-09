@@ -477,7 +477,6 @@ class shape_measurement:
 
         size = res['pars'][4]
         flux = res['flux']
-        print(flux, res['pars'][5])
 
         model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-res['pars'][5])) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*res['pars'][5])
         for i in range(len(obs_list)):
@@ -598,7 +597,8 @@ class shape_measurement:
         fitter            = runner.get_fitter()
 
         res_ = fitter.get_result()
-        res_['flux'] = res_['pars'][5]
+        print(res_['flux'], res_['pars'][5])
+        res_['flux'] = flux_#res_['pars'][5]
         print(res_['s2n_r'], self.get_snr(obs_list,res_))
         res_['s2n_r'] = self.get_snr(obs_list,res_)
         return res_
