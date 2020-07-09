@@ -597,7 +597,6 @@ class shape_measurement:
         fitter            = runner.get_fitter()
 
         res_ = fitter.get_result()
-        print(res_['flux'], res_['pars'][5])
         res_['flux'] = flux_#res_['pars'][5]
         print(res_['s2n_r'], self.get_snr(obs_list,res_))
         res_['s2n_r'] = self.get_snr(obs_list,res_)
