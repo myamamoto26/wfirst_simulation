@@ -649,7 +649,6 @@ class shape_measurement:
                 self.res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
                 self.res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
                 iteration+=1
-            exit()
 
         elif self.shape=='ngmix':
             flux_=get_flux(obs_list)
@@ -754,7 +753,7 @@ def main(argv):
             psfs.append(psf_stamp)
             skys.append(sky_stamp)
         res_tot = shape_measurement(cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot).get_coadd_shape()
-
+    exit()
     ## send and receive objects from one processor to others
     if rank!=0:
         # send res_tot to rank 0 processor
