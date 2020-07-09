@@ -633,6 +633,7 @@ class shape_measurement:
         elif self.shape=='noboot':
             flux_ = get_flux(obs_list)
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
+            print(res_)
             iteration=0
             for key in metacal_keys:
                 self.res_tot[iteration]['ind'][i]                       = i
@@ -648,6 +649,7 @@ class shape_measurement:
                 self.res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
                 self.res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
                 iteration+=1
+            exit()
 
         elif self.shape=='ngmix':
             flux_=get_flux(obs_list)
