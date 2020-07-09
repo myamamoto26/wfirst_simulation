@@ -633,9 +633,9 @@ class shape_measurement:
         elif self.shape=='noboot':
             flux_ = get_flux(obs_list)
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
-            print(res_)
             iteration=0
             for key in metacal_keys:
+                print(res_[key]['s2n_r'])
                 self.res_tot[iteration]['ind'][i]                       = i
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
