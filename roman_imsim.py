@@ -660,8 +660,7 @@ class shape_measurement:
             iteration=0
             for key in metacal_keys:
                 if 's2n_r' not in res_[key]:
-                    print('huh?')
-                    res_['s2n_r'] = -999.
+                    res_[key]['s2n_r'] = -999.
                 self.res_tot[iteration]['ind'][i]                       = i
                 #res_tot[iteration]['ra'][i]                        = t['ra']
                 #res_tot[iteration]['dec'][i]                       = t['dec']
