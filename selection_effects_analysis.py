@@ -164,13 +164,15 @@ def residual_bias(res_tot, shape):
         new1m = res_tot[2]
         new2p = res_tot[3]
         new2m = res_tot[4]
+        print(len(new))
 
         #old = old[old['ra']!=0]
-        #new = new[new['ra']!=0]
-        #new1p = new1p[new1p['ra']!=0]
-        #new1m = new1m[new1m['ra']!=0]
-        #new2p = new2p[new2p['ra']!=0]
-        #new2m = new2m[new2m['ra']!=0]
+        new = new[new['snr']!=-999.]
+        new1p = new1p[new1p['snr']!=-999.]
+        new1m = new1m[new1m['snr']!=-999.]
+        new2p = new2p[new2p['snr']!=-999.]
+        new2m = new2m[new2m['snr']!=-999.]
+        print(len(new))
 
         R11 = (new1p["e1"] - new1m["e1"])/(2*g)
         R22 = (new2p["e2"] - new2m["e2"])/(2*g)
@@ -438,7 +440,7 @@ def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
     #dirr=['../fiducial_H158'] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
-    dirr=['test']
+    dirr=['v2_7_offset_45_noboot']
     shape=sys.argv[1]
 
     if shape=='metacal_quad':
