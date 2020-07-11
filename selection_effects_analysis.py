@@ -166,7 +166,7 @@ def residual_bias(res_tot, shape):
         new2m = res_tot[4]
 
         #old = old[old['ra']!=0]
-        new = new[new['snr']!=-999.]
+        new_noshear = new[new['snr']!=-999.]
         new1p = new1p[new['snr']!=-999.]
         new1m = new1m[new['snr']!=-999.]
         new2p = new2p[new['snr']!=-999.]
