@@ -165,7 +165,8 @@ def residual_bias(res_tot, shape):
         new2p = res_tot[3]
         new2m = res_tot[4]
 
-        print(new[new['e1']>=-1 & new['e1']<1])
+        mask = (new['e1']<=-1) | (new['e1']>1)
+        print(new[mask])
         exit()
         #old = old[old['ra']!=0]
         #new = new[new1p_['snr']!=-999.]
