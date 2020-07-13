@@ -173,7 +173,7 @@ def find_pa(filename):
     pa_list = []
     dither_list = []
     for i in range(len(dither_number)):
-        dither = int(dither_number[i])
+        dither = int(float(dither_number[i]))
         data = fio.FITS('observing_sequence_hlsonly_5yr.fits')[-1][dither]
         pa_list.append(data['pa'] * np.pi / 180.)
         dither_list.append(dither)
