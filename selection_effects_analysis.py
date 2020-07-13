@@ -170,12 +170,14 @@ def residual_bias(res_tot, shape):
         mask1m = (new1m['e1']>=-1) | (new1m['e1']<1)
         mask2p = (new2p['e2']>=-1) | (new2p['e2']<1)
         mask2m = (new2m['e2']>=-1) | (new2m['e2']<1)
+        mask_all = (mask==True) & (mask1p==True) & (mask1m==True) & (mask2p==True) & (mask2m==True)
+        print(len(mask_all))
         #old = old[old['ra']!=0]
-        new = new[mask]
-        new1p = new1p[mask1p]
-        new1m = new1m[mask1m]
-        new2p = new2p[mask2p]
-        new2m = new2m[mask2m]
+        new = new[mask_all]
+        new1p = new1p[mask_all]
+        new1m = new1m[mask_all]
+        new2p = new2p[mask_all]
+        new2m = new2m[mask_all]
         
         R11 = (new1p["e1"] - new1m["e1"])/(2*g)
         R22 = (new2p["e2"] - new2m["e2"])/(2*g)
