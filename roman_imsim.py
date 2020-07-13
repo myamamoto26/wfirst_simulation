@@ -659,7 +659,6 @@ class shape_measurement:
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
             iteration=0
             for key in metacal_keys:
-                print(np.copy(res_[key]['pars'][2]), np.copy(res_[key]['pars'][3]))
                 if 's2n_r' not in res_[key]:
                     res_[key]['s2n_r'] = -999.
                 self.res_tot[iteration]['ind'][i]                       = i
@@ -718,11 +717,11 @@ def main(argv):
     shape = sys.argv[4]
     output_name = sys.argv[5]
 
-    #PA_list, D_list = find_pa(dither_file)
-    #exposures = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
-    #selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
-    exposures = [20, 65]
-    selected_dithers = [22535, 22535]
+    PA_list, D_list = find_pa(dither_file)
+    exposures = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
+    selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
+    #exposures = [20, 65]
+    #selected_dithers = [22535, 22535]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
