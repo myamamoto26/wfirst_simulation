@@ -165,7 +165,7 @@ def residual_bias(res_tot, shape):
         new2p = res_tot[3]
         new2m = res_tot[4]
 
-        print(np.mean(new), np.mean(new1p), np.mean(new1m))
+        print(np.mean(new["e1"]), np.mean(new1p["e1"]), np.mean(new1m["e1"]))
         #old = old[old['ra']!=0]
         #new = new[new1p_['snr']!=-999.]
         #new1p = new1p_[new1p_['snr']!=-999.]
