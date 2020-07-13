@@ -659,6 +659,7 @@ class shape_measurement:
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
             iteration=0
             for key in metacal_keys:
+                print(np.copy(res_[key]['pars'][2]), np.copy(res_[key]['pars'][3]))
                 if 's2n_r' not in res_[key]:
                     res_[key]['s2n_r'] = -999.
                 self.res_tot[iteration]['ind'][i]                       = i
