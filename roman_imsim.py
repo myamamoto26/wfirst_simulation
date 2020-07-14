@@ -55,7 +55,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
 ## import functions from other files
-#from selection_effects_analysis import residual_bias, residual_bias_correction
+from selection_effects_analysis import residual_bias, residual_bias_correction
 
 # This is a setting that decides whether or not to output differences images showing what each
 # detector effect does.  Since they take up quite a bit of space, we set this to False by default,
@@ -287,7 +287,7 @@ class Model:
 
         return sed
 
-    def draw_galaxy(self):
+    def draw_galaxy(self, basis):
         if self.gal_prof=='Gaussian':
             gal_model = galsim.Gaussian(half_light_radius=self.hlr, flux=1.) # needs to normalize the flux before multiplying by sed. For bdf, there are bulge, disk, knots fractions to sum to 1. 
         elif self.gal_prof=='exponential':
@@ -299,13 +299,18 @@ class Model:
         self.sed=self.flux_model()
         gal_model = self.sed * gal_model
 
+        if basis == 'g1':
+            g = np.array([[0.02, 0], [-0.02, 0]])
+        elif basis == 'g2':
+            g = np.array([[0, 0.02], [0, -0.02]])
+
         if self.i_gal%2 == 0:
-            g1=0.02
-            g2=0
+            g1=g[0,0]
+            g2=g[0,1]
             gal_model = gal_model.shear(g1=g1,g2=g2)
         else:
-            g1=-0.02
-            g2=0
+            g1=g[1,0]
+            g2=g[1,1]
             gal_model = gal_model.shear(g1=g1,g2=g2)
 
         gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
@@ -332,13 +337,14 @@ class Model:
 
 class Image:
 
-    def __init__(self, i_gal, stamp_size, gal_model, st_model, pointing, sca_center):
+    def __init__(self, i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs):
         self.i_gal=i_gal
         self.stamp_size=stamp_size
         self.gal_model=gal_model
         self.st_model=st_model
         self.pointing=pointing
         self.sca_center=sca_center
+        self.real_wcs=real_wcs
 
         self.stamp_size_factor = old_div(int(self.gal_model.getGoodImageSize(wfirst.pixel_scale)), self.stamp_size)
         if self.stamp_size_factor == 0:
@@ -346,11 +352,18 @@ class Image:
 
         self.wcs, self.sky_level=self.pointing.get_wcs()
         self.xy = self.wcs.toImage(self.sca_center) # galaxy position 
-        self.xyI = galsim.PositionI(int(self.xy.x), int(self.xy.y))
-        self.b = galsim.BoundsI( xmin=self.xyI.x-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
-                            ymin=self.xyI.y-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
-                            xmax=self.xyI.x+old_div(int(self.stamp_size_factor*self.stamp_size),2),
-                            ymax=self.xyI.y+old_div(int(self.stamp_size_factor*self.stamp_size),2))
+        if self.real_wcs==True:
+            self.xyI = galsim.PositionI(int(self.xy.x), int(self.xy.y))
+            self.b = galsim.BoundsI( xmin=self.xyI.x-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
+                                ymin=self.xyI.y-old_div(int(self.stamp_size_factor*self.stamp_size),2)+1,
+                                xmax=self.xyI.x+old_div(int(self.stamp_size_factor*self.stamp_size),2),
+                                ymax=self.xyI.y+old_div(int(self.stamp_size_factor*self.stamp_size),2))
+        else:
+            self.xyI = galsim.PositionI(int(self.stamp_size_factor*self.stamp_size), int(self.stamp_size_factor*self.stamp_size))
+            self.b = galsim.BoundsI( xmin=1,
+                                xmax=xyI.x,
+                                ymin=1,
+                                ymax=xyI.y)
 
     def make_stamp(self):
         ra=self.pointing.ra
@@ -365,21 +378,12 @@ class Image:
         # Galsim integer image coordinate object 
         xyI = galsim.PositionI(int(xy.x),int(xy.y))
         """
-        #xyI = galsim.PositionI(int(self.stamp_size_factor*self.stamp_size), int(self.stamp_size_factor*self.stamp_size))
-        #b = galsim.BoundsI( xmin=1,
-        #                    xmax=xyI.x,
-        #                    ymin=1,
-        #                    ymax=xyI.y)
-        #---------------------------------------#
-        # if the image does not use a real wcs. #
-        #---------------------------------------#
-        #b = galsim.BoundsI( xmin=1,
-        #                    xmax=int(stamp_size_factor*stamp_size),
-        #                    ymin=1,
-        #                    ymax=int(stamp_size_factor*stamp_size))
-
-        self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
-        self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
+        if real_wcs==True:
+            self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
+            self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
+        else:
+            self.gal_stamp = galsim.Image(self.b, scale=wfirst.pixel_scale)
+            self.psf_stamp = galsim.Image(self.b, scale=wfirst.pixel_scale)
 
     def translational_dithering(self):
         ## translational dithering test
@@ -392,7 +396,10 @@ class Image:
     def draw_image(self, gal_model, st_model):
         self.make_stamp()
 
-        offset = self.xy-self.gal_stamp.true_center # original galaxy position - stamp center
+        if real_wcs==True:
+            offset = self.xy-self.gal_stamp.true_center # original galaxy position - stamp center
+        else:
+            offset = galsim.PositionI(0,0)
         gal_model.drawImage(image=self.gal_stamp, offset=offset)
         st_model.drawImage(image=self.psf_stamp, offset=offset)
 
@@ -654,6 +661,7 @@ class shape_measurement:
                 self.res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
                 self.res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
                 iteration+=1
+                
         elif self.shape=='noboot':
             flux_ = get_flux(obs_list)
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
@@ -715,13 +723,15 @@ def main(argv):
     gal_prof = sys.argv[2]
     psf_prof = sys.argv[3]
     shape = sys.argv[4]
-    output_name = sys.argv[5]
+    basis = sys.argv[5]
+    real_wcs = sys.argv[6]
+    output_name = sys.argv[7]
 
-    PA_list, D_list = find_pa(dither_file)
-    exposures = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
-    selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
-    #exposures = [20, 65]
-    #selected_dithers = [22535, 22535]
+    #PA_list, D_list = find_pa(dither_file)
+    #exposures = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
+    #selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
+    exposures = [0]
+    selected_dithers = [22535]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -748,8 +758,7 @@ def main(argv):
         st_model = None
 
         profile = Model(cat, gal_prof, psf_prof, SCA, filter_, bpass, hlr, i_gal)
-
-        gal_model, g1, g2 = profile.draw_galaxy()
+        gal_model, g1, g2 = profile.draw_galaxy(basis)
         st_model = profile.draw_star()
 
         sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
@@ -757,12 +766,12 @@ def main(argv):
         gals = []
         psfs = []
         skys = []
-        for exp in range(len(exposures)): 
+        for exp in range(len(selected_dithers)): 
             gal_stamp=None
             psf_stamp=None
 
             pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, exposures[exp], random_angle=False)
-            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center)
+            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs)
 
             translation=False
             if translation==True:
@@ -770,7 +779,8 @@ def main(argv):
 
             gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
             gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
-            gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
+            if real_wcs==True:
+                gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
             offsets.append(offset)
             gals.append(gal_stamp)
@@ -798,7 +808,7 @@ def main(argv):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
-        #bias = residual_bias(res_tot, 'metacal')
+        bias = residual_bias(res_tot, 'metacal')
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
