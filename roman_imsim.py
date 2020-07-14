@@ -703,7 +703,7 @@ class shape_measurement:
 def main(argv):
 
     ## fixed parameters
-    random_seed = sys.argv[8]
+    random_seed = int(sys.argv[8])
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
