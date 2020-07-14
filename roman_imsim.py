@@ -661,7 +661,7 @@ class shape_measurement:
                 self.res_tot[iteration]['e2'][i]                        = np.copy(res_[key]['pars'][3])
                 self.res_tot[iteration]['hlr'][i]                       = np.copy(res_[key]['pars'][4])
                 iteration+=1
-                
+
         elif self.shape=='noboot':
             flux_ = get_flux(obs_list)
             res_ = self.ngmix_nobootstrap(obs_list,flux_)
@@ -703,7 +703,7 @@ class shape_measurement:
 def main(argv):
 
     ## fixed parameters
-    random_seed = 314
+    random_seed = sys.argv[8]
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
