@@ -369,7 +369,7 @@ class Image:
         ra=self.pointing.ra
         dec=self.pointing.dec
 
-        if real_wcs==True:
+        if self.real_wcs==True:
             self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
             self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
         else:
@@ -387,7 +387,7 @@ class Image:
     def draw_image(self, gal_model, st_model):
         self.make_stamp()
 
-        if real_wcs==True:
+        if self.real_wcs==True:
             offset = self.xy-self.gal_stamp.true_center # original galaxy position - stamp center
         else:
             offset = galsim.PositionI(0,0)
