@@ -361,23 +361,14 @@ class Image:
         else:
             self.xyI = galsim.PositionI(int(self.stamp_size_factor*self.stamp_size), int(self.stamp_size_factor*self.stamp_size))
             self.b = galsim.BoundsI( xmin=1,
-                                xmax=xyI.x,
+                                xmax=self.xyI.x,
                                 ymin=1,
-                                ymax=xyI.y)
+                                ymax=self.xyI.y)
 
     def make_stamp(self):
         ra=self.pointing.ra
         dec=self.pointing.dec
 
-        # Galsim world coordinate object (ra,dec)
-        """
-        radec = galsim.CelestialCoord(ra*galsim.radians, dec*galsim.radians)
-        # Galsim image coordinate object 
-        wcs,sky=self.pointing1.get_wcs()
-        xy = wcs.toImage(radec)
-        # Galsim integer image coordinate object 
-        xyI = galsim.PositionI(int(xy.x),int(xy.y))
-        """
         if real_wcs==True:
             self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
             self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
