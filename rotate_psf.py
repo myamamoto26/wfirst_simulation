@@ -71,7 +71,7 @@ def rotate_psf():
 	i_gal = 1
 	real_wcs = True
 	basis = 'g1'
-	rng = 314
+	rng = galsim.BaseDeviate(314)
 
 	# get star/psf stamp
 	gal_model = None
