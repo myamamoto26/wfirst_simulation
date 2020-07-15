@@ -71,6 +71,7 @@ def rotate_psf():
 	i_gal = 1
 	real_wcs = True
 	basis = 'g1'
+	rng = 314
 
 	# get star/psf stamp
 	gal_model = None
@@ -79,6 +80,7 @@ def rotate_psf():
 	profile = Model(cat, 'Gaussian', 'wfirst', SCA, filter_, bpass, hlr, i_gal)
 	gal_model, g1, g2 = profile.draw_galaxy(basis)
 	st_model = profile.draw_star()
+	print('Created galaxy anf psf models.')
 
 	sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
 	psfs = []
@@ -93,6 +95,7 @@ def rotate_psf():
 	    gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
 	    if real_wcs==True:
 	        gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
+	    print('Drawing images on the stamps.')
 
 	    ## rotate psf to average out some psf shape biases.
 
