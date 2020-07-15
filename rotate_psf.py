@@ -67,7 +67,7 @@ def rotate_psf():
 	hlr = 1.0
 	stamp_size = 32
 	selected_dithers = [22535, 22535]
-	exposures = [0, 20]
+	exposures = [0, 40]
 	i_gal = 1
 	real_wcs = True
 	basis = 'g1'
