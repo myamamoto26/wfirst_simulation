@@ -103,7 +103,7 @@ def rotate_psf():
 	    psfs.append(psf_stamp)
 
 	for j in range(len(psfs)):
-		fio.write('rotate_psf_'+str(j)+'.fits', psfs[j])
+		psfs[j].write('rotate_psf_'+str(j)+'.fits')
 
 
 rotate_psf()
