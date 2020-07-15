@@ -60,7 +60,6 @@ from roman_imsim import Pointing, Model, Image
 
 
 def rotate_psf():
-
 	cat = fio.FITS('truth_mag.fits')[-1].read()
 	SCA = 1
 	filter_ = 'H158'
@@ -74,33 +73,33 @@ def rotate_psf():
 
 	# get star/psf stamp
 	gal_model = None
-    st_model = None
+	st_model = None
 
-    profile = Model(cat, 'Gaussian', 'wfirst', SCA, filter_, bpass, hlr, i_gal)
-    gal_model, g1, g2 = profile.draw_galaxy(basis)
-    st_model = profile.draw_star()
+	profile = Model(cat, 'Gaussian', 'wfirst', SCA, filter_, bpass, hlr, i_gal)
+	gal_model, g1, g2 = profile.draw_galaxy(basis)
+	st_model = profile.draw_star()
 
-    sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
-    psfs = []
-    for exp in range(2): 
-        gal_stamp=None
-        psf_stamp=None
+	sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
+	psfs = []
+	for exp in range(2): 
+	    gal_stamp=None
+	    psf_stamp=None
 
-        pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, exposures[exp], random_angle=False)
-        image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs)
+	    pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, exposures[exp], random_angle=False)
+	    image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs)
 
-        gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
-        gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
-        if real_wcs==True:
-            gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
+	    gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
+	    gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
+	    if real_wcs==True:
+	        gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
-        ## rotate psf to average out some psf shape biases.
+	    ## rotate psf to average out some psf shape biases.
 
 
-        psfs.append(psf_stamp)
+	    psfs.append(psf_stamp)
 
-    for j in range(len(psfs)):
-    	psfs[j].save('rotate_psf_'+str(j)+'.fits')
+	for j in range(len(psfs)):
+		psfs[j].save('rotate_psf_'+str(j)+'.fits')
 
 
 rotate_psf()
