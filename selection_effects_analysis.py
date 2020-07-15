@@ -116,13 +116,13 @@ def residual_bias_quad(res_tot):
     m6,b6=params2[0]
     m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
-    x=np.linspace(-0.1,0.1,1000)
-    y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
-    y2=(1+m5)*x + b5
-    plt.plot(x,y)
-    plt.plot(x,y2)
-    plt.scatter(new['g1'], g1_obs, s=1)
-    plt.savefig('mcal_quad_fit.png')
+    #x=np.linspace(-0.1,0.1,1000)
+    #y=coeffs_max[2]*(x**3)+coeffs_max[1]*x+coeffs_max[0]
+    #y2=(1+m5)*x + b5
+    #plt.plot(x,y)
+    #plt.plot(x,y2)
+    #plt.scatter(new['g1'], g1_obs, s=1)
+    #plt.savefig('mcal_quad_fit.png')
 
     return None
 
@@ -445,8 +445,8 @@ def main(argv):
     #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
     #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
     #dirr=['../fiducial_H158'] #['v2_9_offset_0_rand20', 'v2_9_offset_0_rand360', 'v2_9_offset_45_rand20', 'v2_9_offset_45_rand360']
-    dirr=['v2_13_skypatch']
-    shape=sys.argv[1]
+    dirr=sys.argv[1]
+    shape=sys.argv[2]
 
     if shape=='metacal_quad':
         for i in range(len(dirr)):
