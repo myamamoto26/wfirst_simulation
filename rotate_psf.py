@@ -70,6 +70,7 @@ def rotate_psf():
 	exposures = [0, 20]
 	i_gal = 1
 	real_wcs = True
+	basis = 'g1'
 
 	# get star/psf stamp
 	gal_model = None
