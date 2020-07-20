@@ -332,7 +332,7 @@ class Model:
         # reassign correct flux
         starflux=1.
         st_model = st_model.withFlux(starflux)
-        st_model = galsim.Convolve(st_model, self.getPSF())
+        st_model = galsim.Convolve(st_model, self.psf)
 
         return st_model
 
