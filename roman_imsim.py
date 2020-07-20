@@ -240,17 +240,17 @@ class Pointing:
         return WCS, sky_level
 
 class Model:
-    def __init__(self, cat, gal_prof, psf_prof, sca, filter_, bpass, hlr, i_gal):
+    def __init__(self, cat, gal_prof, psf, sca, filter_, bpass, hlr, i_gal):
         self.cat=cat
         self.gal_prof=gal_prof
-        self.psf_prof=psf_prof
+        self.psf=psf
         self.sca=sca
         self.filter_=filter_
         self.bpass=bpass
         self.hlr=hlr
         self.i_gal=i_gal
 
-
+    """
     def getPSF(self):
     
         if self.psf_prof == "Gaussian":
@@ -260,6 +260,7 @@ class Model:
             psf = wfirst.getPSF(self.sca, self.filter_, SCA_pos=None, approximate_struts=True, wavelength=self.bpass.effective_wavelength, high_accuracy=False)
 
         return psf
+    """
 
     def make_sed_model(self, model, sed):
         """
@@ -321,7 +322,7 @@ class Model:
         gal_model  = gal_model.evaluateAtWavelength(self.bpass.effective_wavelength)
         # Reassign correct flux
         gal_model  = gal_model.withFlux(flux_)
-        gal_model = galsim.Convolve(gal_model, self.getPSF())
+        gal_model = galsim.Convolve(gal_model, self.psf)
 
         return gal_model, g1, g2
 
@@ -370,8 +371,8 @@ class Image:
         dec=self.pointing.dec
 
         if self.real_wcs==True:
-            self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
-            self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) #scale=wfirst.pixel_scale)
+            self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) 
+            self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) 
         else:
             self.gal_stamp = galsim.Image(self.b, scale=wfirst.pixel_scale)
             self.psf_stamp = galsim.Image(self.b, scale=wfirst.pixel_scale)
@@ -737,6 +738,11 @@ def main(argv):
     elif shape=='ngmix':
         res_tot=[res_noshear]
 
+    # save time. 
+    if psf_prof == "Gaussian":
+        psf = galsim.Gaussian(fwhm=0.178)
+    elif psf_prof == 'wfirst':
+        psf = wfirst.getPSF(SCA, filter_, SCA_pos=None, approximate_struts=True, wavelength=bpass.effective_wavelength, high_accuracy=False)
     t0 = time.time()
     for i_gal in range(gal_num):
         if i_gal%size != rank: 
@@ -748,7 +754,7 @@ def main(argv):
         gal_model = None
         st_model = None
 
-        profile = Model(cat, gal_prof, psf_prof, SCA, filter_, bpass, hlr, i_gal)
+        profile = Model(cat, gal_prof, psf, SCA, filter_, bpass, hlr, i_gal)
         gal_model, g1, g2 = profile.draw_galaxy(basis)
         st_model = profile.draw_star()
 
