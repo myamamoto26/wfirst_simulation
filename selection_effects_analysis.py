@@ -306,7 +306,7 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, shape):
     print("m1="+str("%6.4f"% np.mean(m1_val))+"+-"+str("%6.4f"% np.mean(m1_err)), "b1="+str("%6.6f"% np.mean(b1_val))+"+-"+str("%6.6f"% np.mean(b1_err)))
     print("m2="+str("%6.4f"% np.mean(m2_val))+"+-"+str("%6.4f"% np.mean(m2_err)), "b2="+str("%6.6f"% np.mean(b2_val))+"+-"+str("%6.6f"% np.mean(b2_err)))
 
-    print(m1, m1_err)
+    print(m1_val, m1_err)
 
     values=[m1_val,b1_val,m2_val,b2_val]
     errors=[m1_err,b1_err,m2_err,b2_err]
