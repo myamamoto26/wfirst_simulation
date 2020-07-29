@@ -308,8 +308,8 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, shape):
 
     print(m1, m1_err)
 
-    values=[m1_val,b1_val,m2_val,b2_val,m3_val,b3_val,m4_val,b4_val]
-    errors=[m1_err,b1_err,m2_err,b2_err,m3_err,b3_err,m4_err,b4_err]
+    values=[m1_val,b1_val,m2_val,b2_val]
+    errors=[m1_err,b1_err,m2_err,b2_err]
     return values, errors, snr_binslist
 
 def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
