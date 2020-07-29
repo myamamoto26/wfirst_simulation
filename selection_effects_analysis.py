@@ -442,10 +442,62 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
     plt.savefig('v1_23comb_residualbias.png')
 
 def main(argv):
-    #dirr=['v2_7_offset_0', 'v2_8_offset_0', 'v2_7_offset_10', 'v2_8_offset_10', 'v2_7_offset_45', 'v2_8_offset_45']
-    #off=['g1_off0', 'g2_off0', 'g1_off10', 'g2_off10', 'g1_off45', 'g2_off45']
-    dirr=['v2_3', 'v2_3_redo']
+
     shape=sys.argv[1]
+
+    g = 0.01
+    old = None
+    dirr=['v2_3', 'v2_3_seed2', 'v2_3_seed3', 'v2_3_seed4', 'v2_3_seed5']
+    model='sim' # choice: metacal
+    #f = open('meds_number.txt', 'r')
+    #medsn = f.read().split('\n')
+
+    start = 0
+    """
+    for j,pix in enumerate(medsn):
+        for i in range(5):
+            new_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits')[-1].read()
+            new1p_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_1p.fits')[-1].read()
+            new1m_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_1m.fits')[-1].read()
+            new2p_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_2p.fits')[-1].read()
+            new2m_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_2m.fits')[-1].read()
+            print(j,i,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start,len(new))
+            if (j==0)&(i==0):
+                new   = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                new1p = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                new1m = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                new2p = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                new2m = np.zeros(2500*len(medsn),dtype=new_.dtype)
+            else:
+                for col in new.dtype.names:
+                    new[col][start:start+len(new_)] += new_[col]
+                    new1p[col][start:start+len(new_)] += new1p_[col]
+                    new1m[col][start:start+len(new_)] += new1m_[col]
+                    new2p[col][start:start+len(new_)] += new2p_[col]
+                    new2m[col][start:start+len(new_)] += new2m_[col]
+        start+=len(new_)
+    """
+    for j in range(len(dirr)):
+        new_ = fio.FITS(dirr[j]+model+'_0.fits')[-1].read()
+        new1p_ = fio.FITS(dirr[j]+model+'_1.fits')[-1].read()
+        new1m_ = fio.FITS(dirr[j]+model+'_2.fits')[-1].read()
+        new2p_ = fio.FITS(dirr[j]+model+'_3.fits')[-1].read()
+        new2m_ = fio.FITS(dirr[j]+model+'_4.fits')[-1].read()
+        print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start,len(new))
+        if j==0:
+            new   = np.zeros(10000000,dtype=new_.dtype)
+            new1p = np.zeros(10000000,dtype=new_.dtype)
+            new1m = np.zeros(10000000,dtype=new_.dtype)
+            new2p = np.zeros(10000000,dtype=new_.dtype)
+            new2m = np.zeros(10000000,dtype=new_.dtype)
+        for col in new.dtype.names:
+            new[col][start:start+len(new_)] += new_[col]
+            new1p[col][start:start+len(new_)] += new1p_[col]
+            new1m[col][start:start+len(new_)] += new1m_[col]
+            new2p[col][start:start+len(new_)] += new2p_[col]
+            new2m[col][start:start+len(new_)] += new2m_[col]
+        start+=len(new_)
+
 
     if shape=='metacal_quad':
         dirr=['../fiducial_H158']
@@ -470,14 +522,14 @@ def main(argv):
             g_values,g_errors,snr_binslist = residual_bias([a,b,c,d,e], shape)
 
     elif shape=='metacal':
-        for i in range(len(dirr)):
-            a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
-            b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
-            c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
-            d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
-            e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
+        #for i in range(len(dirr)):
+        #    a=fio.FITS(dirr[i]+'_sim_0.fits')[-1].read() 
+        #    b=fio.FITS(dirr[i]+'_sim_1.fits')[-1].read()
+        #    c=fio.FITS(dirr[i]+'_sim_2.fits')[-1].read()
+        #    d=fio.FITS(dirr[i]+'_sim_3.fits')[-1].read()
+        #    e=fio.FITS(dirr[i]+'_sim_4.fits')[-1].read()
 
-            g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, shape)
+        g_values,g_errors,snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m,shape)
     return None
 
 if __name__ == "__main__":
