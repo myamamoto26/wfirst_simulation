@@ -447,6 +447,7 @@ def main(argv):
 
     g = 0.01
     old = None
+    folder='/hpc/group/cosmology/phy-lsst/my137/roman_simple_mcal/v2'
     dirr=['v2_3_', 'v2_3_seed2_', 'v2_3_seed3_', 'v2_3_seed4_', 'v2_3_seed5_']
     model='sim' # choice: metacal
     #f = open('meds_number.txt', 'r')
@@ -478,11 +479,11 @@ def main(argv):
         start+=len(new_)
     """
     for j in range(len(dirr)):
-        new_ = fio.FITS(dirr[j]+model+'_0.fits')[-1].read()
-        new1p_ = fio.FITS(dirr[j]+model+'_1.fits')[-1].read()
-        new1m_ = fio.FITS(dirr[j]+model+'_2.fits')[-1].read()
-        new2p_ = fio.FITS(dirr[j]+model+'_3.fits')[-1].read()
-        new2m_ = fio.FITS(dirr[j]+model+'_4.fits')[-1].read()
+        new_ = fio.FITS(folder+dirr[j]+model+'_0.fits')[-1].read()
+        new1p_ = fio.FITS(folder+dirr[j]+model+'_1.fits')[-1].read()
+        new1m_ = fio.FITS(folder+dirr[j]+model+'_2.fits')[-1].read()
+        new2p_ = fio.FITS(folder+dirr[j]+model+'_3.fits')[-1].read()
+        new2m_ = fio.FITS(folder+dirr[j]+model+'_4.fits')[-1].read()
         print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
         if j==0:
             new   = np.zeros(10000000,dtype=new_.dtype)
