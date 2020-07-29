@@ -483,7 +483,7 @@ def main(argv):
         new1m_ = fio.FITS(dirr[j]+model+'_2.fits')[-1].read()
         new2p_ = fio.FITS(dirr[j]+model+'_3.fits')[-1].read()
         new2m_ = fio.FITS(dirr[j]+model+'_4.fits')[-1].read()
-        print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start,len(new))
+        print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
         if j==0:
             new   = np.zeros(10000000,dtype=new_.dtype)
             new1p = np.zeros(10000000,dtype=new_.dtype)
