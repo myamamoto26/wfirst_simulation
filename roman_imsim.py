@@ -630,7 +630,7 @@ class shape_measurement:
         #for i in range(len(gals)):
         #t = truth[i]
         #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-        obs_list,psf_list,w = self.get_exp_list(psf2=None)
+        obs_list,psf_list,w = self.get_exp_list(psf2=Nsone)
         i = self.i_gal
         #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
         #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
@@ -805,7 +805,7 @@ def main(argv):
             fio.write(dirr+'_sim_'+str(i)+'.fits', res_tot[i])
             
     if rank==0:
-        bias = residual_bias(res_tot, 'metacal')
+        bias = residual_bias(res_tot[0], res_tot[1], res_tot[2], res_tot[3], res_tot[4], 'metacal')
         #final = residual_bias_correction(res_tot,R11,R22,R12,R21)
         print(time.time()-t0)
 
