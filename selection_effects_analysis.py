@@ -392,6 +392,7 @@ def main(argv):
                     new2m[col][start:start+len(new_)] += new2m_[col]
         start+=len(new_)
     """
+    object_number = 5000000
     for j in range(len(dirr)):
         new_ = fio.FITS(folder+dirr[j]+model+'_0.fits')[-1].read()
         new1p_ = fio.FITS(folder+dirr[j]+model+'_1.fits')[-1].read()
@@ -400,11 +401,11 @@ def main(argv):
         new2m_ = fio.FITS(folder+dirr[j]+model+'_4.fits')[-1].read()
         print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
         if j==0:
-            new   = np.zeros(10000000,dtype=new_.dtype)
-            new1p = np.zeros(10000000,dtype=new_.dtype)
-            new1m = np.zeros(10000000,dtype=new_.dtype)
-            new2p = np.zeros(10000000,dtype=new_.dtype)
-            new2m = np.zeros(10000000,dtype=new_.dtype)
+            new   = np.zeros(object_number,dtype=new_.dtype)
+            new1p = np.zeros(object_number,dtype=new_.dtype)
+            new1m = np.zeros(object_number,dtype=new_.dtype)
+            new2p = np.zeros(object_number,dtype=new_.dtype)
+            new2m = np.zeros(object_number,dtype=new_.dtype)
         for col in new.dtype.names:
             new[col][start:start+len(new_)] += new_[col]
             new1p[col][start:start+len(new_)] += new1p_[col]
