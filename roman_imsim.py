@@ -630,7 +630,7 @@ class shape_measurement:
         #for i in range(len(gals)):
         #t = truth[i]
         #obs_list,psf_list,w = get_exp_list(t,gals,psfs,sky_stamp,psf2=None,size=t['size'])
-        obs_list,psf_list,w = self.get_exp_list(psf2=Nsone)
+        obs_list,psf_list,w = self.get_exp_list(psf2=None)
         i = self.i_gal
         #obs_list,psf_list,w = get_exp_list(gals,psfs,sky_stamp,psf2=None)
         #res_ = shape_measurement(obs_list,metacal_pars,hlr,flux=get_flux(obs_list),fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
