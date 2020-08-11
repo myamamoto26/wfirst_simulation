@@ -362,7 +362,8 @@ def main(argv):
     g = 0.01
     old = None
     folder='/hpc/group/cosmology/phy-lsst/my137/roman_simple_mcal/v2/'
-    dirr=['v2_4_seed2_', 'v2_4_seed3_', 'v2_4_seed4_', 'v2_4_seed5_']
+    dirr=[ 'v2_4_seed3_', 'v2_4_seed3_', 'v2_4_seed4_', 'v2_4_seed5_',
+            'v2_4_seed6_', 'v2_4_seed7_', 'v2_4_seed8_', 'v2_4_seed9_']
     model='sim' # choice: metacal
     #f = open('meds_number.txt', 'r')
     #medsn = f.read().split('\n')
