@@ -393,7 +393,7 @@ def main(argv):
                     new2m[col][start:start+len(new_)] += new2m_[col]
         start+=len(new_)
     """
-    object_number = 5000000
+    object_number = 10000000
     for j in range(len(dirr)):
         new_ = fio.FITS(folder+dirr[j]+model+'_0.fits')[-1].read()
         new1p_ = fio.FITS(folder+dirr[j]+model+'_1.fits')[-1].read()
