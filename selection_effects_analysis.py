@@ -214,8 +214,8 @@ def residual_bias(new, new1p, new1m, new2p, new2m, shape):
         m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
 
         print('off-diagonal cpomponents: ')
-        print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b1="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12err))
-        print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b1="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21err))
+        print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b1="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+        print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b1="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
 
         print("before correction: ")
         print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
