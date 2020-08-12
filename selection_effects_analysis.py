@@ -205,6 +205,18 @@ def residual_bias(new, new1p, new1m, new2p, new2m, shape):
         m6,b6=params2[0]
         m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
+        ## off-diagonal bias check
+        params_off1 = curve_fit(func,new['g2'],gamma1_obs,p0=(0.,0.))
+        params_off2 = curve_fit(func,new['g1'],gamma2_obs,p0=(0.,0.))
+        m12, c12 = params_off1[0]
+        m12_err, c12_err = np.sqrt(np.diagonal(params_off1[1]))
+        m21, c21 = params_off2[0]
+        m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
+
+        print('off-diagonal cpomponents: ')
+        print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b1="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12err))
+        print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b1="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21err))
+
         print("before correction: ")
         print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
         print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
