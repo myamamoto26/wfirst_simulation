@@ -372,7 +372,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
 
     shape=sys.argv[1]
-    if shape=='metacal_all'
+    if shape=='metacal_all':
         g = 0.01
         old = None
         """
