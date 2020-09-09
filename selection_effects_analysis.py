@@ -154,7 +154,7 @@ def residual_bias(new, new1p, new1m, new2p, new2m, shape):
 
         return R11, R22, R12, R21, gamma1_obs, gamma2_obs
 
-    elif shape=='metacal':
+    elif shape=='mcal':
         g = 0.01
 
         """
@@ -372,75 +372,80 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
 
     shape=sys.argv[1]
+    if shape=='metacal_all'
+        g = 0.01
+        old = None
+        """
+        folder='/hpc/group/cosmology/phy-lsst/my137/roman_simple_mcal/v2/'
+        dirr=['v2_3_', 'v2_3_seed2_', 'v2_3_seed3_', 'v2_3_seed4_', 'v2_3_seed5_']
+        dirr2=[ 'v2_4_seed3_', 'v2_4_seed3_', 'v2_4_seed4_', 'v2_4_seed5_',
+                'v2_4_seed6_', 'v2_4_seed7_', 'v2_4_seed8_', 'v2_4_seed9_']
+        model='sim' # choice: metacal
+        """
+        folder='/hpc/group/cosmology/phy-lsst/my137/ngmix'
+        dirr=['fiducial_H158_2290725_0_']
+        model='mcal_'
+        #f = open('meds_number.txt', 'r')
+        #medsn = f.read().split('\n')
 
-    g = 0.01
-    old = None
-    folder='/hpc/group/cosmology/phy-lsst/my137/roman_simple_mcal/v2/'
-    dirr=['v2_3_', 'v2_3_seed2_', 'v2_3_seed3_', 'v2_3_seed4_', 'v2_3_seed5_']
-    dirr2=[ 'v2_4_seed3_', 'v2_4_seed3_', 'v2_4_seed4_', 'v2_4_seed5_',
-            'v2_4_seed6_', 'v2_4_seed7_', 'v2_4_seed8_', 'v2_4_seed9_']
-    model='sim' # choice: metacal
-    #f = open('meds_number.txt', 'r')
-    #medsn = f.read().split('\n')
-
-    start = 0
-    """
-    for j,pix in enumerate(medsn):
-        for i in range(5):
-            new_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits')[-1].read()
-            new1p_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_1p.fits')[-1].read()
-            new1m_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_1m.fits')[-1].read()
-            new2p_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_2p.fits')[-1].read()
-            new2m_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_2m.fits')[-1].read()
-            print(j,i,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start,len(new))
-            if (j==0)&(i==0):
-                new   = np.zeros(2500*len(medsn),dtype=new_.dtype)
-                new1p = np.zeros(2500*len(medsn),dtype=new_.dtype)
-                new1m = np.zeros(2500*len(medsn),dtype=new_.dtype)
-                new2p = np.zeros(2500*len(medsn),dtype=new_.dtype)
-                new2m = np.zeros(2500*len(medsn),dtype=new_.dtype)
-            else:
-                for col in new.dtype.names:
-                    new[col][start:start+len(new_)] += new_[col]
-                    new1p[col][start:start+len(new_)] += new1p_[col]
-                    new1m[col][start:start+len(new_)] += new1m_[col]
-                    new2p[col][start:start+len(new_)] += new2p_[col]
-                    new2m[col][start:start+len(new_)] += new2m_[col]
-        start+=len(new_)
-    """
-    object_number = 10000000
-    for j in range(len(dirr)):
-        new_ = fio.FITS(folder+dirr[j]+model+'_0.fits')[-1].read()
-        new1p_ = fio.FITS(folder+dirr[j]+model+'_1.fits')[-1].read()
-        new1m_ = fio.FITS(folder+dirr[j]+model+'_2.fits')[-1].read()
-        new2p_ = fio.FITS(folder+dirr[j]+model+'_3.fits')[-1].read()
-        new2m_ = fio.FITS(folder+dirr[j]+model+'_4.fits')[-1].read()
-        print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-        if j==0:
-            new   = np.zeros(object_number,dtype=new_.dtype)
-            new1p = np.zeros(object_number,dtype=new_.dtype)
-            new1m = np.zeros(object_number,dtype=new_.dtype)
-            new2p = np.zeros(object_number,dtype=new_.dtype)
-            new2m = np.zeros(object_number,dtype=new_.dtype)
-        for col in new.dtype.names:
-            new[col][start:start+len(new_)] += new_[col]
-            new1p[col][start:start+len(new_)] += new1p_[col]
-            new1m[col][start:start+len(new_)] += new1m_[col]
-            new2p[col][start:start+len(new_)] += new2p_[col]
-            new2m[col][start:start+len(new_)] += new2m_[col]
-        start+=len(new_)
+        start = 0
+        """
+        for j,pix in enumerate(medsn):
+            for i in range(5):
+                new_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits')[-1].read()
+                new1p_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_1p.fits')[-1].read()
+                new1m_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_1m.fits')[-1].read()
+                new2p_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_2p.fits')[-1].read()
+                new2m_ = fio.FITS(dirr+'/fiducial_H158_'+str(pix)+'_'+str(i)+'_'+model+'_2m.fits')[-1].read()
+                print(j,i,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start,len(new))
+                if (j==0)&(i==0):
+                    new   = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                    new1p = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                    new1m = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                    new2p = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                    new2m = np.zeros(2500*len(medsn),dtype=new_.dtype)
+                else:
+                    for col in new.dtype.names:
+                        new[col][start:start+len(new_)] += new_[col]
+                        new1p[col][start:start+len(new_)] += new1p_[col]
+                        new1m[col][start:start+len(new_)] += new1m_[col]
+                        new2p[col][start:start+len(new_)] += new2p_[col]
+                        new2m[col][start:start+len(new_)] += new2m_[col]
+            start+=len(new_)
+        """
+        object_number = 10000000
+        for j in range(len(dirr)):
+            new_ = fio.FITS(folder+dirr[j]+model+'_0.fits')[-1].read()
+            new1p_ = fio.FITS(folder+dirr[j]+model+'_1.fits')[-1].read()
+            new1m_ = fio.FITS(folder+dirr[j]+model+'_2.fits')[-1].read()
+            new2p_ = fio.FITS(folder+dirr[j]+model+'_3.fits')[-1].read()
+            new2m_ = fio.FITS(folder+dirr[j]+model+'_4.fits')[-1].read()
+            print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
+            if j==0:
+                new   = np.zeros(object_number,dtype=new_.dtype)
+                new1p = np.zeros(object_number,dtype=new_.dtype)
+                new1m = np.zeros(object_number,dtype=new_.dtype)
+                new2p = np.zeros(object_number,dtype=new_.dtype)
+                new2m = np.zeros(object_number,dtype=new_.dtype)
+            for col in new.dtype.names:
+                new[col][start:start+len(new_)] += new_[col]
+                new1p[col][start:start+len(new_)] += new1p_[col]
+                new1m[col][start:start+len(new_)] += new1m_[col]
+                new2p[col][start:start+len(new_)] += new2p_[col]
+                new2m[col][start:start+len(new_)] += new2m_[col]
+            start+=len(new_)
 
 
-    if shape=='metacal_quad':
-        dirr=['../fiducial_H158']
+    if shape=='mcal':
+        dirr=['/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_2290725_0']
         for i in range(len(dirr)):
-            a=fio.FITS(dirr[i]+'_metacal_noshear.fits')[-1].read() 
-            b=fio.FITS(dirr[i]+'_metacal_1p.fits')[-1].read()
-            c=fio.FITS(dirr[i]+'_metacal_1m.fits')[-1].read()
-            d=fio.FITS(dirr[i]+'_metacal_2p.fits')[-1].read()
-            e=fio.FITS(dirr[i]+'_metacal_2m.fits')[-1].read()
+            a=fio.FITS(dirr[i]+'_mcal_noshear.fits')[-1].read() 
+            b=fio.FITS(dirr[i]+'_mcal_1p.fits')[-1].read()
+            c=fio.FITS(dirr[i]+'_mcal_1m.fits')[-1].read()
+            d=fio.FITS(dirr[i]+'_mcal_2p.fits')[-1].read()
+            e=fio.FITS(dirr[i]+'_mcal_2m.fits')[-1].read()
 
-            residual_bias_quad([a,b,c,d,e])
+            residual_bias_correction(a,b,c,d,e,shape)
             #g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, 'metacal')
 
     elif shape=='ngmix':
