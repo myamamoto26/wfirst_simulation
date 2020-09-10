@@ -154,7 +154,7 @@ def residual_bias(new, new1p, new1m, new2p, new2m, shape):
 
         return R11, R22, R12, R21, gamma1_obs, gamma2_obs
 
-    elif shape=='mcal':
+    elif shape=='mcal' or shape=='mcal_all':
         g = 0.01
 
         """
@@ -372,7 +372,7 @@ def plot_combined(g1values,g1errors,g2values,g2errors,snr_binslist):
 def main(argv):
 
     shape=sys.argv[1]
-    if shape=='metacal_all':
+    if shape=='mcal_all':
         g = 0.01
         old = None
         """
@@ -422,6 +422,7 @@ def main(argv):
             new2m_ = fio.FITS(folder+dirr[j]+model+'_2m.fits')[-1].read()
             print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
             if j==0:
+                object_number = len(new_['ind'])
                 new   = np.zeros(object_number,dtype=new_.dtype)
                 new1p = np.zeros(object_number,dtype=new_.dtype)
                 new1m = np.zeros(object_number,dtype=new_.dtype)
@@ -458,7 +459,7 @@ def main(argv):
 
             g_values,g_errors,snr_binslist = residual_bias([a,b,c,d,e], shape)
 
-    elif shape=='metacal_all':
+    elif shape=='mcal_all':
         g_values,g_errors,snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m,shape)
     
     return None
