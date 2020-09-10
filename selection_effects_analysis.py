@@ -383,7 +383,7 @@ def main(argv):
         model='sim' # choice: metacal
         """
         folder='/hpc/group/cosmology/phy-lsst/my137/ngmix'
-        dirr=['fiducial_H158_2290725_0_']
+        dirr=['fiducial_H158_2290725_0_', 'fiducial_H158_2290725_1_', 'fiducial_H158_2290725_2_', 'fiducial_H158_2290725_3_', 'fiducial_H158_2290725_4_']
         model='mcal_'
         #f = open('meds_number.txt', 'r')
         #medsn = f.read().split('\n')
@@ -413,13 +413,13 @@ def main(argv):
                         new2m[col][start:start+len(new_)] += new2m_[col]
             start+=len(new_)
         """
-        object_number = 10000000
+        #object_number = 10000000
         for j in range(len(dirr)):
-            new_ = fio.FITS(folder+dirr[j]+model+'_0.fits')[-1].read()
-            new1p_ = fio.FITS(folder+dirr[j]+model+'_1.fits')[-1].read()
-            new1m_ = fio.FITS(folder+dirr[j]+model+'_2.fits')[-1].read()
-            new2p_ = fio.FITS(folder+dirr[j]+model+'_3.fits')[-1].read()
-            new2m_ = fio.FITS(folder+dirr[j]+model+'_4.fits')[-1].read()
+            new_ = fio.FITS(folder+dirr[j]+model+'_noshear.fits')[-1].read()
+            new1p_ = fio.FITS(folder+dirr[j]+model+'_1p.fits')[-1].read()
+            new1m_ = fio.FITS(folder+dirr[j]+model+'_1m.fits')[-1].read()
+            new2p_ = fio.FITS(folder+dirr[j]+model+'_2p.fits')[-1].read()
+            new2m_ = fio.FITS(folder+dirr[j]+model+'_2m.fits')[-1].read()
             print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
             if j==0:
                 new   = np.zeros(object_number,dtype=new_.dtype)
@@ -458,7 +458,7 @@ def main(argv):
 
             g_values,g_errors,snr_binslist = residual_bias([a,b,c,d,e], shape)
 
-    elif shape=='metacal':
+    elif shape=='metacal_all':
         g_values,g_errors,snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m,shape)
     
     return None
