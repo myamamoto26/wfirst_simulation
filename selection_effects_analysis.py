@@ -384,7 +384,7 @@ def main(argv):
         """
         folder='/hpc/group/cosmology/phy-lsst/my137/ngmix'
         dirr=['fiducial_H158_2290725_0_', 'fiducial_H158_2290725_1_', 'fiducial_H158_2290725_2_', 'fiducial_H158_2290725_3_', 'fiducial_H158_2290725_4_']
-        model='mcal_'
+        model='mcal'
         #f = open('meds_number.txt', 'r')
         #medsn = f.read().split('\n')
 
