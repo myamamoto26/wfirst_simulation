@@ -382,7 +382,7 @@ def main(argv):
                 'v2_4_seed6_', 'v2_4_seed7_', 'v2_4_seed8_', 'v2_4_seed9_']
         model='sim' # choice: metacal
         """
-        folder='/hpc/group/cosmology/phy-lsst/my137/ngmix'
+        folder='/hpc/group/cosmology/phy-lsst/my137/ngmix/'
         dirr=['fiducial_H158_2290725_0_', 'fiducial_H158_2290725_1_', 'fiducial_H158_2290725_2_', 'fiducial_H158_2290725_3_', 'fiducial_H158_2290725_4_']
         model='mcal'
         #f = open('meds_number.txt', 'r')
