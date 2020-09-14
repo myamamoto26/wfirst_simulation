@@ -383,7 +383,7 @@ def main(argv):
         model='sim' # choice: metacal
         """
         folder='/hpc/group/cosmology/phy-lsst/my137/ngmix/'
-        dirr=['fiducial_H158_2290725_0_', 'fiducial_H158_2290725_1_', 'fiducial_H158_2290725_2_', 'fiducial_H158_2290725_3_', 'fiducial_H158_2290725_4_']
+        dirr=['fiducial_H158_2290725_0_']
         model='mcal'
         #f = open('meds_number.txt', 'r')
         #medsn = f.read().split('\n')
@@ -438,7 +438,7 @@ def main(argv):
 
 
     if shape=='mcal':
-        dirr=['/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_2290725_0']
+        dirr=[sys.argv[2]]
         for i in range(len(dirr)):
             a=fio.FITS(dirr[i]+'_mcal_noshear.fits')[-1].read() 
             b=fio.FITS(dirr[i]+'_mcal_1p.fits')[-1].read()
