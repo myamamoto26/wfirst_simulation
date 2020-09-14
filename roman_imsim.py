@@ -699,7 +699,7 @@ def main(argv):
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
-    dither_file = '/hpc/group/cosmology/phy-lsst/dc2_truth/dc2_cen1deg.txt'
+    dither_file = 22535 #'/hpc/group/cosmology/phy-lsst/dc2_truth/dc2_cen1deg.txt'
     reference_dither = 30592
     SCA = 1
     filter_ = 'H158'
@@ -720,10 +720,10 @@ def main(argv):
     output_name = sys.argv[7]
 
     #PA_list, D_list = find_pa(dither_file)
-    #exposures = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
+    #position_angless = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
     #selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
-    exposures = [0]
-    selected_dithers = [22535]
+    position_angles = [20, 65]
+    selected_dithers = [22535, 22535]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -758,7 +758,7 @@ def main(argv):
         gal_model, g1, g2 = profile.draw_galaxy(basis)
         st_model = profile.draw_star()
 
-        sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, exposures[0], random_angle=False).find_sca_center()
+        sca_center = Pointing(selected_dithers[0], SCA, filter_, stamp_size, position_angles[0], random_angle=False).find_sca_center()
         offsets = []
         gals = []
         psfs = []
@@ -767,7 +767,7 @@ def main(argv):
             gal_stamp=None
             psf_stamp=None
 
-            pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, exposures[exp], random_angle=False)
+            pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False)
             image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs)
 
             translation=False
@@ -779,11 +779,14 @@ def main(argv):
             if real_wcs==True:
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
+            gal_stamp.write('psf_rotation_'+str(exp)+'.fits')
+
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_stamp)
         res_tot = shape_measurement(cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot).get_coadd_shape()
+    sys.exit()
 
     ## send and receive objects from one processor to others
     if rank!=0:
