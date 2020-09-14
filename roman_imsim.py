@@ -753,7 +753,7 @@ def main(argv):
         gal_model = None
         st_model = None
 
-        elif psf_prof == 'wfirst':
+        if psf_prof == 'wfirst':
             psf_wcs = Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False).get_wcs()
             psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, approximate_struts=True, wavelength=bpass.effective_wavelength, high_accuracy=False)
         
