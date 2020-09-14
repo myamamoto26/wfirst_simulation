@@ -699,7 +699,7 @@ def main(argv):
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
-    dither_file = 22535 #'/hpc/group/cosmology/phy-lsst/dc2_truth/dc2_cen1deg.txt'
+    dither_file = '/hpc/group/cosmology/phy-lsst/dc2_truth/dc2_cen1deg.txt'
     reference_dither = 30592
     SCA = 1
     filter_ = 'H158'
