@@ -741,8 +741,7 @@ def main(argv):
     # save time. 
     if psf_prof == "Gaussian":
         psf = galsim.Gaussian(fwhm=0.178)
-    elif psf_prof == 'wfirst':
-        psf = wfirst.getPSF(SCA, filter_, SCA_pos=None, approximate_struts=True, wavelength=bpass.effective_wavelength, high_accuracy=False)
+    
     t0 = time.time()
     for i_gal in range(gal_num):
         if i_gal%size != rank: 
@@ -754,6 +753,10 @@ def main(argv):
         gal_model = None
         st_model = None
 
+        elif psf_prof == 'wfirst':
+            psf_wcs = Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False).get_wcs()
+            psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, approximate_struts=True, wavelength=bpass.effective_wavelength, high_accuracy=False)
+        
         profile = Model(cat, gal_prof, psf, SCA, filter_, bpass, hlr, i_gal)
         gal_model, g1, g2 = profile.draw_galaxy(basis)
         st_model = profile.draw_star()
