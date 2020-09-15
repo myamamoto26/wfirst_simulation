@@ -442,11 +442,11 @@ def main(argv):
     if shape=='mcal':
         dirr=[sys.argv[2]]
         for i in range(len(dirr)):
-            a=fio.FITS(dirr[i]+'_mcal_noshear.fits')[-1].read() 
-            b=fio.FITS(dirr[i]+'_mcal_1p.fits')[-1].read()
-            c=fio.FITS(dirr[i]+'_mcal_1m.fits')[-1].read()
-            d=fio.FITS(dirr[i]+'_mcal_2p.fits')[-1].read()
-            e=fio.FITS(dirr[i]+'_mcal_2m.fits')[-1].read()
+            a=fio.FITS(dirr[i]+'_noshear.fits')[-1].read() 
+            b=fio.FITS(dirr[i]+'_1p.fits')[-1].read()
+            c=fio.FITS(dirr[i]+'_1m.fits')[-1].read()
+            d=fio.FITS(dirr[i]+'_2p.fits')[-1].read()
+            e=fio.FITS(dirr[i]+'_2m.fits')[-1].read()
 
             residual_bias_correction(a,b,c,d,e,shape)
             #g_values,g_errors,snr_binslist = residual_bias_correction(a,b,c,d,e, 'metacal')
