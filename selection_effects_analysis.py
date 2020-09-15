@@ -167,12 +167,12 @@ def residual_bias(new, new1p, new1m, new2p, new2m, shape):
         print(len(mask), len(mask_all))
         #old = old[old['ra']!=0]
         """
-        
+
         new = new[new['ra']!=0]
-        new1p = new1p[new1p['ra']!=0]
-        new1m = new1m[new1m['ra']!=0]
-        new2p = new2p[new2p['ra']!=0]
-        new2m = new2m[new2m['ra']!=0]
+        new1p = new1p[new['ra']!=0]
+        new1m = new1m[new['ra']!=0]
+        new2p = new2p[new['ra']!=0]
+        new2m = new2m[new['ra']!=0]
         
         
         R11 = (new1p["e1"] - new1m["e1"])/(2*g)
