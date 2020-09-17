@@ -762,7 +762,7 @@ def main(argv):
 
             if psf_prof == 'wfirst':
                 psf_wcs, sk = Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False).get_wcs()
-                psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, pupil_bin=4, wavelength=bpass.effective_wavelengh)
+                psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, pupil_bin=4, wavelength=bpass.effective_wavelength)
             
             profile = Model(cat, gal_prof, psf, SCA, filter_, bpass, hlr, i_gal)
             gal_model, g1, g2 = profile.draw_galaxy(basis)
