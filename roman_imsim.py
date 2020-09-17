@@ -780,9 +780,9 @@ def main(argv):
 
             gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
             gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
-            if real_wcs==True:
+            if self.real_wcs==True:
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
-
+            print(psf_stamp.wcs)
             psf_stamp.write('psf_rotation_'+str(exp)+'.fits')
 
             offsets.append(offset)
