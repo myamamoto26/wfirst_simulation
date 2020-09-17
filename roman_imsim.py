@@ -453,7 +453,7 @@ class Image:
         wcs_transf = gal_stamp.wcs.affine(image_pos=new_pos)
         new_wcs = galsim.JacobianWCS(wcs_transf.dudx, wcs_transf.dudy, wcs_transf.dvdx, wcs_transf.dvdy)
         gal_stamp.wcs=new_wcs
-        #psf_stamp.wcs=new_wcs
+        psf_stamp.wcs=new_wcs
 
         return gal_stamp, psf_stamp
 
@@ -759,18 +759,16 @@ def main(argv):
 
             gal_model = None
             st_model = None
+            gal_stamp=None
+            psf_stamp=None
 
             if psf_prof == 'wfirst':
                 psf_wcs, sk = Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False).get_wcs()
-                print(psf_wcs)
                 psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, pupil_bin=4, wavelength=bpass.effective_wavelength)
             
             profile = Model(cat, gal_prof, psf, SCA, filter_, bpass, hlr, i_gal)
             gal_model, g1, g2 = profile.draw_galaxy(basis)
             st_model = profile.draw_star()
-
-            gal_stamp=None
-            psf_stamp=None
 
             pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False)
             image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs)
@@ -781,6 +779,7 @@ def main(argv):
 
             gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
             gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
+            print(psf_stamp.wcs)
             if real_wcs==True:
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
