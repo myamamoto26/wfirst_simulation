@@ -314,7 +314,7 @@ class Model:
             g2=g[1,1]
             gal_model = gal_model.shear(g1=g1,g2=g2)
 
-        gal_model = gal_model * galsim.wfirst.collecting_area * galsim.wfirst.exptime
+        gal_model = gal_model * wfirst.collecting_area * wfirst.exptime
 
         flux_ = gal_model.calculateFlux(self.bpass)
         #mag_ = gal_model.calculateMagnitude(bpass)
@@ -540,13 +540,13 @@ class shape_measurement:
 
     def shape_measurement_metacal(self, obs_list, metacal_pars, flux=1000.0, fracdev=None, use_e=None):
         T = self.hlr
-        pix_range = old_div(galsim.wfirst.pixel_scale,10.)
+        pix_range = old_div(wfirst.pixel_scale,10.)
         e_range = 0.1
         fdev = 1.
         def pixe_guess(n):
             return 2.*n*np.random.random() - n
 
-        cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
+        cp = ngmix.priors.CenPrior(0.0, 0.0, wfirst.pixel_scale, wfirst.pixel_scale)
         gp = ngmix.priors.GPriorBA(0.3)
         hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
         fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
@@ -571,14 +571,14 @@ class shape_measurement:
 
     def measure_shape_ngmix(self, obs_list, flux_=1000.0, model='gauss'):
         T = self.hlr
-        pix_range = old_div(galsim.wfirst.pixel_scale,10.)
+        pix_range = old_div(wfirst.pixel_scale,10.)
         e_range = 0.1
         fdev = 1.
         def pixe_guess(n):
             return 2.*n*np.random.random() - n
 
         # possible models are 'exp','dev','bdf' galsim.wfirst.pixel_scale
-        cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.wfirst.pixel_scale, galsim.wfirst.pixel_scale)
+        cp = ngmix.priors.CenPrior(0.0, 0.0, wfirst.pixel_scale, wfirst.pixel_scale)
         gp = ngmix.priors.GPriorBA(0.3)
         hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
         fracdevp = ngmix.priors.TruncatedGaussian(0.5, 0.5, -0.5, 1.5)
