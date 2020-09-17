@@ -338,7 +338,7 @@ class Model:
 
 class Image:
 
-    def __init__(self, i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs):
+    def __init__(self, i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs=False):
         self.i_gal=i_gal
         self.stamp_size=stamp_size
         self.gal_model=gal_model
@@ -346,6 +346,7 @@ class Image:
         self.pointing=pointing
         self.sca_center=sca_center
         self.real_wcs=real_wcs
+        print(self.real_wcs)
 
         self.stamp_size_factor = old_div(int(self.gal_model.getGoodImageSize(wfirst.pixel_scale)), self.stamp_size)
         if self.stamp_size_factor == 0:
@@ -369,7 +370,7 @@ class Image:
     def make_stamp(self):
         ra=self.pointing.ra
         dec=self.pointing.dec
-
+        print(self.real_wcs)
         if self.real_wcs==True:
             self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) 
             self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) 
@@ -696,7 +697,7 @@ class shape_measurement:
 def main(argv):
 
     ## fixed parameters
-    random_seed = int(sys.argv[8])
+    random_seed = int(sys.argv[7])
     rng = galsim.BaseDeviate(random_seed)
     random_dir = galsim.UniformDeviate(rng)
     poisson_noise = galsim.PoissonNoise(rng)
@@ -717,8 +718,7 @@ def main(argv):
     psf_prof = sys.argv[3]
     shape = sys.argv[4]
     basis = sys.argv[5]
-    real_wcs = sys.argv[6]
-    output_name = sys.argv[7]
+    output_name = sys.argv[6]
 
     #PA_list, D_list = find_pa(dither_file)
     #position_angless = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
@@ -772,14 +772,13 @@ def main(argv):
             st_model = profile.draw_star()
 
             pointing=Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False)
-            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs)
+            image=Image(i_gal, stamp_size, gal_model, st_model, pointing, sca_center, real_wcs=True)
 
             translation=False
             if translation==True:
                 offset=image.translational_dithering()
 
             gal_stamp, psf_stamp, offset = image.draw_image(gal_model, st_model)
-            print(psf_stamp.wcs)
             gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
             if real_wcs==True:
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
