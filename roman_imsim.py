@@ -346,7 +346,6 @@ class Image:
         self.pointing=pointing
         self.sca_center=sca_center
         self.real_wcs=real_wcs
-        print(self.real_wcs)
 
         self.stamp_size_factor = old_div(int(self.gal_model.getGoodImageSize(wfirst.pixel_scale)), self.stamp_size)
         if self.stamp_size_factor == 0:
@@ -370,12 +369,11 @@ class Image:
     def make_stamp(self):
         ra=self.pointing.ra
         dec=self.pointing.dec
-        print(self.real_wcs)
+
         if self.real_wcs==True:
             self.gal_stamp = galsim.Image(self.b, wcs=self.wcs) 
             self.psf_stamp = galsim.Image(self.b, wcs=self.wcs) 
         else:
-            print('in the wrong condition')
             self.gal_stamp = galsim.Image(self.b, scale=wfirst.pixel_scale)
             self.psf_stamp = galsim.Image(self.b, scale=wfirst.pixel_scale)
 
@@ -723,7 +721,7 @@ def main(argv):
     #PA_list, D_list = find_pa(dither_file)
     #position_angless = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
     #selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
-    position_angles = [20, 65]
+    position_angles = [20, 50]
     selected_dithers = [22535, 22535]
 
     # when using more galaxies than the length of truth file. 
@@ -782,7 +780,7 @@ def main(argv):
             gal_stamp, sky_stamp = image.add_noise(rng, gal_stamp)
             if psf_stamp.wcs != galsim.PixelScale(0.11):
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
-            print(psf_stamp.wcs)
+
             psf_stamp.write('psf_rotation_'+str(exp)+'.fits')
 
             offsets.append(offset)
