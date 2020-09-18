@@ -59,7 +59,7 @@ def main(argv):
     # diameter and (since we didn't use any keyword arguments to modify this) using the typical
     # exposure time for WFIRST images.  By default, this routine truncates the parts of the
     # bandpasses that are near 0 at the edges, and thins them by the default amount.
-    filters = wfirst.getBandpasses(AB_zeropoint=True)
+    filters = wfirst.getBandpasses(AB_zeropoint=True)['H158']
     logger.debug('Read in WFIRST imaging filters.')
 
     # Here we carry out the initial steps that are necessary to get a fully chromatic PSF.  We use
