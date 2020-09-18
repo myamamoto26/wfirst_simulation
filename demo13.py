@@ -62,15 +62,6 @@ def main(argv):
     filters = wfirst.getBandpasses(AB_zeropoint=True)
     logger.debug('Read in WFIRST imaging filters.')
 
-    logger.info('Reading from a parametric COSMOS catalog.')
-    # Read in a galaxy catalog - just a random subsample of 100 galaxies for F814W<23.5 from COSMOS.
-    cat_file_name = 'real_galaxy_catalog_23.5_example_fits.fits'
-    dir = 'data'
-    # Use the routine that can take COSMOS real or parametric galaxy information, and tell it we
-    # want parametric galaxies that represent an I<23.5 sample.
-    cat = galsim.COSMOSCatalog(cat_file_name, dir=dir, use_real=False)
-    logger.info('Read in %d galaxies from catalog'%cat.nobjects)
-
     # Here we carry out the initial steps that are necessary to get a fully chromatic PSF.  We use
     # the getPSF() routine in the WFIRST module, which knows all about the telescope parameters
     # (diameter, bandpasses, obscuration, etc.).  Note that we arbitrarily choose a single SCA
@@ -120,59 +111,6 @@ def main(argv):
         # If we had a real galaxy catalog with positions in terms of RA, dec we could use wcs.toImage()
         # to find where those objects should be in terms of (X, Y).
         pos_rng = galsim.UniformDeviate(random_seed)
-        # Make a list of (X, Y, F814W magnitude, n_rot, flip) values.
-        # (X, Y) give the position of the galaxy centroid (or the center of the postage stamp into which
-        # we draw the galaxy) in the big image.
-        # F814W magnitudes are randomly drawn from the catalog, and are used to create a more realistic
-        # flux distribution for the galaxies instead of just having the 10 flux values for the galaxies
-        # we have chosen to draw.
-        # n_rot says how many 90 degree rotations to include for a given realization of each galaxy, so
-        # it doesn't appear completely identical each time we put it in the image.
-        # flip is a random number that will determine whether we include an x-y flip for this appearance
-        # of the galaxy or not.
-        x_stamp = []
-        y_stamp = []
-        mag_stamp = []
-        n_rot_stamp = []
-        flip_stamp = []
-        for i_gal in range(n_tot):
-            x_stamp.append(pos_rng()*wfirst.n_pix)
-            y_stamp.append(pos_rng()*wfirst.n_pix)
-            # Note that we could use wcs.toWorld() to get the (RA, dec) for these (x, y) positions.  Or,
-            # if we had started with (RA, dec) positions, we could have used wcs.toImage() to get the
-            # CCD coordinates for those positions.
-            mag_stamp.append(cat.param_cat['mag_auto'][int(pos_rng()*cat.nobjects)])
-            n_rot_stamp.append(int(4*pos_rng()))
-            flip_stamp.append(pos_rng())
-
-        # Make the 2-component parametric GSObjects for each object, including chromaticity (roughly
-        # appropriate SEDs per galaxy component, at the appropriate galaxy redshift).  Note that since
-        # the PSF is position-independent within the SCA, we can simply do the convolution with that PSF
-        # now instead of using a different one for each position.  We also have to include the correct
-        # flux scaling: The catalog returns objects that would be observed by HST in 1 second
-        # exposures. So for our telescope we scale up by the relative area and exposure time.  Note that
-        # what is important is the *effective* area after taking into account obscuration.
-        logger.info('Processing the objects in the catalog to get GSObject representations')
-        # Choose a random set of unique indices in the catalog (will be the same each time script is
-        # run, due to use of the same random seed):
-        rand_indices = []
-        while len(rand_indices)<n_use:
-            tmp_ind = int(pos_rng()*cat.nobjects)
-            if tmp_ind not in rand_indices:
-                rand_indices.append(tmp_ind)
-        obj_list = cat.makeGalaxy(rand_indices, chromatic=True, gal_type='parametric')
-        hst_eff_area = 2.4**2 * (1.-0.33**2)
-        wfirst_eff_area = galsim.wfirst.diameter**2 * (1.-galsim.wfirst.obscuration**2)
-        flux_scaling = (wfirst_eff_area/hst_eff_area) * wfirst.exptime
-        mag_list = []
-        for ind in range(len(obj_list)):
-            # First, let's check what magnitude this object has in F814W.  We want to do this because
-            # (to inject some variety into our images) we are going to rescale the fluxes in all bands
-            # for different instances of this galaxy in the final image in order to get a reasonable S/N
-            # distribution.  So we need to save the original magnitude in F814W, to compare with a
-            # randomly drawn one from the catalog.  This is not something that most users would need to
-            # do.
-            mag_list.append(cat.param_cat['mag_auto'][cat.orig_index[rand_indices[ind]]])
 
         # Calculate the sky level for each filter, and draw the PSF and the galaxies through the
         # filters.
