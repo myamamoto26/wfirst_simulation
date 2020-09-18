@@ -29,7 +29,7 @@ def main(argv):
     n_tot = 4000
 
     # Default is to use all filters.  Specify e.g. 'YJH' to only do Y106, J129, and H158.
-    use_filters = None
+    use_filters = 'H158'
 
     # quick and dirty command line parsing.
     for var in argv:
@@ -59,7 +59,7 @@ def main(argv):
     # diameter and (since we didn't use any keyword arguments to modify this) using the typical
     # exposure time for WFIRST images.  By default, this routine truncates the parts of the
     # bandpasses that are near 0 at the edges, and thins them by the default amount.
-    filters = wfirst.getBandpasses(AB_zeropoint=True)['H158']
+    filters = wfirst.getBandpasses(AB_zeropoint=True)
     logger.debug('Read in WFIRST imaging filters.')
 
     # Here we carry out the initial steps that are necessary to get a fully chromatic PSF.  We use
