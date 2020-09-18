@@ -65,10 +65,9 @@ def main(argv):
     logger.info('Reading from a parametric COSMOS catalog.')
     # Read in a galaxy catalog - just a random subsample of 100 galaxies for F814W<23.5 from COSMOS.
     cat_file_name = 'real_galaxy_catalog_23.5_example_fits.fits'
-    dir = 'data'
     # Use the routine that can take COSMOS real or parametric galaxy information, and tell it we
     # want parametric galaxies that represent an I<23.5 sample.
-    cat = galsim.COSMOSCatalog(cat_file_name, dir=dir, use_real=False)
+    cat = galsim.COSMOSCatalog(cat_file_name, use_real=False)
     logger.info('Read in %d galaxies from catalog'%cat.nobjects)
 
     # Here we carry out the initial steps that are necessary to get a fully chromatic PSF.  We use
