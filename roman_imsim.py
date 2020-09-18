@@ -781,6 +781,7 @@ def main(argv):
             if psf_stamp.wcs != galsim.PixelScale(0.11):
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
+            gal_stamp.write('gal_rotation_'+str(exp)+'.fits')
             psf_stamp.write('psf_rotation_'+str(exp)+'.fits')
 
             offsets.append(offset)
