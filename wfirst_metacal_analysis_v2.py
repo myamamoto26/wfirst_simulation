@@ -15,7 +15,7 @@ model='mcal' # choice: metacal
 f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
 medsn = f.read().split('\n')
 
-obj_num = 1000000 #880426 #2500*len(medsn)
+obj_num = 863305 #880426 #2500*len(medsn)
 start = 0
 for j,pix in enumerate(medsn):
     for i in range(1): #range(5):
@@ -48,8 +48,8 @@ for j,pix in enumerate(medsn):
         start+=len(new_)
 print('number of objects is, ', start)
 
-fio.write('fiducial_H158_mcal_1pmcal_noshear.fits', new)
-fio.write('fiducial_H158_mcal_1p.fits', new1p)
-fio.write('fiducial_H158_mcal_1m.fits', new1m)
-fio.write('fiducial_H158_mcal_2p.fits', new2p)
-fio.write('fiducial_H158_mcal_2m.fits', new2m)
+fio.write('/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_mcal_noshear.fits', new)
+fio.write('/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_mcal_1p.fits', new1p)
+fio.write('/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_mcal_1m.fits', new1m)
+fio.write('/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_mcal_2p.fits', new2p)
+fio.write('/hpc/group/cosmology/phy-lsst/my137/ngmix/fiducial_H158_mcal_2m.fits', new2m)
