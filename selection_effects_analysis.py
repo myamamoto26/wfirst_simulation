@@ -385,7 +385,7 @@ def main(argv):
         model='sim' # choice: metacal
         """
         folder='/hpc/group/cosmology/phy-lsst/my137/ngmix/'
-        dirr=['fiducial_H158_2290725_0_']
+        dirr=['fiducial_H158_mcal_']
         model='mcal'
         #f = open('meds_number.txt', 'r')
         #medsn = f.read().split('\n')
