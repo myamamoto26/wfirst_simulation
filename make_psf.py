@@ -23,8 +23,8 @@ st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
 # reassign correct flux
 starflux=1.
 st_model = st_model.withFlux(starflux)
-star1 = galsim.Convolve(star_model, psf)
-star2 = galsim.Convolve(star_model, psf)
+star1 = galsim.Convolve(st_model, psf)
+star2 = galsim.Convolve(st_model, psf)
 img_psf1 = galsim.ImageF(stamp_size1,stamp_size1)
 img_psf2 = galsim.ImageF(stamp_size2, stamp_size2)
 star1.drawImage(bandpass=filter_, image=img_psf1, scale=wfirst.pixel_scale)
