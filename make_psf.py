@@ -18,10 +18,13 @@ psf = wfirst.getPSF(SCA,
                     wavelength=bpass.effective_wavelength
                     )
 
-point = galsim.DeltaFunction(flux=1.)
-star_sed = galsim.SED(lambda x:1, 'nm', 'flambda').withFlux(1.,filter_)  # Give it unit flux in this filter.
-star1 = galsim.Convolve(point*star_sed, psf)
-star2 = galsim.Convolve(point*star_sed, psf)
+st_model = galsim.DeltaFunction(flux=1.)
+st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
+# reassign correct flux
+starflux=1.
+st_model = st_model.withFlux(starflux)
+star1 = galsim.Convolve(star_model, psf)
+star2 = galsim.Convolve(star_model, psf)
 img_psf1 = galsim.ImageF(stamp_size1,stamp_size1)
 img_psf2 = galsim.ImageF(stamp_size2, stamp_size2)
 star1.drawImage(bandpass=filter_, image=img_psf1, scale=wfirst.pixel_scale)
