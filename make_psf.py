@@ -13,7 +13,7 @@ filter_ = 'H158'
 bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
 psf = wfirst.getPSF(SCA, 
                     filter_,
-                    pupil_bin=4,
+                    pupil_bin=1,
                     n_waves=10,
                     wavelength=bpass.effective_wavelength
                     )
@@ -34,5 +34,5 @@ for stamp in stamp_size:
                         ymax=xyI.y)
     psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
     st_model.drawImage(image=psf_stamp)
-    psf_stamp.write('psf_size_'+str(stamp)+'.fits')
+    psf_stamp.write('psf_size_pupil1_'+str(stamp)+'.fits')
 
