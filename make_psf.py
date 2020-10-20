@@ -8,6 +8,7 @@ import galsim.wfirst as wfirst
 
 stamp_size1 = 4088
 stamp_size2 = 32
+stamp_size = [stamp_size1, stamp_size2]
 SCA = 1
 filter_ = 'H158'
 bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
@@ -18,19 +19,21 @@ psf = wfirst.getPSF(SCA,
                     wavelength=bpass.effective_wavelength
                     )
 
-st_model = galsim.DeltaFunction(flux=1.)
-st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
-# reassign correct flux
-starflux=1.
-st_model = st_model.withFlux(starflux)
-star1 = galsim.Convolve(st_model, psf)
-star2 = galsim.Convolve(st_model, psf)
-img_psf1 = galsim.ImageF(stamp_size1,stamp_size1)
-img_psf2 = galsim.ImageF(stamp_size2, stamp_size2)
-star1.drawImage(bandpass=filter_, image=img_psf1, scale=wfirst.pixel_scale)
-star2.drawImage(bandpass=filter_, image=img_psf2, scale=wfirst.pixel_scale)
-img_psf1.write('psf_size4088.fits')
-img_psf1.write('psf_size32.fits')
 
-if __name__ == "__main__":
-    main(sys.argv)
+for stamp in stamp_size:
+    st_model = galsim.DeltaFunction(flux=1.)
+    st_model = st_model.evaluateAtWavelength(bpass.effective_wavelength)
+    # reassign correct flux
+    starflux=1.
+    st_model = st_model.withFlux(starflux)
+    st_model = galsim.Convolve(st_model, psf)
+
+    xyI = galsim.PositionI(int(stamp), int(stamp))
+    b = galsim.BoundsI( xmin=1,
+                        xmax=xyI.x,
+                        ymin=1,
+                        ymax=xyI.y)
+    psf_stamp = galsim.Image(b, scale=wfirst.pixel_scale)
+    st_model.drawImage(image=psf_stamp)
+    psf_stamp.write('psf_size_'+str(stamp)+'.fits')
+
