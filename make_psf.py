@@ -7,7 +7,7 @@ import galsim as galsim
 import galsim.wfirst as wfirst
 
 
-stamp_size = [4088, 32, 256]
+stamp_size = [1600, 32, 256]
 SCA = 1
 filter_ = 'H158'
 bpass = wfirst.getBandpasses(AB_zeropoint=True)[filter_]
