@@ -50,7 +50,7 @@ def main(argv):
     model='mcal'
 
     start = 0
-    #object_number = 863305+863306+863306+863306
+    object_number = 863305 #863305+863306+863306+863306
     for j in range(len(folder)):
         new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
         new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
@@ -58,7 +58,7 @@ def main(argv):
         new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
         new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
         print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-        object_number = len(new_['ind'])
+        #object_number = len(new_['ind'])
         new   = np.zeros(object_number,dtype=new_.dtype)
         new1p = np.zeros(object_number,dtype=new_.dtype)
         new1m = np.zeros(object_number,dtype=new_.dtype)
@@ -72,6 +72,14 @@ def main(argv):
             new2m[col][start:start+len(new_)] += new2m_[col]
         start = 0
         #start+=len(new_)
+
+        ## remove the extra object (object number = 40118)
+        if (j==1 or j==2 or j==3):
+        	new = new[np.where(new['ind']!=40118)]
+        	new1p = new1p[np.where(new1p['ind']!=40118)]
+        	new1m = new1m[np.where(new1m['ind']!=40118)]
+        	new2p = new2p[np.where(new2p['ind']!=40118)]
+        	new2m = new2m[np.where(new2m['ind']!=40118)]
 
         if j==0:
         	g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
@@ -100,16 +108,16 @@ def main(argv):
     m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
     ## off-diagonal bias check
-    #params_off1 = curve_fit(func_off,gamma2_true,gamma1_obs,p0=(0.,0.))
-    #params_off2 = curve_fit(func_off,gamma1_true,gamma2_obs,p0=(0.,0.))
-    #m12, c12 = params_off1[0]
-    #m12_err, c12_err = np.sqrt(np.diagonal(params_off1[1]))
-    #m21, c21 = params_off2[0]
-    #m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
+    params_off1 = curve_fit(func_off,gamma2_true,gamma1_obs,p0=(0.,0.))
+    params_off2 = curve_fit(func_off,gamma1_true,gamma2_obs,p0=(0.,0.))
+    m12, c12 = params_off1[0]
+    m12_err, c12_err = np.sqrt(np.diagonal(params_off1[1]))
+    m21, c21 = params_off2[0]
+    m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
 
-    #print('off-diagonal cpomponents: ')
-    #print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
-    #print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+    print('off-diagonal cpomponents: ')
+    print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+    print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
 
     print("before correction: ")
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
