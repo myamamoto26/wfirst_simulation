@@ -194,7 +194,7 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m):
 
 def main(argv):
 
-    g = 0.01
+	g = 0.01
     old = None
 
     folder=['/hpc/group/cosmology/phy-lsst/my137/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g1n002/ngmix/',
@@ -274,10 +274,11 @@ def main(argv):
 
     print("before correction: ")
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-    print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+	print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
     correction = sys.argv[1]
-	if correction==True:
+	if correction == True:
+		
 		start = 0
 		object_number = 863305+863306+863306+863306
 		for j in range(len(folder)):
