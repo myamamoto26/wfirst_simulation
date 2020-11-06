@@ -18,7 +18,7 @@ def analyze_g1(new,new1p,new1m,new2p,new2m):
 
 	gamma1_obs = new['e1']/avg_R11
 
-    return new['g1'], gamma1_obs
+	return new['g1'], gamma1_obs
 
 def analyze_g2(new,new1p,new1m,new2p,new2m):
 
@@ -34,7 +34,7 @@ def analyze_g2(new,new1p,new1m,new2p,new2m):
 
 	gamma2_obs = new['e2']/avg_R22
 
-    return new['g2'], gamma2_obs
+	return new['g2'], gamma2_obs
 
 
 
