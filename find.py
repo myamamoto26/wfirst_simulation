@@ -9,5 +9,3 @@ print(len(a['ind']), len(b['ind']))
 for i in range(len(b['ind'])):
 	if b['ind'][i] not in a['ind']:
 		print(b['ind'][i])
-	else:
-		print('clear',i)
