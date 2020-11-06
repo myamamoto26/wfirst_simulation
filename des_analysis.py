@@ -73,7 +73,7 @@ def main(argv):
         start+=len(new_)
 
         if j==0:
-    		g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
+        	g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
     	elif j==1:
     		g1n_true, g1n_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
     	elif j==2:
@@ -82,9 +82,9 @@ def main(argv):
     		g2n_true, g2n_obs = analyze_g2(new,new1p,new1m,new2p,new2m)
     
     def func(x,m,b):
-          return (1+m)*x+b
+    	return (1+m)*x+b
     def func_off(x,m,b):
-        return m*x+b
+    	return m*x+b
 
     gamma1_true = np.concatenate((g1_true,g1n_true))
     gamma1_obs = np.concatenate((g1_obs,g1n_obs))
