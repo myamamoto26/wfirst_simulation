@@ -276,7 +276,7 @@ def main(argv):
 	print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
 	print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
-    correction = sys.argv[1]
+	correction = sys.argv[1]
 	if correction == True:
 
 		start = 0
