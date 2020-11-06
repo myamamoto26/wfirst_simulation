@@ -260,6 +260,7 @@ def main(argv):
 	m6,b6=params2[0]
 	m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
+	print('######', (np.mean(g1_obs)-np.mean(g1n_true))/0.04)
 	## off-diagonal bias check
 	params_off1 = curve_fit(func_off,gamma2_true,gamma1_obs,p0=(0.,0.))
 	params_off2 = curve_fit(func_off,gamma1_true,gamma2_obs,p0=(0.,0.))
