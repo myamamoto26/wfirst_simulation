@@ -276,7 +276,7 @@ def main(argv):
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
     print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
-	correction=sys.argv[1]
+    correction = sys.argv[1]
 	if correction==True:
 		start = 0
 		object_number = 863305+863306+863306+863306
@@ -302,9 +302,9 @@ def main(argv):
 		start+=len(new_)
 
 	R11, R22, R12, R21, gamma1_obs, gamma2_obs = analyze_g12(new,new1p,new1m,new2p,new2m)
-    values, errors, snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m)
+	values, errors, snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m)
 
-    return None
+	return None
 
 if __name__ == "__main__":
     main(sys.argv)
