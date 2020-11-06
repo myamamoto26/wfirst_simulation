@@ -6,7 +6,7 @@ import fitsio as fio
 
 
 def analyze_g1(new,new1p,new1m,new2p,new2m):
-
+	g=0.01
 	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
 	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
 	R12 = (new2p["e1"] - new2m["e1"])/(2*g)
@@ -22,7 +22,7 @@ def analyze_g1(new,new1p,new1m,new2p,new2m):
 	return new['g1'], gamma1_obs
 
 def analyze_g2(new,new1p,new1m,new2p,new2m):
-
+	g=0.01
 	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
 	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
 	R12 = (new2p["e1"] - new2m["e1"])/(2*g)
@@ -58,20 +58,20 @@ def main(argv):
         new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
         new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
         print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-        if j==0:
-            object_number = len(new_['ind'])
-            new   = np.zeros(object_number,dtype=new_.dtype)
-            new1p = np.zeros(object_number,dtype=new_.dtype)
-            new1m = np.zeros(object_number,dtype=new_.dtype)
-            new2p = np.zeros(object_number,dtype=new_.dtype)
-            new2m = np.zeros(object_number,dtype=new_.dtype)
+        object_number = len(new_['ind'])
+        new   = np.zeros(object_number,dtype=new_.dtype)
+        new1p = np.zeros(object_number,dtype=new_.dtype)
+        new1m = np.zeros(object_number,dtype=new_.dtype)
+        new2p = np.zeros(object_number,dtype=new_.dtype)
+        new2m = np.zeros(object_number,dtype=new_.dtype)
         for col in new.dtype.names:
             new[col][start:start+len(new_)] += new_[col]
             new1p[col][start:start+len(new_)] += new1p_[col]
             new1m[col][start:start+len(new_)] += new1m_[col]
             new2p[col][start:start+len(new_)] += new2p_[col]
             new2m[col][start:start+len(new_)] += new2m_[col]
-        start+=len(new_)
+        start = 0
+        #start+=len(new_)
 
         if j==0:
         	g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
