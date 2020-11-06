@@ -195,44 +195,44 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m):
 def main(argv):
 
 	g = 0.01
-    old = None
+	old = None
 
-    folder=['/hpc/group/cosmology/phy-lsst/my137/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g1n002/ngmix/',
-    '/hpc/group/cosmology/phy-lsst/my137/g2002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g2n002/ngmix/']
-    dirr='fiducial_H158_'
-    model='mcal'
+	folder=['/hpc/group/cosmology/phy-lsst/my137/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g1n002/ngmix/',
+	'/hpc/group/cosmology/phy-lsst/my137/g2002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g2n002/ngmix/']
+	dirr='fiducial_H158_'
+	model='mcal'
 
-    start = 0
+	start = 0
     #object_number = 863305+863306+863306+863306
-    for j in range(len(folder)):
-        new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
-        new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
-        new1m_ = fio.FITS(folder[j]+dirr+model+'_1m.fits')[-1].read()
-        new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
-        new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
-        print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-        object_number = len(new_['ind'])
-        new   = np.zeros(object_number,dtype=new_.dtype)
-        new1p = np.zeros(object_number,dtype=new_.dtype)
-        new1m = np.zeros(object_number,dtype=new_.dtype)
-        new2p = np.zeros(object_number,dtype=new_.dtype)
-        new2m = np.zeros(object_number,dtype=new_.dtype)
-        for col in new.dtype.names:
-            new[col][start:start+len(new_)] += new_[col]
-            new1p[col][start:start+len(new_)] += new1p_[col]
-            new1m[col][start:start+len(new_)] += new1m_[col]
-            new2p[col][start:start+len(new_)] += new2p_[col]
-            new2m[col][start:start+len(new_)] += new2m_[col]
-        start = 0
-        #start+=len(new_)
+	for j in range(len(folder)):
+		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
+		new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
+		new1m_ = fio.FITS(folder[j]+dirr+model+'_1m.fits')[-1].read()
+		new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
+		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
+		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
+		object_number = len(new_['ind'])
+		new   = np.zeros(object_number,dtype=new_.dtype)
+		new1p = np.zeros(object_number,dtype=new_.dtype)
+		new1m = np.zeros(object_number,dtype=new_.dtype)
+		new2p = np.zeros(object_number,dtype=new_.dtype)
+		new2m = np.zeros(object_number,dtype=new_.dtype)
+		for col in new.dtype.names:
+			new[col][start:start+len(new_)] += new_[col]
+			new1p[col][start:start+len(new_)] += new1p_[col]
+			new1m[col][start:start+len(new_)] += new1m_[col]
+			new2p[col][start:start+len(new_)] += new2p_[col]
+			new2m[col][start:start+len(new_)] += new2m_[col]
+		start = 0
+		#start+=len(new_)
 
         ## remove the extra object (object number = 40118)
-        if (j==1 or j==2 or j==3):
-        	new = new[np.where(new['ind']!=40118)]
-        	new1p = new1p[np.where(new1p['ind']!=40118)]
-        	new1m = new1m[np.where(new1m['ind']!=40118)]
-        	new2p = new2p[np.where(new2p['ind']!=40118)]
-        	new2m = new2m[np.where(new2m['ind']!=40118)]
+		if (j==1 or j==2 or j==3):
+			new = new[np.where(new['ind']!=40118)]
+			new1p = new1p[np.where(new1p['ind']!=40118)]
+			new1m = new1m[np.where(new1m['ind']!=40118)]
+			new2p = new2p[np.where(new2p['ind']!=40118)]
+			new2m = new2m[np.where(new2m['ind']!=40118)]
 
         if j==0:
         	g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
@@ -278,7 +278,7 @@ def main(argv):
 
     correction = sys.argv[1]
 	if correction == True:
-		
+
 		start = 0
 		object_number = 863305+863306+863306+863306
 		for j in range(len(folder)):
