@@ -276,30 +276,30 @@ def main(argv):
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
     print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
 
-    correction=sys.argv[1]
-    if correction==True:
-    	start = 0
-    	object_number = 863305+863306+863306+863306
-    	for j in range(len(folder)):
-    		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
-    		new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
-    		new1m_ = fio.FITS(folder[j]+dirr+model+'_1m.fits')[-1].read()
-    		new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
-    		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
-    		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-	        #object_number = len(new_['ind'])
-	        new   = np.zeros(object_number,dtype=new_.dtype)
-	        new1p = np.zeros(object_number,dtype=new_.dtype)
-	        new1m = np.zeros(object_number,dtype=new_.dtype)
-	        new2p = np.zeros(object_number,dtype=new_.dtype)
-	        new2m = np.zeros(object_number,dtype=new_.dtype)
-	        for col in new.dtype.names:
-	        	new[col][start:start+len(new_)] += new_[col]
-	        	new1p[col][start:start+len(new_)] += new1p_[col]
-	        	new1m[col][start:start+len(new_)] += new1m_[col]
-	        	new2p[col][start:start+len(new_)] += new2p_[col]
-	        	new2m[col][start:start+len(new_)] += new2m_[col]
-	        start+=len(new_)
+	correction=sys.argv[1]
+	if correction==True:
+		start = 0
+		object_number = 863305+863306+863306+863306
+		for j in range(len(folder)):
+			new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
+			new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
+			new1m_ = fio.FITS(folder[j]+dirr+model+'_1m.fits')[-1].read()
+			new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
+			new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
+			print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
+			#object_number = len(new_['ind'])
+			new = np.zeros(object_number,dtype=new_.dtype)
+			new1p = np.zeros(object_number,dtype=new_.dtype)
+			new1m = np.zeros(object_number,dtype=new_.dtype)
+			new2p = np.zeros(object_number,dtype=new_.dtype)
+			new2m = np.zeros(object_number,dtype=new_.dtype)
+			for col in new.dtype.names:
+				new[col][start:start+len(new_)] += new_[col]
+				new1p[col][start:start+len(new_)] += new1p_[col]
+				new1m[col][start:start+len(new_)] += new1m_[col]
+				new2p[col][start:start+len(new_)] += new2p_[col]
+				new2m[col][start:start+len(new_)] += new2m_[col]
+		start+=len(new_)
 
 	R11, R22, R12, R21, gamma1_obs, gamma2_obs = analyze_g12(new,new1p,new1m,new2p,new2m)
     values, errors, snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m)
