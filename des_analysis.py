@@ -59,7 +59,7 @@ def analyze_g12(new,new1p,new1m,new2p,new2m):
 
 	def func(x,m,b):
 		return (1+m)*x+b
-    def func_off(x,m,b):
+	def func_off(x,m,b):
 		return m*x+b
 
 	gamma1_obs = new['e1']/avg_R11
