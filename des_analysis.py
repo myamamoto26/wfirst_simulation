@@ -7,32 +7,32 @@ from scipy.optimize import curve_fit
 def analyze_g1(new,new1p,new1m,new2p,new2m):
 
 	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-    R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-    R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+	R12 = (new2p["e1"] - new2m["e1"])/(2*g)
+	R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
-    avg_R11 = np.mean(R11)
-    avg_R22 = np.mean(R22)
-    avg_R12 = np.mean(R12)
-    avg_R21 = np.mean(R21)
+	avg_R11 = np.mean(R11)
+	avg_R22 = np.mean(R22)
+	avg_R12 = np.mean(R12)
+	avg_R21 = np.mean(R21)
 
-    gamma1_obs = new['e1']/avg_R11
+	gamma1_obs = new['e1']/avg_R11
 
     return new['g1'], gamma1_obs
 
 def analyze_g2(new,new1p,new1m,new2p,new2m):
 
 	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-    R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-    R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-    R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+	R12 = (new2p["e1"] - new2m["e1"])/(2*g)
+	R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
-    avg_R11 = np.mean(R11)
-    avg_R22 = np.mean(R22)
-    avg_R12 = np.mean(R12)
-    avg_R21 = np.mean(R21)
+	avg_R11 = np.mean(R11)
+	avg_R22 = np.mean(R22)
+	avg_R12 = np.mean(R12)
+	avg_R21 = np.mean(R21)
 
-    gamma2_obs = new['e2']/avg_R22
+	gamma2_obs = new['e2']/avg_R22
 
     return new['g2'], gamma2_obs
 
