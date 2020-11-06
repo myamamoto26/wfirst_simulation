@@ -91,7 +91,7 @@ def analyze_g12(new,new1p,new1m,new2p,new2m):
 
 def residual_bias_correction(new, new1p, new1m, new2p, new2m):
     g = 0.01
-    R11, R22, R12, R21, gamma1_obs, gamma2_obs = residual_bias(new, new1p, new1m, new2p, new2m, shape)
+    R11, R22, R12, R21, gamma1_obs, gamma2_obs = analyze_g12(new, new1p, new1m, new2p, new2m)
 
     avg_R11 = np.mean(R11)
     avg_R22 = np.mean(R22)
