@@ -74,7 +74,7 @@ def main(argv):
 
         if j==0:
         	g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
-		elif j==1:
+        elif j==1:
 			g1n_true, g1n_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
 		elif j==2:
 			g2_true, g2_obs = analyze_g2(new,new1p,new1m,new2p,new2m)
