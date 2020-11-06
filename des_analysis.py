@@ -50,7 +50,7 @@ def main(argv):
     model='mcal'
 
     start = 0
-    object_number = 863305 #863305+863306+863306+863306
+    #object_number = 863305 #863305+863306+863306+863306
     for j in range(len(folder)):
         new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
         new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
@@ -58,7 +58,7 @@ def main(argv):
         new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
         new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
         print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-        #object_number = len(new_['ind'])
+        object_number = len(new_['ind'])
         new   = np.zeros(object_number,dtype=new_.dtype)
         new1p = np.zeros(object_number,dtype=new_.dtype)
         new1m = np.zeros(object_number,dtype=new_.dtype)
