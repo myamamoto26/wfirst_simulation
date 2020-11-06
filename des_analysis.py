@@ -58,7 +58,7 @@ def analyze_g12(new,new1p,new1m,new2p,new2m):
 	print("<R21> = "+str("%6.4f"% avg_R21)+"+-"+str("%6.4f"% (np.std(R21)/np.sqrt(N))))
 
 	def func(x,m,b):
-    	return (1+m)*x+b
+		return (1+m)*x+b
     def func_off(x,m,b):
 		return m*x+b
 
