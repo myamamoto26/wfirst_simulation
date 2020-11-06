@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+import fitsio as fio
 
 
 def analyze_g1(new,new1p,new1m,new2p,new2m):
