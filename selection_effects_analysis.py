@@ -242,23 +242,23 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, shape):
     if snr_binslist[10] != snr_max:
         print("raise an error.")
 
-    R11_g = []
-    R22_g = []
-    R12_g = []
-    R21_g = []
+    R11_g = np.zeros(10)
+    R22_g = np.zeros(10)
+    R12_g = np.zeros(10)
+    R21_g = np.zeros(10)
     for a in range(10):
         mask = (np.log(new['snr']) >= snr_binslist[a]) & (np.log(new['snr']) < snr_binslist[a+1])
 
-        R11_g.append(np.mean(R11[mask]))
-        R22_g.append(np.mean(R22[mask]))
-        R12_g.append(np.mean(R12[mask]))
-        R21_g.append(np.mean(R21[mask]))
+        R11_g[a] = np.mean(R11[mask])
+        R22_g[a] = np.mean(R22[mask])
+        R12_g[a] = np.mean(R12[mask])
+        R21_g[a] = np.mean(R21[mask])
 
     ## getting cuts on the snr from the sheared catalogs and calculating selection response <R>selection
-    R11_s = []
-    R22_s = []
-    R12_s = []
-    R21_s = []
+    R11_s = np.zeros(10)
+    R22_s = np.zeros(10)
+    R12_s = np.zeros(10)
+    R21_s = np.zeros(10)
     for i in range(10):
         mask_1p = (np.log(new1p['snr']) >= snr_binslist[i]) & (np.log(new1p['snr']) < snr_binslist[i+1])
         mask_1m = (np.log(new1m['snr']) >= snr_binslist[i]) & (np.log(new1m['snr']) < snr_binslist[i+1])
@@ -272,10 +272,10 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, shape):
             
         #print("how many objects fall in each bin. ", len(mask_1p), len(mask_1m), len(mask_2p), len(mask_2m))
         
-        R11_s.append((np.mean(new['e1'][mask_1p]) - np.mean(new['e1'][mask_1m]))/(2*g))
-        R22_s.append((np.mean(new['e2'][mask_2p]) - np.mean(new['e2'][mask_2m]))/(2*g))
-        R12_s.append((np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g))
-        R21_s.append((np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g))
+        R11_s[i] = (np.mean(new['e1'][mask_1p]) - np.mean(new['e1'][mask_1m]))/(2*g)
+        R22_s[i] = (np.mean(new['e2'][mask_2p]) - np.mean(new['e2'][mask_2m]))/(2*g)
+        R12_s[i] = (np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)
+        R21_s[i] = (np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)
 
     ## total response
     tot_R11 = R11_g + R11_s
@@ -385,7 +385,7 @@ def main(argv):
         model='sim' # choice: metacal
         """
         folder='/hpc/group/cosmology/phy-lsst/my137/ngmix/'
-        dirr=['fiducial_H158_mcal_']
+        dirr=['fiducial_H158_']
         model='mcal'
         #f = open('meds_number.txt', 'r')
         #medsn = f.read().split('\n')
