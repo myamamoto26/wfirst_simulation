@@ -100,16 +100,16 @@ def main(argv):
     m6err,b6err=np.sqrt(np.diagonal(params2[1]))
 
     ## off-diagonal bias check
-    params_off1 = curve_fit(func_off,gamma2_true,gamma1_obs,p0=(0.,0.))
-    params_off2 = curve_fit(func_off,gamma1_true,gamma2_obs,p0=(0.,0.))
-    m12, c12 = params_off1[0]
-    m12_err, c12_err = np.sqrt(np.diagonal(params_off1[1]))
-    m21, c21 = params_off2[0]
-    m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
+    #params_off1 = curve_fit(func_off,gamma2_true,gamma1_obs,p0=(0.,0.))
+    #params_off2 = curve_fit(func_off,gamma1_true,gamma2_obs,p0=(0.,0.))
+    #m12, c12 = params_off1[0]
+    #m12_err, c12_err = np.sqrt(np.diagonal(params_off1[1]))
+    #m21, c21 = params_off2[0]
+    #m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
 
-    print('off-diagonal cpomponents: ')
-    print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
-    print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+    #print('off-diagonal cpomponents: ')
+    #print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+    #print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
 
     print("before correction: ")
     print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
