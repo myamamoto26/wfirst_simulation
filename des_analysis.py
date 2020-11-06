@@ -46,7 +46,7 @@ def main(argv):
 
     folder=['/hpc/group/cosmology/phy-lsst/my137/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g1n002/ngmix/',
     '/hpc/group/cosmology/phy-lsst/my137/g2002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/g2n002/ngmix/']
-    dirr='fiducial_H158_mcal_'
+    dirr='fiducial_H158_'
     model='mcal'
 
     start = 0
