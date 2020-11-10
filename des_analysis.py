@@ -249,7 +249,7 @@ def main(argv):
 		fi = []
 		for n in range(N):
 			sample = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
-			function = ((data1[sample]-(1+m)*data2[sample]) + (data3[sample] - (1+m)*data4[sample]))/2
+			function = np.mean((data1[sample]-(1+m)*data2[sample]) + (data3[sample] - (1+m)*data4[sample]))/2
 			fi.append(function)
 		f_mean = np.sum(fi)/N 
 		fi = np.array(fi)
@@ -259,32 +259,24 @@ def main(argv):
 	## m1,c1 calculation
 	m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
 	m11_err = bootstrap_cov_m(200,g1_obs[0],g1_obs[1])
-	c11p = np.mean(g1_obs[0] - (1+m11)*g1_true[0])
-	c11n = np.mean(g1_obs[1] - (1+m11)*g1_true[1])
-	c11 = (c11p + c11n)/2
+	c11 = (np.mean(g1_obs[0] - (1+m11)*g1_true[0]) + np.mean(g1_obs[1] - (1+m11)*g1_true[1]))/2
 	c11_err = bootstrap_cov_c(200,m11,g1_obs[0],g1_true[0],g1_obs[1],g1_true[1])
 
 	## m2,c2 calculation
 	m22 = ((np.mean(g2_obs[2])-np.mean(g2_obs[3]))/0.04) - 1
 	m22_err = bootstrap_cov_m(200,g2_obs[2],g2_obs[3])
-	c22p = np.mean(g2_obs[2] - (1+m22)*g2_true[2])
-	c22n = np.mean(g2_obs[3] - (1+m22)*g2_true[3])
-	c22 = (c22p + c22n)/2
+	c22 = (np.mean(g2_obs[2] - (1+m22)*g2_true[2]) + np.mean(g2_obs[3] - (1+m22)*g2_true[3]))/2
 	c22_err = bootstrap_cov_c(200,m22,g2_obs[2],g2_true[2],g2_obs[3],g2_true[3])
 
 	## off-diagonal components
 	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04) - 1
 	m12_err = bootstrap_cov_m(200,g1_obs[2],g1_obs[3])
-	c12p = np.mean(g1_obs[2] - (m12)*g1_true[2])
-	c12n = np.mean(g1_obs[3] - (m12)*g1_true[3])
-	c12 = (c12p + c12n)/2
+	c12 = (np.mean(g1_obs[2] - (1+m12)*g1_true[2]) + np.mean(g1_obs[3] - (1+m12)*g1_true[3]))/2
 	c12_err = bootstrap_cov_c(200,m12,g1_obs[2],g1_true[2],g1_obs[3],g1_true[3])
 
 	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04) - 1
 	m21_err = bootstrap_cov_m(200,g2_obs[0],g2_obs[1])
-	c21p = np.mean(g2_obs[0] - (m21)*g2_true[0])
-	c21n = np.mean(g2_obs[1] - (m21)*g2_true[1])
-	c21 = (c21p + c21n)/2
+	c21 = (np.mean(g2_obs[0] - (1+m21)*g2_true[0]) + np.mean(g2_obs[1] - (1+m21)*g2_true[1]))/2
 	c21_err = bootstrap_cov_c(200,m21,g2_obs[0],g2_true[0],g2_obs[1],g2_true[1])
 
 	#print(m11,c11,m22,c22,m12,c12,m21,c21)
