@@ -269,12 +269,12 @@ def main(argv):
 	c22_err = bootstrap_cov_c(200,m22,g2_obs[2],g2_true[2],g2_obs[3],g2_true[3])
 
 	## off-diagonal components
-	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04) - 1
+	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04) 
 	m12_err = bootstrap_cov_m(200,g1_obs[2],g1_obs[3])
 	c12 = (np.mean(g1_obs[2] - (1+m12)*g1_true[2]) + np.mean(g1_obs[3] - (1+m12)*g1_true[3]))/2
 	c12_err = bootstrap_cov_c(200,m12,g1_obs[2],g1_true[2],g1_obs[3],g1_true[3])
 
-	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04) - 1
+	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04) 
 	m21_err = bootstrap_cov_m(200,g2_obs[0],g2_obs[1])
 	c21 = (np.mean(g2_obs[0] - (1+m21)*g2_true[0]) + np.mean(g2_obs[1] - (1+m21)*g2_true[1]))/2
 	c21_err = bootstrap_cov_c(200,m21,g2_obs[0],g2_true[0],g2_obs[1],g2_true[1])
