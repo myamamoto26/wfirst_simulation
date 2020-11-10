@@ -235,50 +235,65 @@ def main(argv):
 		return m*x+b
 
 	## bootstrap covariance function. 
-	def bootstrap_cov(N,data1,data2):
+	def bootstrap_cov_m(N,data1,data2):
 		fi = []
 		for n in range(N):
-			ep_samples = [np.random.choice(data1) for m in range(len(data1))]
-			en_samples = [np.random.choice(data2) for m in range(len(data2))]
+			sample = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
+			fi.append((np.mean(data1[sample]) - np.mean(data2[sample]))/0.04)
+		f_mean = np.sum(fi)/N 
+		cov = np.sqrt(np.sum([(fi[n]-f_mean)**2 for n in range(N)])/(N-1))
+		return cov
 
-			fi.append((np.mean(ep_samples) - np.mean(en_samples))/0.04)
+	def bootstrap_cov_c(N,m,data1,data2,data3,data4):
+		fi = []
+		for n in range(N):
+			sample = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
+			function = ((data1[sample]-(1+m)*data2[sample]) + (data3[sample] - (1+m)*data4[sample]))/2
+			fi.append(function)
 		f_mean = np.sum(fi)/N 
 		cov = np.sqrt(np.sum([(fi[n]-f_mean)**2 for n in range(N)])/(N-1))
 		return cov
 
 	## m1,c1 calculation
 	m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
-	#m11_err = bootstrap_cov(200,g1_obs[0],g1_obs[1])
-	c11p = np.mean(g1_obs[0] - (1+m11)*g1_obs[0])
-	c11n = np.mean(g1_obs[1] - (1+m11)*g1_obs[1])
+	m11_err = bootstrap_cov_m(200,g1_obs[0],g1_obs[1])
+	c11p = np.mean(g1_obs[0] - (1+m11)*g1_true[0])
+	c11n = np.mean(g1_obs[1] - (1+m11)*g1_true[1])
 	c11 = (c11p + c11n)/2
+	c11_err = bootstrap_cov_c(200,m11,g1_obs[0],g1_true[0],g1_obs[1],g1_true[1])
 
 	## m2,c2 calculation
 	m22 = ((np.mean(g2_obs[2])-np.mean(g2_obs[3]))/0.04) - 1
-	c22p = np.mean(g2_obs[2] - (1+m22)*g2_obs[2])
-	c22n = np.mean(g2_obs[3] - (1+m22)*g2_obs[3])
+	m22_err = bootstrap_cov_m(200,g2_obs[2],g2_obs[3])
+	c22p = np.mean(g2_obs[2] - (1+m22)*g2_true[2])
+	c22n = np.mean(g2_obs[3] - (1+m22)*g2_true[3])
 	c22 = (c22p + c22n)/2
+	c22_err = bootstrap_cov_c(200,m22,g2_obs[2],g2_true[2],g2_obs[3],g2_true[3])
 
 	## off-diagonal components
-	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04)
-	c12p = np.mean(g1_obs[2] - (1+m12)*g1_obs[2])
-	c12n = np.mean(g1_obs[3] - (1+m12)*g1_obs[3])
+	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04) - 1
+	m12_err = bootstrap_cov_m(200,g1_obs[2],g1_obs[3])
+	c12p = np.mean(g1_obs[2] - (m12)*g1_true[2])
+	c12n = np.mean(g1_obs[3] - (m12)*g1_true[3])
 	c12 = (c12p + c12n)/2
+	c12_err = bootstrap_cov_c(200,m12,g1_obs[2],g1_true[2],g1_obs[3],g1_true[3])
 
-	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04)
-	c21p = np.mean(g2_obs[0] - (1+m21)*g2_obs[0])
-	c21n = np.mean(g2_obs[1] - (1+m21)*g2_obs[1])
+	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04) - 1
+	m21_err = bootstrap_cov_m(200,g2_obs[0],g2_obs[1])
+	c21p = np.mean(g2_obs[0] - (m21)*g2_true[0])
+	c21n = np.mean(g2_obs[1] - (m21)*g2_true[1])
 	c21 = (c21p + c21n)/2
+	c21_err = bootstrap_cov_c(200,m21,g2_obs[0],g2_true[0],g2_obs[1],g2_true[1])
 
-	print(m11,c11,m22,c22,m12,c12,m21,c21)
+	#print(m11,c11,m22,c22,m12,c12,m21,c21)
 
-	#print('off-diagonal cpomponents: ')
-	#print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
-	#print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+	print('off-diagonal cpomponents: ')
+	print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+	print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
 
-	#print("before correction: ")
-	#print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-	#print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+	print("before correction: ")
+	print("m1="+str("%6.4f"% m11)+"+-"+str("%6.4f"% m11_err), "b1="+str("%6.6f"% c11)+"+-"+str("%6.6f"% c11_err))
+	print("m2="+str("%6.4f"% m22)+"+-"+str("%6.4f"% m22_err), "b2="+str("%6.6f"% c22)+"+-"+str("%6.6f"% c22_err))
 
 	"""
 	correction = sys.argv[1]
