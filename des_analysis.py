@@ -241,7 +241,8 @@ def main(argv):
 			sample = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
 			fi.append((np.mean(data1[sample]) - np.mean(data2[sample]))/0.04)
 		f_mean = np.sum(fi)/N 
-		cov = np.sqrt(np.sum([(fi[n]-f_mean)**2 for n in range(N)])/(N-1))
+		fi = np.array(fi)
+		cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
 		return cov
 
 	def bootstrap_cov_c(N,m,data1,data2,data3,data4):
@@ -251,7 +252,8 @@ def main(argv):
 			function = ((data1[sample]-(1+m)*data2[sample]) + (data3[sample] - (1+m)*data4[sample]))/2
 			fi.append(function)
 		f_mean = np.sum(fi)/N 
-		cov = np.sqrt(np.sum([(fi[n]-f_mean)**2 for n in range(N)])/(N-1))
+		fi = np.array(fi)
+		cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
 		return cov
 
 	## m1,c1 calculation
