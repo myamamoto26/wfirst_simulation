@@ -5,7 +5,7 @@ from scipy.optimize import curve_fit
 import fitsio as fio
 
 
-def analyze_g1(new,new1p,new1m,new2p,new2m):
+def analyze_gamma_obs(new,new1p,new1m,new2p,new2m):
 	g=0.01
 	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
 	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
@@ -18,24 +18,9 @@ def analyze_g1(new,new1p,new1m,new2p,new2m):
 	avg_R21 = np.mean(R21)
 
 	gamma1_obs = new['e1']/avg_R11
-
-	return new['g1'], gamma1_obs
-
-def analyze_g2(new,new1p,new1m,new2p,new2m):
-	g=0.01
-	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-	R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-	R21 = (new1p["e2"] - new1m["e2"])/(2*g)
-
-	avg_R11 = np.mean(R11)
-	avg_R22 = np.mean(R22)
-	avg_R12 = np.mean(R12)
-	avg_R21 = np.mean(R21)
-
 	gamma2_obs = new['e2']/avg_R22
 
-	return new['g2'], gamma2_obs
+	return new['g1'], new['g2'], gamma1_obs, gamma2_obs
 
 def analyze_g12(new,new1p,new1m,new2p,new2m):
 	g=0.01
@@ -203,6 +188,10 @@ def main(argv):
 	model='mcal'
 
 	start = 0
+	g1_true = []
+	g2_true = []
+	g1_obs = []
+	g2_obs = []
     #object_number = 863305+863306+863306+863306
 	for j in range(len(folder)):
 		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
@@ -234,50 +223,64 @@ def main(argv):
 			new2p = new2p[np.where(new2p['ind']!=40118)]
 			new2m = new2m[np.where(new2m['ind']!=40118)]
 
-		if j==0:
-			g1_true, g1_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
-		elif j==1:
-			g1n_true, g1n_obs = analyze_g1(new,new1p,new1m,new2p,new2m)
-		elif j==2:
-			g2_true,g2_obs = analyze_g2(new,new1p,new1m,new2p,new2m)
-		elif j==3:
-			g2n_true,g2n_obs = analyze_g2(new,new1p,new1m,new2p,new2m)
+		gamma1_t,gamma2_t,gamma1_o,gamma2_o = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
+		g1_true.append(gamma1_t)
+		g2_true.append(gamma2_t)
+		g1_obs.append(gamma1_o)
+		g2_obs.append(gamma2_o)
     
-		def func(x,m,b):
-			return (1+m)*x+b
-		def func_off(x,m,b):
-			return m*x+b
+	def func(x,m,b):
+		return (1+m)*x+b
+	def func_off(x,m,b):
+		return m*x+b
 
-	gamma1_true = np.concatenate((g1_true,g1n_true))
-	gamma1_obs = np.concatenate((g1_obs,g1n_obs))
-	params2 = curve_fit(func,gamma1_true,gamma1_obs,p0=(0.,0.))
-	m5,b5=params2[0]
-	m5err,b5err=np.sqrt(np.diagonal(params2[1]))
+	## bootstrap covariance function. 
+	def bootstrap_cov(N,data1,data2):
+		fi = []
+		for n in range(N):
+			ep_samples = [np.random.choice(data1) for m in range(len(data1))]
+			en_samples = [np.random.choice(data2) for m in range(len(data2))]
 
-	gamma2_true = np.concatenate((g2_true,g2n_true))
-	gamma2_obs = np.concatenate((g2_obs,g2n_obs))
-	params2 = curve_fit(func,gamma2_true,gamma2_obs,p0=(0.,0.))
-	m6,b6=params2[0]
-	m6err,b6err=np.sqrt(np.diagonal(params2[1]))
+			fi.append((np.mean(ep_samples) - np.mean(en_samples))/0.04)
+		f_mean = np.sum(fi)/N 
+		cov = np.sqrt(np.sum([(fi[n]-f_mean)**2 for n in range(N)])/(N-1))
+		return cov
 
-	print('######', (np.mean(g1_obs)-np.mean(g1n_true))/0.04)
-	print('######', (np.mean(g2_obs)-np.mean(g2n_true))/0.04)
-	## off-diagonal bias check
-	params_off1 = curve_fit(func_off,gamma2_true,gamma1_obs,p0=(0.,0.))
-	params_off2 = curve_fit(func_off,gamma1_true,gamma2_obs,p0=(0.,0.))
-	m12, c12 = params_off1[0]
-	m12_err, c12_err = np.sqrt(np.diagonal(params_off1[1]))
-	m21, c21 = params_off2[0]
-	m21_err, c21_err = np.sqrt(np.diagonal(params_off2[1]))
+	## m1,c1 calculation
+	m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
+	#m11_err = bootstrap_cov(200,g1_obs[0],g1_obs[1])
+	c11p = np.mean(g1_obs[0] - (1+m11)*g1_obs[0])
+	c11n = np.mean(g1_obs[1] - (1+m11)*g1_obs[1])
+	c11 = (c11p + c11n)/2
 
-	print('off-diagonal cpomponents: ')
-	print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
-	print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+	## m2,c2 calculation
+	m22 = ((np.mean(g2_obs[2])-np.mean(g2_obs[3]))/0.04) - 1
+	c22p = np.mean(g2_obs[2] - (1+m22)*g2_obs[2])
+	c22n = np.mean(g2_obs[3] - (1+m22)*g2_obs[3])
+	c22 = (c22p + c22n)/2
 
-	print("before correction: ")
-	print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
-	print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+	## off-diagonal components
+	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04)
+	c12p = np.mean(g1_obs[2] - (1+m12)*g1_obs[2])
+	c12n = np.mean(g1_obs[3] - (1+m12)*g1_obs[3])
+	c12 = (c12p + c12n)/2
 
+	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04)
+	c21p = np.mean(g2_obs[0] - (1+m21)*g2_obs[0])
+	c21n = np.mean(g2_obs[1] - (1+m21)*g2_obs[1])
+	c21 = (c21p + c21n)/2
+
+	print(m11,c11,m22,c22,m12,c12,m21,c21)
+
+	#print('off-diagonal cpomponents: ')
+	#print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+	#print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+
+	#print("before correction: ")
+	#print("m1="+str("%6.4f"% m5)+"+-"+str("%6.4f"% m5err), "b1="+str("%6.6f"% b5)+"+-"+str("%6.6f"% b5err))
+	#print("m2="+str("%6.4f"% m6)+"+-"+str("%6.4f"% m6err), "b2="+str("%6.6f"% b6)+"+-"+str("%6.6f"% b6err))
+
+	"""
 	correction = sys.argv[1]
 	if correction == True:
 
@@ -306,6 +309,7 @@ def main(argv):
 
 	R11, R22, R12, R21, gamma1_obs, gamma2_obs = analyze_g12(new,new1p,new1m,new2p,new2m)
 	values, errors, snr_binslist = residual_bias_correction(new,new1p,new1m,new2p,new2m)
+	"""
 
 	return None
 
