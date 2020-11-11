@@ -239,7 +239,7 @@ def main(argv):
 	c22_snr=np.zeros(10)
 	c22_snr_err=np.zeros(10)
 	for p in range(10):
-		print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
+		#print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
 		m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
 		m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
 		c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11_snr[p])*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11_snr[p])*g1snr_true[1][p]))/2
@@ -251,6 +251,8 @@ def main(argv):
 		c22_snr[p] = (np.mean(g2snr_obs[2][p] - (1+m22_snr[p])*g2snr_true[2][p]) + np.mean(g2snr_obs[3][p] - (1+m22_snr[p])*g2snr_true[3][p]))/2
 		c22_snr_err[p] = bootstrap_cov_c(200,m22_snr[p],g2snr_obs[2][p],g2snr_true[2][p],g2snr_obs[3][p],g2snr_true[3][p])
 	## shear response correction. 
+	print(m11_snr, m11_snr_err)
+	print(m22_snr, m22_snr_err)
 	print('corrected m, b: ')
 	print("m1="+str("%6.4f"% np.mean(m11_snr))+"+-"+str("%6.4f"% np.mean(m11_snr_err)), "b1="+str("%6.6f"% np.mean(c11_snr))+"+-"+str("%6.6f"% np.mean(c11_snr_err)))
 	print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
