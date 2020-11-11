@@ -40,9 +40,10 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	avg_R22 = np.mean(R22)
 
 	snr_binn = 10
-	snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
-	snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
-	snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
+	#snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
+	#snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
+	#snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
+	snr_binslist = np.linspace(np.log10(15),np.log10(500),10)
 	#print(snr_min, snr_max, snr_binslist)
 	if snr_binslist[10] != snr_max:
 		print("raise an error.")
@@ -86,9 +87,10 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 
 	snr_binn = 10
-	snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
-	snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
-	snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
+	#snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
+	#snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
+	#snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
+	snr_binslist = np.linspace(np.log10(15),np.log10(500),10)
 
 	g1_true_snr=[]
 	g1_obs_snr=[]
@@ -256,6 +258,16 @@ def main(argv):
 	print('corrected m, b: ')
 	print("m1="+str("%6.4f"% np.mean(m11_snr))+"+-"+str("%6.4f"% np.mean(m11_snr_err)), "b1="+str("%6.6f"% np.mean(c11_snr))+"+-"+str("%6.6f"% np.mean(c11_snr_err)))
 	print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
+
+	fig,ax1=plt.subplots(figsize=(8,6))
+	ax1.scatter(np.logspace(15,500,10), m11_snr, label='m1')
+	ax1.errorbar(np.logspace(15,500,10), m11_snr, yerr=m11_snr_err)
+	ax1.scatter(np.logspace(15,500,10), m22_snr, label='m2')
+	ax1.errorbar(np.logspace(15,500,10), m22_snr, yerr=m22_snr_err)
+	ax1.set_xlabel('log(SNR)', fontsize=15)
+	ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
+	plt.legend()
+	plt.savefig('roman_g002_m.png')
 
 
 	return None
