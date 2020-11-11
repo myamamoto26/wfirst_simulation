@@ -190,7 +190,7 @@ def main(argv):
 		fi = np.array(fi)
 		cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
 		return cov
-
+	"""
 	## m1,c1 calculation
 	m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
 	m11_err = bootstrap_cov_m(200,g1_obs[0],g1_obs[1])
@@ -223,6 +223,7 @@ def main(argv):
 	print("before correction: ")
 	print("m1="+str("%6.4f"% m11)+"+-"+str("%6.4f"% m11_err), "b1="+str("%6.6f"% c11)+"+-"+str("%6.6f"% c11_err))
 	print("m2="+str("%6.4f"% m22)+"+-"+str("%6.4f"% m22_err), "b2="+str("%6.6f"% c22)+"+-"+str("%6.6f"% c22_err))
+	"""
 
 	m11_snr=np.zeros(10)
 	m11_snr_err=np.zeros(10)
@@ -233,6 +234,7 @@ def main(argv):
 	c22_snr=np.zeros(10)
 	c22_snr_err=np.zeros(10)
 	for p in range(10):
+		print(g1snr_obs[0][p], np.mean(g1snr_obs[0][p]), np.mean(g1snr_obs[1][p]))
 		m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
 		m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
 		c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11)*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11)*g1snr_true[1][p]))/2
