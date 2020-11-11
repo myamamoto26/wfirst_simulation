@@ -90,13 +90,13 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 	g2_true_snr=[]
 	g2_obs_snr=[]
 	for p in range(10):
-        mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
-        #mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
-        g1_true_snr.append(new['g1'][mask])
-        g1_obs_snr.append(new['e1'][mask]/R11[p])
+		mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
+		#mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
+		g1_true_snr.append(new['g1'][mask])
+		g1_obs_snr.append(new['e1'][mask]/R11[p])
 
-        g2_true_snr.append(new['g2'][mask])
-        g2_obs_snr.append(new['e1'][mask]/R22[p])
+		g2_true_snr.append(new['g2'][mask])
+		g2_obs_snr.append(new['e1'][mask]/R22[p])
 
 	return g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr
 
