@@ -173,8 +173,9 @@ def main(argv):
 	def bootstrap_cov_m(N,data1,data2):
 		fi = []
 		for n in range(N):
-			sample = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
-			fi.append((np.mean(data1[sample]) - np.mean(data2[sample]))/0.04)
+			sample1 = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
+			sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
+			fi.append((np.mean(data1[sample1]) - np.mean(data2[sample2]))/0.04)
 		f_mean = np.sum(fi)/N 
 		fi = np.array(fi)
 		cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
@@ -183,8 +184,11 @@ def main(argv):
 	def bootstrap_cov_c(N,m,data1,data2,data3,data4):
 		fi = []
 		for n in range(N):
-			sample = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
-			function = np.mean((data1[sample]-(1+m)*data2[sample]) + (data3[sample] - (1+m)*data4[sample]))/2
+			sample1 = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
+			sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
+			sample3 = np.random.choice(np.arange(len(data3)),len(data3),replace=True)
+			sample4 = np.random.choice(np.arange(len(data4)),len(data4),replace=True)
+			function = np.mean((data1[sample1]-(1+m)*data2[sample2]) + (data3[sample3] - (1+m)*data4[sample4]))/2
 			fi.append(function)
 		f_mean = np.sum(fi)/N 
 		fi = np.array(fi)
