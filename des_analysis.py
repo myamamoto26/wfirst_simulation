@@ -234,7 +234,7 @@ def main(argv):
 	c22_snr=np.zeros(10)
 	c22_snr_err=np.zeros(10)
 	for p in range(10):
-		print(g1snr_obs[0][p], np.mean(g1snr_obs[0][p]), np.mean(g1snr_obs[1][p]))
+		print(g1snr_true)
 		m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
 		m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
 		c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11)*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11)*g1snr_true[1][p]))/2
