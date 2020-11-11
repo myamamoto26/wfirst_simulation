@@ -85,6 +85,11 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 
 def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 
+	snr_binn = 10
+	snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
+	snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
+	snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
+
 	g1_true_snr=[]
 	g1_obs_snr=[]
 	g2_true_snr=[]
