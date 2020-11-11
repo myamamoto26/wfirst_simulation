@@ -101,7 +101,7 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 		g1_obs_snr.append(new['e1'][mask]/R11[p])
 
 		g2_true_snr.append(new['g2'][mask])
-		g2_obs_snr.append(new['e1'][mask]/R22[p])
+		g2_obs_snr.append(new['e2'][mask]/R22[p])
 
 	return g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr
 
