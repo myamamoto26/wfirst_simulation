@@ -239,7 +239,7 @@ def main(argv):
 	c22_snr=np.zeros(10)
 	c22_snr_err=np.zeros(10)
 	for p in range(10):
-		#print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
+		print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
 		m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
 		m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
 		c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11_snr[p])*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11_snr[p])*g1snr_true[1][p]))/2
@@ -258,10 +258,12 @@ def main(argv):
 	print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
 
 	fig,ax1=plt.subplots(figsize=(8,6))
-	ax1.scatter(np.logspace(15,500,10), m11_snr, label='m1')
-	ax1.errorbar(np.logspace(15,500,10), m11_snr, yerr=m11_snr_err)
-	ax1.scatter(np.logspace(15,500,10), m22_snr, label='m2')
-	ax1.errorbar(np.logspace(15,500,10), m22_snr, yerr=m22_snr_err)
+	snr = np.linspace(np.log10(10),np.log10(500),11)
+	x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
+	ax1.scatter(x_, m11_snr, label='m1')
+	ax1.errorbar(x_, m11_snr, yerr=m11_snr_err)
+	ax1.scatter(x_, m22_snr, label='m2')
+	ax1.errorbar(x_, m22_snr, yerr=m22_snr_err)
 	ax1.set_xlabel('log(SNR)', fontsize=15)
 	ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 	plt.legend()
