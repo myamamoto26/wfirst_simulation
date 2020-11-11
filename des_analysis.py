@@ -51,7 +51,7 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	R12_g = np.zeros(10)
 	R21_g = np.zeros(10)
 	for a in range(10):
-		mask = (np.log(new['snr']) >= snr_binslist[a]) & (np.log(new['snr']) < snr_binslist[a+1])
+		mask = (np.log10(new['snr']) >= snr_binslist[a]) & (np.log10(new['snr']) < snr_binslist[a+1])
 
 		R11_g[a] = np.mean(R11[mask])
 		R22_g[a] = np.mean(R22[mask])
@@ -64,10 +64,10 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	R12_s = np.zeros(10)
 	R21_s = np.zeros(10)
 	for i in range(10):
-		mask_1p = (np.log(new1p['snr']) >= snr_binslist[i]) & (np.log(new1p['snr']) < snr_binslist[i+1])
-		mask_1m = (np.log(new1m['snr']) >= snr_binslist[i]) & (np.log(new1m['snr']) < snr_binslist[i+1])
-		mask_2p = (np.log(new2p['snr']) >= snr_binslist[i]) & (np.log(new2p['snr']) < snr_binslist[i+1])
-		mask_2m = (np.log(new2m['snr']) >= snr_binslist[i]) & (np.log(new2m['snr']) < snr_binslist[i+1])
+		mask_1p = (np.log10(new1p['snr']) >= snr_binslist[i]) & (np.log10(new1p['snr']) < snr_binslist[i+1])
+		mask_1m = (np.log10(new1m['snr']) >= snr_binslist[i]) & (np.log10(new1m['snr']) < snr_binslist[i+1])
+		mask_2p = (np.log10(new2p['snr']) >= snr_binslist[i]) & (np.log10(new2p['snr']) < snr_binslist[i+1])
+		mask_2m = (np.log10(new2m['snr']) >= snr_binslist[i]) & (np.log10(new2m['snr']) < snr_binslist[i+1])
 
 		R11_s[i] = (np.mean(new['e1'][mask_1p]) - np.mean(new['e1'][mask_1m]))/(2*g)
 		R22_s[i] = (np.mean(new['e2'][mask_2p]) - np.mean(new['e2'][mask_2m]))/(2*g)
@@ -95,7 +95,7 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 	g2_true_snr=[]
 	g2_obs_snr=[]
 	for p in range(10):
-		mask = (np.log(new['snr']) >= snr_binslist[p]) & (np.log(new['snr']) < snr_binslist[p+1])
+		mask = (np.log10(new['snr']) >= snr_binslist[p]) & (np.log10(new['snr']) < snr_binslist[p+1])
 		#mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
 		g1_true_snr.append(new['g1'][mask])
 		g1_obs_snr.append(new['e1'][mask]/R11[p])
