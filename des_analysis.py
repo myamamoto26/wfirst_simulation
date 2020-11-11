@@ -188,7 +188,8 @@ def main(argv):
 			sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
 			sample3 = np.random.choice(np.arange(len(data3)),len(data3),replace=True)
 			sample4 = np.random.choice(np.arange(len(data4)),len(data4),replace=True)
-			function = np.mean((data1[sample1]-(1+m)*data2[sample2]) + (data3[sample3] - (1+m)*data4[sample4]))/2
+			#function = np.mean((data1[sample1]-(1+m)*data2[sample2]) + (data3[sample3] - (1+m)*data4[sample4]))/2
+			function = (np.mean(data1[sample1])-(1+m)*np.mean(data2[sample2]) + np.mean(data3[sample3]) - (1+m)*np.mean(data4[sample4]))/2
 			fi.append(function)
 		f_mean = np.sum(fi)/N 
 		fi = np.array(fi)
