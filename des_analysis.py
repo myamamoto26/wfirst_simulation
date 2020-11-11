@@ -164,10 +164,10 @@ def main(argv):
 
 		R11_correction, R22_correction = shear_response_correction(new,new1p,new1m,new2p,new2m)
 		g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr = residual_bias_correction(new,new1p,new1m,new2p,new2m,R11_correction,R22_correction)
-		g1snr_true.append([g1_true_snr])
-		g1snr_obs.append([g1_obs_snr])
-		g2snr_true.append([g2_true_snr])
-		g2snr_obs.append([g2_obs_snr])
+		g1snr_true.append(g1_true_snr)
+		g1snr_obs.append(g1_obs_snr)
+		g2snr_true.append(g2_true_snr)
+		g2snr_obs.append(g2_obs_snr)
 
 	## bootstrap covariance function. 
 	def bootstrap_cov_m(N,data1,data2):
