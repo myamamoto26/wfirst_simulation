@@ -4,6 +4,32 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import fitsio as fio
 
+## bootstrap covariance function. 
+def bootstrap_cov_m(N,data1,data2):
+	fi = []
+	for n in range(N):
+		sample1 = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
+		sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
+		fi.append((np.mean(data1[sample1]) - np.mean(data2[sample2]))/0.04)
+	f_mean = np.sum(fi)/N 
+	fi = np.array(fi)
+	cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
+	return cov
+
+def bootstrap_cov_c(N,m,data1,data2,data3,data4):
+	fi = []
+	for n in range(N):
+		sample1 = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
+		sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
+		sample3 = np.random.choice(np.arange(len(data3)),len(data3),replace=True)
+		sample4 = np.random.choice(np.arange(len(data4)),len(data4),replace=True)
+		#function = np.mean((data1[sample1]-(1+m)*data2[sample2]) + (data3[sample3] - (1+m)*data4[sample4]))/2
+		function = (np.mean(data1[sample1])-(1+m)*np.mean(data2[sample2]) + np.mean(data3[sample3]) - (1+m)*np.mean(data4[sample4]))/2
+		fi.append(function)
+	f_mean = np.sum(fi)/N 
+	fi = np.array(fi)
+	cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
+	return cov
 
 def analyze_gamma_obs(new,new1p,new1m,new2p,new2m):
 	g=0.01
@@ -20,7 +46,7 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m):
 	gamma1_obs = new['e1']/avg_R11
 	gamma2_obs = new['e2']/avg_R22
 
-	return new['g1'], new['g2'], gamma1_obs, gamma2_obs
+	return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['e1'], new['e2']
 
 def shear_response(new,new1p,new1m,new2p,new2m):
 	g=0.01
@@ -121,6 +147,8 @@ def main(argv):
 	g2_true = []
 	g1_obs = []
 	g2_obs = []
+	g1_noshear = []
+	g2_noshear = []
 	g1snr_true = []
 	g2snr_true = []
 	g1snr_obs = []
@@ -156,118 +184,113 @@ def main(argv):
 			new2p = new2p[np.where(new2p['ind']!=40118)]
 			new2m = new2m[np.where(new2m['ind']!=40118)]
 
-		gamma1_t,gamma2_t,gamma1_o,gamma2_o = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
-		g1_true.append(gamma1_t)
-		g2_true.append(gamma2_t)
-		g1_obs.append(gamma1_o)
-		g2_obs.append(gamma2_o)
+		if sys.argv[1]=='shear':
+			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
+			g1_true.append(gamma1_t)
+			g2_true.append(gamma2_t)
+			g1_obs.append(gamma1_o)
+			g2_obs.append(gamma2_o)
+			g1_noshear.append(noshear1)
+			g2_noshear.append(noshear2)
 
-		R11_correction, R22_correction = shear_response_correction(new,new1p,new1m,new2p,new2m)
-		g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr = residual_bias_correction(new,new1p,new1m,new2p,new2m,R11_correction,R22_correction)
-		g1snr_true.append(g1_true_snr)
-		g1snr_obs.append(g1_obs_snr)
-		g2snr_true.append(g2_true_snr)
-		g2snr_obs.append(g2_obs_snr)
-
-	## bootstrap covariance function. 
-	def bootstrap_cov_m(N,data1,data2):
-		fi = []
-		for n in range(N):
-			sample1 = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
-			sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
-			fi.append((np.mean(data1[sample1]) - np.mean(data2[sample2]))/0.04)
-		f_mean = np.sum(fi)/N 
-		fi = np.array(fi)
-		cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
-		return cov
-
-	def bootstrap_cov_c(N,m,data1,data2,data3,data4):
-		fi = []
-		for n in range(N):
-			sample1 = np.random.choice(np.arange(len(data1)),len(data1),replace=True)
-			sample2 = np.random.choice(np.arange(len(data2)),len(data2),replace=True)
-			sample3 = np.random.choice(np.arange(len(data3)),len(data3),replace=True)
-			sample4 = np.random.choice(np.arange(len(data4)),len(data4),replace=True)
-			#function = np.mean((data1[sample1]-(1+m)*data2[sample2]) + (data3[sample3] - (1+m)*data4[sample4]))/2
-			function = (np.mean(data1[sample1])-(1+m)*np.mean(data2[sample2]) + np.mean(data3[sample3]) - (1+m)*np.mean(data4[sample4]))/2
-			fi.append(function)
-		f_mean = np.sum(fi)/N 
-		fi = np.array(fi)
-		cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
-		return cov
-	"""
-	## m1,c1 calculation
-	m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
-	m11_err = bootstrap_cov_m(200,g1_obs[0],g1_obs[1])
-	c11 = (np.mean(g1_obs[0] - (1+m11)*g1_true[0]) + np.mean(g1_obs[1] - (1+m11)*g1_true[1]))/2
-	c11_err = bootstrap_cov_c(200,m11,g1_obs[0],g1_true[0],g1_obs[1],g1_true[1])
-
-	## m2,c2 calculation
-	m22 = ((np.mean(g2_obs[2])-np.mean(g2_obs[3]))/0.04) - 1
-	m22_err = bootstrap_cov_m(200,g2_obs[2],g2_obs[3])
-	c22 = (np.mean(g2_obs[2] - (1+m22)*g2_true[2]) + np.mean(g2_obs[3] - (1+m22)*g2_true[3]))/2
-	c22_err = bootstrap_cov_c(200,m22,g2_obs[2],g2_true[2],g2_obs[3],g2_true[3])
-
-	## off-diagonal components
-	m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04) 
-	m12_err = bootstrap_cov_m(200,g1_obs[2],g1_obs[3])
-	c12 = (np.mean(g1_obs[2] - (1+m12)*g1_true[2]) + np.mean(g1_obs[3] - (1+m12)*g1_true[3]))/2
-	c12_err = bootstrap_cov_c(200,m12,g1_obs[2],g1_true[2],g1_obs[3],g1_true[3])
-
-	m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04) 
-	m21_err = bootstrap_cov_m(200,g2_obs[0],g2_obs[1])
-	c21 = (np.mean(g2_obs[0] - (1+m21)*g2_true[0]) + np.mean(g2_obs[1] - (1+m21)*g2_true[1]))/2
-	c21_err = bootstrap_cov_c(200,m21,g2_obs[0],g2_true[0],g2_obs[1],g2_true[1])
-
-	#print(m11,c11,m22,c22,m12,c12,m21,c21)
-
-	print('off-diagonal cpomponents: ')
-	print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
-	print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
-
-	print("before correction: ")
-	print("m1="+str("%6.4f"% m11)+"+-"+str("%6.4f"% m11_err), "b1="+str("%6.6f"% c11)+"+-"+str("%6.6f"% c11_err))
-	print("m2="+str("%6.4f"% m22)+"+-"+str("%6.4f"% m22_err), "b2="+str("%6.6f"% c22)+"+-"+str("%6.6f"% c22_err))
-	"""
-
-	m11_snr=np.zeros(10)
-	m11_snr_err=np.zeros(10)
-	m22_snr=np.zeros(10)
-	m22_snr_err=np.zeros(10)
-	c11_snr=np.zeros(10)
-	c11_snr_err=np.zeros(10)
-	c22_snr=np.zeros(10)
-	c22_snr_err=np.zeros(10)
-	for p in range(10):
-		print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
-		m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
-		m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
-		c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11_snr[p])*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11_snr[p])*g1snr_true[1][p]))/2
-		c11_snr_err[p] = bootstrap_cov_c(200,m11_snr[p],g1snr_obs[0][p],g1snr_true[0][p],g1snr_obs[1][p],g1snr_true[1][p])
+		elif sys.argv[1]=='selection':
+			R11_correction, R22_correction = shear_response_correction(new,new1p,new1m,new2p,new2m)
+			g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr = residual_bias_correction(new,new1p,new1m,new2p,new2m,R11_correction,R22_correction)
+			g1snr_true.append(g1_true_snr)
+			g1snr_obs.append(g1_obs_snr)
+			g2snr_true.append(g2_true_snr)
+			g2snr_obs.append(g2_obs_snr)
+	
+	if sys.argv[1]=='shear':
+		## m1,c1 calculation before metacalibration correction. 
+		m1 = ((np.mean(g1_noshear[0])-np.mean(g1_noshear[1]))/0.04) - 1
+		m1_err = bootstrap_cov_m(200,g1_noshear[0],g1_noshear[1])
+		c1 = (np.mean(g1_noshear[0] - (1+m1)*g1_true[0]) + np.mean(g1_noshear[1] - (1+m1)*g1_true[1]))/2
+		c1_err = bootstrap_cov_c(200,m1,g1_noshear[0],g1_true[0],g1_noshear[1],g1_true[1])
 
 		## m2,c2 calculation
-		m22_snr[p] = ((np.mean(g2snr_obs[2][p])-np.mean(g2snr_obs[3][p]))/0.04) - 1
-		m22_snr_err[p] = bootstrap_cov_m(200,g2snr_obs[2][p],g2snr_obs[3][p])
-		c22_snr[p] = (np.mean(g2snr_obs[2][p] - (1+m22_snr[p])*g2snr_true[2][p]) + np.mean(g2snr_obs[3][p] - (1+m22_snr[p])*g2snr_true[3][p]))/2
-		c22_snr_err[p] = bootstrap_cov_c(200,m22_snr[p],g2snr_obs[2][p],g2snr_true[2][p],g2snr_obs[3][p],g2snr_true[3][p])
-	## shear response correction. 
-	print(m11_snr, m11_snr_err)
-	print(m22_snr, m22_snr_err)
-	print('corrected m, b: ')
-	print("m1="+str("%6.4f"% np.mean(m11_snr))+"+-"+str("%6.4f"% np.mean(m11_snr_err)), "b1="+str("%6.6f"% np.mean(c11_snr))+"+-"+str("%6.6f"% np.mean(c11_snr_err)))
-	print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
+		m2 = ((np.mean(g2_noshear[2])-np.mean(g2_noshear[3]))/0.04) - 1
+		m2_err = bootstrap_cov_m(200,g2_noshear[2],g2_noshear[3])
+		c2 = (np.mean(g2_noshear[2] - (1+m2)*g2_true[2]) + np.mean(g2_noshear[3] - (1+m2)*g2_true[3]))/2
+		c2_err = bootstrap_cov_c(200,m2,g2_noshear[2],g2_true[2],g2_noshear[3],g2_true[3])
 
-	fig,ax1=plt.subplots(figsize=(8,6))
-	snr = np.linspace(np.log10(10),np.log10(500),11)
-	x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
-	ax1.plot(x_, m11_snr, 'o', c='b', label='m1')
-	ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, c='b', fmt='o')
-	ax1.plot(x_, m22_snr, 'o', c='r', label='m2')
-	ax1.errorbar(x_, m22_snr, yerr=m22_snr_err, c='r', fmt='o')
-	ax1.set_xlabel('log(SNR)', fontsize=15)
-	ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
-	plt.legend()
-	plt.savefig('roman_g002_m.png')
+		print("before metacalibration correction: ")
+		print("m1="+str("%6.4f"% m1)+"+-"+str("%6.4f"% m1_err), "b1="+str("%6.6f"% c1)+"+-"+str("%6.6f"% c1_err))
+		print("m2="+str("%6.4f"% m2)+"+-"+str("%6.4f"% m2_err), "b2="+str("%6.6f"% c2)+"+-"+str("%6.6f"% c2_err))
+
+		## m1,c1 calculation
+		m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
+		m11_err = bootstrap_cov_m(200,g1_obs[0],g1_obs[1])
+		c11 = (np.mean(g1_obs[0] - (1+m11)*g1_true[0]) + np.mean(g1_obs[1] - (1+m11)*g1_true[1]))/2
+		c11_err = bootstrap_cov_c(200,m11,g1_obs[0],g1_true[0],g1_obs[1],g1_true[1])
+
+		## m2,c2 calculation
+		m22 = ((np.mean(g2_obs[2])-np.mean(g2_obs[3]))/0.04) - 1
+		m22_err = bootstrap_cov_m(200,g2_obs[2],g2_obs[3])
+		c22 = (np.mean(g2_obs[2] - (1+m22)*g2_true[2]) + np.mean(g2_obs[3] - (1+m22)*g2_true[3]))/2
+		c22_err = bootstrap_cov_c(200,m22,g2_obs[2],g2_true[2],g2_obs[3],g2_true[3])
+
+		## off-diagonal components
+		m12 = ((np.mean(g1_obs[2])-np.mean(g1_obs[3]))/0.04) 
+		m12_err = bootstrap_cov_m(200,g1_obs[2],g1_obs[3])
+		c12 = (np.mean(g1_obs[2] - (1+m12)*g1_true[2]) + np.mean(g1_obs[3] - (1+m12)*g1_true[3]))/2
+		c12_err = bootstrap_cov_c(200,m12,g1_obs[2],g1_true[2],g1_obs[3],g1_true[3])
+
+		m21 = ((np.mean(g2_obs[0])-np.mean(g2_obs[1]))/0.04) 
+		m21_err = bootstrap_cov_m(200,g2_obs[0],g2_obs[1])
+		c21 = (np.mean(g2_obs[0] - (1+m21)*g2_true[0]) + np.mean(g2_obs[1] - (1+m21)*g2_true[1]))/2
+		c21_err = bootstrap_cov_c(200,m21,g2_obs[0],g2_true[0],g2_obs[1],g2_true[1])
+
+		#print(m11,c11,m22,c22,m12,c12,m21,c21)
+
+		print('off-diagonal cpomponents: ')
+		print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+		print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+
+		print("metacalibration correction: ")
+		print("m1="+str("%6.4f"% m11)+"+-"+str("%6.4f"% m11_err), "b1="+str("%6.6f"% c11)+"+-"+str("%6.6f"% c11_err))
+		print("m2="+str("%6.4f"% m22)+"+-"+str("%6.4f"% m22_err), "b2="+str("%6.6f"% c22)+"+-"+str("%6.6f"% c22_err))
+	
+
+	elif sys.argv[1]=='selection':
+		m11_snr=np.zeros(10)
+		m11_snr_err=np.zeros(10)
+		m22_snr=np.zeros(10)
+		m22_snr_err=np.zeros(10)
+		c11_snr=np.zeros(10)
+		c11_snr_err=np.zeros(10)
+		c22_snr=np.zeros(10)
+		c22_snr_err=np.zeros(10)
+		for p in range(10):
+			print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
+			m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
+			m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
+			c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11_snr[p])*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11_snr[p])*g1snr_true[1][p]))/2
+			c11_snr_err[p] = bootstrap_cov_c(200,m11_snr[p],g1snr_obs[0][p],g1snr_true[0][p],g1snr_obs[1][p],g1snr_true[1][p])
+
+			## m2,c2 calculation
+			m22_snr[p] = ((np.mean(g2snr_obs[2][p])-np.mean(g2snr_obs[3][p]))/0.04) - 1
+			m22_snr_err[p] = bootstrap_cov_m(200,g2snr_obs[2][p],g2snr_obs[3][p])
+			c22_snr[p] = (np.mean(g2snr_obs[2][p] - (1+m22_snr[p])*g2snr_true[2][p]) + np.mean(g2snr_obs[3][p] - (1+m22_snr[p])*g2snr_true[3][p]))/2
+			c22_snr_err[p] = bootstrap_cov_c(200,m22_snr[p],g2snr_obs[2][p],g2snr_true[2][p],g2snr_obs[3][p],g2snr_true[3][p])
+		## shear response correction. 
+		print(m11_snr, m11_snr_err)
+		print(m22_snr, m22_snr_err)
+		print('corrected m, b: ')
+		print("m1="+str("%6.4f"% np.mean(m11_snr))+"+-"+str("%6.4f"% np.mean(m11_snr_err)), "b1="+str("%6.6f"% np.mean(c11_snr))+"+-"+str("%6.6f"% np.mean(c11_snr_err)))
+		print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
+
+		fig,ax1=plt.subplots(figsize=(8,6))
+		snr = np.linspace(np.log10(10),np.log10(500),11)
+		x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
+		ax1.plot(x_, m11_snr, 'o', c='b', label='m1')
+		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, c='b', fmt='o')
+		ax1.plot(x_, m22_snr, 'o', c='r', label='m2')
+		ax1.errorbar(x_, m22_snr, yerr=m22_snr_err, c='r', fmt='o')
+		ax1.set_xlabel('log(SNR)', fontsize=15)
+		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
+		plt.legend()
+		plt.savefig('roman_g002_m.png')
 
 
 	return None
