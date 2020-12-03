@@ -76,6 +76,7 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	R22_g = np.zeros(10)
 	R12_g = np.zeros(10)
 	R21_g = np.zeros(10)
+	"""
 	for a in range(10):
 		mask = (np.log10(new['snr']) >= snr_binslist[a]) & (np.log10(new['snr']) < snr_binslist[a+1])
 
@@ -83,12 +84,14 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 		R22_g[a] = np.mean(R22[mask])
 		R12_g[a] = np.mean(R12[mask])
 		R21_g[a] = np.mean(R21[mask])
+	"""
 
 	## getting cuts on the snr from the sheared catalogs and calculating selection response <R>selection
 	R11_s = np.zeros(10)
 	R22_s = np.zeros(10)
 	R12_s = np.zeros(10)
 	R21_s = np.zeros(10)
+	"""
 	for i in range(10):
 		mask_1p = (np.log10(new1p['snr']) >= snr_binslist[i]) & (np.log10(new1p['snr']) < snr_binslist[i+1])
 		mask_1m = (np.log10(new1m['snr']) >= snr_binslist[i]) & (np.log10(new1m['snr']) < snr_binslist[i+1])
@@ -105,6 +108,38 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	tot_R22 = R22_g + R22_s
 	#tot_R12 = R12_g + R12_s
 	#tot_R21 = R21_g + R21_s
+	"""
+
+	## equal nubmer of objects in each bin.
+	equal_bin = np.linspace(0,len(new['snr']),11)
+	idx = np.argsort(new['snr'])
+	start=0
+	for a in range(10):
+		end = int(equal_bin[a+1])
+		R11_g[a] = np.mean(np.array(R11)[idx][start:end+1])
+		R22_g[a] = np.mean(np.array(R22)[idx][start:end+1])
+		R12_g[a] = np.mean(np.array(R12)[idx][start:end+1])
+		R21_g[a] = np.mean(np.array(R21)[idx][start:end+1])
+		start = end+1
+
+	mask_1p = np.argsort(new1p['snr'])
+	mask_1m = np.argsort(new1m['snr'])
+	mask_2p = np.argsort(new2p['snr'])
+	mask_2m = np.argsort(new2m['snr'])
+	start=0
+	for i in range(10):
+		end = int(equal_bin[i+1])
+		R11_s[i] = (np.mean(np.array(new['e1'])[mask_1p][start:end+1]) - np.mean(np.array(new['e1'])[mask_1m][start:end+1]))/(2*g)
+		R22_s[i] = (np.mean(np.array(new['e2'])[mask_2p][start:end+1]) - np.mean(np.array(new['e2'])[mask_2m][start:end+1]))/(2*g)
+		R12_s[i] = (np.mean(np.array(new['e1'])[mask_2p][start:end+1]) - np.mean(np.array(new['e1'])[mask_2m][start:end+1]))/(2*g)
+		R21_s[i] = (np.mean(np.array(new['e2'])[mask_1p][start:end+1]) - np.mean(np.array(new['e2'])[mask_1m][start:end+1]))/(2*g)
+		start = end+1
+	## total response
+	tot_R11 = R11_g + R11_s
+	tot_R22 = R22_g + R22_s
+	#tot_R12 = R12_g + R12_s
+	#tot_R21 = R21_g + R21_s
+
 	return tot_R11,tot_R22
 
 
@@ -120,6 +155,7 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 	g1_obs_snr=[]
 	g2_true_snr=[]
 	g2_obs_snr=[]
+	"""
 	for p in range(10):
 		mask = (np.log10(new['snr']) >= snr_binslist[p]) & (np.log10(new['snr']) < snr_binslist[p+1])
 		#mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
@@ -128,6 +164,24 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 
 		g2_true_snr.append(new['g2'][mask])
 		g2_obs_snr.append(new['e2'][mask]/R22[p])
+	"""
+
+	## equal nubmer of objects in each bin.
+	equal_bin = np.linspace(0,len(new['snr']),11)
+	idx = np.argsort(new['snr'])
+	sorted_g1 = np.array(new['g1'])[idx]
+	sorted_e1 = np.array(new['e1'])[idx]
+	sorted_g2 = np.array(new['g2'])[idx]
+	sorted_e2 = np.array(new['e2'])[idx]
+	start=0
+	for p in range(10):
+		end = int(equal_bin[p+1])
+		g1_true_snr.append(sorted_g1[start:end+1])
+		g1_obs_snr.append(sorted_e1[start:end+1]/R11[p])
+		g2_true_snr.append(sorted_g2[start:end+1])
+		g2_obs_snr.append(sorted_e2[start:end+1]/R22[p])
+		start = end+1
+
 
 	return g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr
 
@@ -290,7 +344,7 @@ def main(argv):
 		ax1.set_xlabel('log(SNR)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		plt.legend()
-		plt.savefig('roman_g002_m.png')
+		plt.savefig('roman_g002_m_equal.png')
 
 
 	return None
