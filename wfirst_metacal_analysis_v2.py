@@ -11,11 +11,11 @@ import fitsio as fio
 g = 0.01
 old = None
 dirr='/hpc/group/cosmology/phy-lsst/my137/ngmix' # choice: ngmix_boot, ngmix_bdf, ngmix_gauss, ngmix_unsheared
-model='mcal' # choice: metacal
+model='mcal_coadd' # choice: metacal
 f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
 medsn = f.read().split('\n')
 
-obj_num = 863305 #880426 #2500*len(medsn)
+obj_num = 1000000 #863305 #2500*len(medsn)
 start = 0
 for j,pix in enumerate(medsn):
     for i in range(1): #range(5):
