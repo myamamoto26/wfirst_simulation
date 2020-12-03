@@ -333,7 +333,7 @@ def main(argv):
 		fig,ax1=plt.subplots(figsize=(8,6))
 		#snr = np.linspace(np.log10(10),np.log10(500),11)
 		#x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
-		x_ = [np.mean([snr_x[0][i],snr_x[1][i],snr_x[2][i],snr_x[3][i]]) for i in range(10)]
+		x_ = [np.log10(np.mean([snr_x[0][i],snr_x[1][i],snr_x[2][i],snr_x[3][i]])) for i in range(10)]
 		ax1.plot(x_, m11_snr, 'o', c='b', label='m1')
 		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, c='b', fmt='o')
 		ax1.plot(x_, m22_snr, 'o', c='r', label='m2')
