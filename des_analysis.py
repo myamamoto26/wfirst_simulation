@@ -107,8 +107,8 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	"""
 
 	## equal nubmer of objects in each bin.
-	equal_bin = np.linspace(0,len(new['snr']),11)
-	idx = np.argsort(new['snr'])
+	equal_bin = np.linspace(0,len(new['hlr']),11)#np.linspace(0,len(new['snr']),11)
+	idx = np.argsort(new['hlr'])#np.argsort(new['snr'])
 	start=0
 	for a in range(10):
 		end = int(equal_bin[a+1])
@@ -118,10 +118,10 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 		R21_g[a] = np.mean(np.array(R21)[idx][start:end+1])
 		start = end+1
 
-	mask_1p = np.argsort(new1p['snr'])
-	mask_1m = np.argsort(new1m['snr'])
-	mask_2p = np.argsort(new2p['snr'])
-	mask_2m = np.argsort(new2m['snr'])
+	mask_1p = np.argsort(new1p['hlr'])#np.argsort(new1p['snr'])
+	mask_1m = np.argsort(new1m['hlr'])#np.argsort(new1m['snr'])
+	mask_2p = np.argsort(new2p['hlr'])#np.argsort(new2p['snr'])
+	mask_2m = np.argsort(new2m['hlr'])#np.argsort(new2m['snr'])
 	start=0
 	for i in range(10):
 		end = int(equal_bin[i+1])
@@ -160,8 +160,8 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 	"""
 
 	## equal nubmer of objects in each bin.
-	equal_bin = np.linspace(0,len(new['snr']),11)
-	idx = np.argsort(new['snr'])
+	equal_bin = np.linspace(0,len(new['hlr']),11)#np.linspace(0,len(new['snr']),11)
+	idx = np.argsort(new['hlr'])#np.argsort(new['snr'])
 	sorted_g1 = np.array(new['g1'])[idx]
 	sorted_e1 = np.array(new['e1'])[idx]
 	sorted_g2 = np.array(new['g2'])[idx]
@@ -173,7 +173,7 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 		g1_obs_snr.append(sorted_e1[start:end+1]/R11[p])
 		g2_true_snr.append(sorted_g2[start:end+1])
 		g2_obs_snr.append(sorted_e2[start:end+1]/R22[p])
-		snr_bin.append(np.mean(np.array(new['snr'])[idx][start:end+1]))
+		snr_bin.append(np.mean(np.array(new['hlr'])[idx][start:end+1]))#snr_bin.append(np.mean(np.array(new['snr'])[idx][start:end+1]))
 		start = end+1
 
 
@@ -338,10 +338,10 @@ def main(argv):
 		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, markeredgecolor='b',markerfacecolor='None', fmt='o')
 		ax1.plot(x_, m22_snr, 'o', markeredgecolor='r',markerfacecolor='None', label='m2')
 		ax1.errorbar(x_, m22_snr, yerr=m22_snr_err, markeredgecolor='r',markerfacecolor='None', fmt='o')
-		ax1.set_xlabel('log(SNR)', fontsize=15)
+		ax1.set_xlabel('log(hlr)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		plt.legend()
-		plt.savefig('roman_g002_m_equal.png')
+		plt.savefig('roman_g002_m_equalhlr.png')
 
 
 	return None
