@@ -334,10 +334,10 @@ def main(argv):
 		#snr = np.linspace(np.log10(10),np.log10(500),11)
 		#x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
 		x_ = [np.log10(np.mean([snr_x[0][i],snr_x[1][i],snr_x[2][i],snr_x[3][i]])) for i in range(10)]
-		ax1.plot(x_, m11_snr, 'o', c='b', label='m1')
-		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, c='b', fmt='o')
-		ax1.plot(x_, m22_snr, 'o', c='r', label='m2')
-		ax1.errorbar(x_, m22_snr, yerr=m22_snr_err, c='r', fmt='o')
+		ax1.plot(x_, m11_snr, 'o', markeredgecolor='b',markerfacecolor='None', label='m1')
+		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, markeredgecolor='b',markerfacecolor='None', fmt='o')
+		ax1.plot(x_, m22_snr, 'o', markeredgecolor='r',markerfacecolor='None', label='m2')
+		ax1.errorbar(x_, m22_snr, yerr=m22_snr_err, markeredgecolor='r',markerfacecolor='None', fmt='o')
 		ax1.set_xlabel('log(SNR)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		plt.legend()
