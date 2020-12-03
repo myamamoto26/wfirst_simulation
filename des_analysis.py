@@ -65,11 +65,7 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 	avg_R11 = np.mean(R11)
 	avg_R22 = np.mean(R22)
 
-	snr_binn = 10
-	#snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
-	#snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
-	#snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
-	snr_binslist = np.linspace(np.log10(15),np.log10(500),11)
+	#snr_binslist = np.linspace(np.log10(15),np.log10(500),11)
 	#print(snr_min, snr_max, snr_binslist)
 
 	R11_g = np.zeros(10)
@@ -145,16 +141,13 @@ def shear_response_correction(new,new1p,new1m,new2p,new2m):
 
 def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 
-	snr_binn = 10
-	#snr_min = np.log(15) #np.min(new['hlr']) #np.log(15) #np.log(min(new['snr']))
-	#snr_max = np.log(500) #np.max(new['hlr']) #np.log(max(new['snr']))
-	#snr_binslist = [snr_min+(x*((snr_max-snr_min)/10)) for x in range(11)]
-	snr_binslist = np.linspace(np.log10(15),np.log10(500),11)
+	#snr_binslist = np.linspace(np.log10(15),np.log10(500),11)
 
 	g1_true_snr=[]
 	g1_obs_snr=[]
 	g2_true_snr=[]
 	g2_obs_snr=[]
+	snr_bin=[]
 	"""
 	for p in range(10):
 		mask = (np.log10(new['snr']) >= snr_binslist[p]) & (np.log10(new['snr']) < snr_binslist[p+1])
@@ -180,10 +173,11 @@ def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
 		g1_obs_snr.append(sorted_e1[start:end+1]/R11[p])
 		g2_true_snr.append(sorted_g2[start:end+1])
 		g2_obs_snr.append(sorted_e2[start:end+1]/R22[p])
+		snr_bin.append(np.mean(np.array(new['snr'])[idx][start:end+1]))
 		start = end+1
 
 
-	return g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr
+	return g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr,snr_bin
 
 
 def main(argv):
@@ -207,6 +201,7 @@ def main(argv):
 	g2snr_true = []
 	g1snr_obs = []
 	g2snr_obs = []
+	snr_x = []
     #object_number = 863305+863306+863306+863306
 	for j in range(len(folder)):
 		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
@@ -249,11 +244,12 @@ def main(argv):
 
 		elif sys.argv[1]=='selection':
 			R11_correction, R22_correction = shear_response_correction(new,new1p,new1m,new2p,new2m)
-			g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr = residual_bias_correction(new,new1p,new1m,new2p,new2m,R11_correction,R22_correction)
+			g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr,snr_bin = residual_bias_correction(new,new1p,new1m,new2p,new2m,R11_correction,R22_correction)
 			g1snr_true.append(g1_true_snr)
 			g1snr_obs.append(g1_obs_snr)
 			g2snr_true.append(g2_true_snr)
 			g2snr_obs.append(g2_obs_snr)
+			snr_x.append(snr_bin)
 	
 	if sys.argv[1]=='shear':
 		## m1,c1 calculation before metacalibration correction. 
@@ -335,8 +331,9 @@ def main(argv):
 		print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
 
 		fig,ax1=plt.subplots(figsize=(8,6))
-		snr = np.linspace(np.log10(10),np.log10(500),11)
-		x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
+		#snr = np.linspace(np.log10(10),np.log10(500),11)
+		#x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
+		x_ = [np.mean([snr_x[0][i],snr_x[1][i],snr_x[2][i],snr_x[3][i]]) for i in range(10)]
 		ax1.plot(x_, m11_snr, 'o', c='b', label='m1')
 		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, c='b', fmt='o')
 		ax1.plot(x_, m22_snr, 'o', c='r', label='m2')
