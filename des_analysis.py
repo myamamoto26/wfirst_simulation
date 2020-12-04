@@ -184,10 +184,11 @@ def main(argv):
 
 	g = 0.01
 	old = None
+	filter_='F184'
 
-	folder=['/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1n002/ngmix/',
-	'/hpc/group/cosmology/phy-lsst/my137/roman_H158/g2002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/roman_H158/g2n002/ngmix/']
-	dirr='fiducial_H158_'
+	folder=['/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g1n002/ngmix/',
+	'/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g2002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g2n002/ngmix/']
+	dirr='fiducial_'+filter_+'_'
 	model='mcal'
 
 	start = 0
@@ -225,13 +226,22 @@ def main(argv):
 		start = 0
 		#start+=len(new_)
 
-        ## remove the extra object (object number = 40118)
-		if (j==1 or j==2 or j==3):
-			new = new[np.where(new['ind']!=40118)]
-			new1p = new1p[np.where(new1p['ind']!=40118)]
-			new1m = new1m[np.where(new1m['ind']!=40118)]
-			new2p = new2p[np.where(new2p['ind']!=40118)]
-			new2m = new2m[np.where(new2m['ind']!=40118)]
+        ## remove the extra object (for H158, object number = 40118)
+		#if (j==1 or j==2 or j==3):
+		#	new = new[np.where(new['ind']!=40118)]
+		#	new1p = new1p[np.where(new1p['ind']!=40118)]
+		#	new1m = new1m[np.where(new1m['ind']!=40118)]
+		#	new2p = new2p[np.where(new2p['ind']!=40118)]
+		#	new2m = new2m[np.where(new2m['ind']!=40118)]
+		## remove the extra object (for F184, object number = 363298,711974)
+		extra=[363298,711974]
+		if (j==2 or j==3):
+			for num in extra:
+				new = new[np.where(new['ind']!=num)]
+				new1p = new1p[np.where(new1p['ind']!=num)]
+				new1m = new1m[np.where(new1m['ind']!=num)]
+				new2p = new2p[np.where(new2p['ind']!=num)]
+				new2m = new2m[np.where(new2m['ind']!=num)]
 
 		if sys.argv[1]=='shear':
 			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
