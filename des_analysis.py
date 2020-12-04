@@ -233,8 +233,8 @@ def main(argv):
 		#	new1m = new1m[np.where(new1m['ind']!=40118)]
 		#	new2p = new2p[np.where(new2p['ind']!=40118)]
 		#	new2m = new2m[np.where(new2m['ind']!=40118)]
-		## remove the extra object (for F184, object number = 363298,711974)
-		extra=[363298,711974]
+		## remove the extra object (for F184, object number = 363298,711974,745864,729340)
+		extra=[363298,711974,745864,729340]
 		if (j==2 or j==3):
 			for num in extra:
 				new = new[np.where(new['ind']!=num)]
