@@ -265,11 +265,12 @@ def main(argv):
 			new2p = ((shear2p[run][c00])[c01])[c02]
 			new2m = ((shear2m[run][c00])[c01])[c02]
 		else:
-			new = noshear[run](common[run-1])
-			new1p = shear1p[run](common[run-1])
-			new1m = shear1m[run](common[run-1])
-			new2p = shear2p[run](common[run-1])
-			new2m = shear2m[run](common[run-1])
+			idx = common[run-1]
+			new = (noshear[run])[idx]
+			new1p = (shear1p[run])[idx]
+			new1m = (shear1m[run])[idx]
+			new2p = (shear2p[run])[idx]
+			new2m = (shear2m[run])[idx]
 		print('the final object number is, ', len(new))
 		if sys.argv[1]=='shear':
 			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
