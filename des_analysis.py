@@ -192,6 +192,11 @@ def main(argv):
 	model='mcal'
 
 	start = 0
+	noshear = []
+	1pshear = []
+	1mshear = []
+	2pshear = []
+	2mshear = []
 	g1_true = []
 	g2_true = []
 	g1_obs = []
@@ -225,6 +230,11 @@ def main(argv):
 			new2m[col][start:start+len(new_)] += new2m_[col]
 		start = 0
 		#start+=len(new_)
+		nosher.append(new)
+		1pshear.append(new1p)
+		1mshear.append(new1m)
+		2pshear.append(new2p)
+		2mshear.append(new2m)
 
         ## remove the extra object (for H158, object number = 40118)
 		#if (j==1 or j==2 or j==3):
@@ -234,15 +244,33 @@ def main(argv):
 		#	new2p = new2p[np.where(new2p['ind']!=40118)]
 		#	new2m = new2m[np.where(new2m['ind']!=40118)]
 		## remove the extra object (for F184, object number = 363298,711974,745864,729340)
-		extra=[363298,711974,745864,729340]
-		if (j==2 or j==3):
-			for num in extra:
-				new = new[np.where(new['ind']!=num)]
-				new1p = new1p[np.where(new1p['ind']!=num)]
-				new1m = new1m[np.where(new1m['ind']!=num)]
-				new2p = new2p[np.where(new2p['ind']!=num)]
-				new2m = new2m[np.where(new2m['ind']!=num)]
-
+		#extra=[363298,711974,745864,729340]
+		#if (j==2 or j==3):
+		#	for num in extra:
+		#		new = new[np.where(new['ind']!=num)]
+		#		new1p = new1p[np.where(new1p['ind']!=num)]
+		#		new1m = new1m[np.where(new1m['ind']!=num)]
+		#		new2p = new2p[np.where(new2p['ind']!=num)]
+		#		new2m = new2m[np.where(new2m['ind']!=num)]
+	## finding common indices. 
+	a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
+	b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
+	c,c02,c3 = np.intersect1d(noshear[0]['ind'][c01], noshear[3]['ind'], return_indices=True)
+	common = [c1,c2,c3]
+	for run in range(4):
+		if run==0:
+			new = ((noshear[run][c00])[c01])[c02]
+			new1p = ((1pshear[run][c00])[c01])[c02]
+			new1m = ((1mshear[run][c00])[c01])[c02]
+			new2p = ((2pshear[run][c00])[c01])[c02]
+			new2m = ((2mshear[run][c00])[c01])[c02]
+		else:
+			new = noshear[run](common[run-1])
+			new1p = 1pshear[run](common[run-1])
+			new1m = 1mshear[run](common[run-1])
+			new2p = 2pshear[run](common[run-1])
+			new2m = 2mshear[run](common[run-1])
+		print('the final object number is, ', len(new))
 		if sys.argv[1]=='shear':
 			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
 			g1_true.append(gamma1_t)
