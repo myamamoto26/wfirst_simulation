@@ -230,7 +230,7 @@ def main(argv):
 			new2m[col][start:start+len(new_)] += new2m_[col]
 		start = 0
 		#start+=len(new_)
-		nosher.append(new)
+		noshear.append(new)
 		shear1p.append(new1p)
 		shear1m.append(new1m)
 		shear2p.append(new2p)
