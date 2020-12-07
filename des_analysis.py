@@ -193,10 +193,10 @@ def main(argv):
 
 	start = 0
 	noshear = []
-	1pshear = []
-	1mshear = []
-	2pshear = []
-	2mshear = []
+	shear1p = []
+	shear1m = []
+	shear2p = []
+	shear2m = []
 	g1_true = []
 	g2_true = []
 	g1_obs = []
@@ -231,10 +231,10 @@ def main(argv):
 		start = 0
 		#start+=len(new_)
 		nosher.append(new)
-		1pshear.append(new1p)
-		1mshear.append(new1m)
-		2pshear.append(new2p)
-		2mshear.append(new2m)
+		shear1p.append(new1p)
+		shear1m.append(new1m)
+		shear2p.append(new2p)
+		shear2m.append(new2m)
 
         ## remove the extra object (for H158, object number = 40118)
 		#if (j==1 or j==2 or j==3):
@@ -260,16 +260,16 @@ def main(argv):
 	for run in range(4):
 		if run==0:
 			new = ((noshear[run][c00])[c01])[c02]
-			new1p = ((1pshear[run][c00])[c01])[c02]
-			new1m = ((1mshear[run][c00])[c01])[c02]
-			new2p = ((2pshear[run][c00])[c01])[c02]
-			new2m = ((2mshear[run][c00])[c01])[c02]
+			new1p = ((shear1p[run][c00])[c01])[c02]
+			new1m = ((shear1m[run][c00])[c01])[c02]
+			new2p = ((shear2p[run][c00])[c01])[c02]
+			new2m = ((shear2m[run][c00])[c01])[c02]
 		else:
 			new = noshear[run](common[run-1])
-			new1p = 1pshear[run](common[run-1])
-			new1m = 1mshear[run](common[run-1])
-			new2p = 2pshear[run](common[run-1])
-			new2m = 2mshear[run](common[run-1])
+			new1p = shear1p[run](common[run-1])
+			new1m = shear1m[run](common[run-1])
+			new2p = shear2p[run](common[run-1])
+			new2m = shear2m[run](common[run-1])
 		print('the final object number is, ', len(new))
 		if sys.argv[1]=='shear':
 			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m)
