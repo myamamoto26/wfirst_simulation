@@ -184,10 +184,14 @@ def main(argv):
 
 	g = 0.01
 	old = None
-	filter_='F184'
+	f = sys.argv[1]
+	filter_=sys.argv[2]
+	coadd_ = sys.argv[3]
 
-	folder=['/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g1002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g1n002/ngmix/',
-	'/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g2002/ngmix/','/hpc/group/cosmology/phy-lsst/my137/roman_'+filter_+'/g2n002/ngmix/']
+	if not coadd_:
+		folder=[f+'/g1002/ngmix/',f+'/g1n002/ngmix/', f+'/g2002/ngmix/',f+'/g2n002/ngmix/']
+	else:
+		folder=[f+'/g1002/ngmix/coadd/',f+'/g1n002/ngmix/coadd/', f+'/g2002/ngmix/coadd/',f+'/g2n002/ngmix/coadd/']
 	dirr='fiducial_'+filter_+'_'
 	model='mcal'
 
