@@ -258,42 +258,24 @@ def main(argv):
 		shear2p.append(new2p)
 		shear2m.append(new2m)
 
-        ## remove the extra object (for H158, object number = 40118)
-		#if (j==1 or j==2 or j==3):
 		#	new = new[np.where(new['ind']!=40118)]
 		#	new1p = new1p[np.where(new1p['ind']!=40118)]
 		#	new1m = new1m[np.where(new1m['ind']!=40118)]
 		#	new2p = new2p[np.where(new2p['ind']!=40118)]
 		#	new2m = new2m[np.where(new2m['ind']!=40118)]
-		## rem,745864,7293ove the extra object (for F184, object number = 363298,71197440)
-		#extra=[363298,711974,745864,729340]
-		#if (j==2 or j==3):
-		#	for num in extra:
-		#		new = new[np.where(new['ind']!=num)]
-		#		new1p = new1p[np.where(new1p['ind']!=num)]
-		#		new1m = new1m[np.where(new1m['ind']!=num)]
-		#		new2p = new2p[np.where(new2p['ind']!=num)]
-		#		new2m = new2m[np.where(new2m['ind']!=num)]
 	## finding common indices. 
 	a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
 	b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
 	c,c02,c3 = np.intersect1d(noshear[0]['ind'][c01], noshear[3]['ind'], return_indices=True)
 	tmp_ind = noshear[0]['ind'][c00][c01][c02]
-	common = [c1,c2,c3]
 	for run in range(4):
 		new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 		new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 		new1m = shear1m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 		new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 		new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-		#else:
-		#	idx = common[run-1]
-		#	new = (noshear[run])[idx]
-		#	new1p = (shear1p[run])[idx]
-		#	new1m = (shear1m[run])[idx]
-		#	new2p = (shear2p[run])[idx]
-		#	new2m = (shear2m[run])[idx]
 		print('the final object number is, ', len(new))
+
 		if sys.argv[1]=='shear':
 			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
 			g1_true.append(gamma1_t)
