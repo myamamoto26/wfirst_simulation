@@ -184,12 +184,13 @@ def main(argv):
 
 	g = 0.01
 	old = None
-	f = sys.argv[1]
-	filter_=sys.argv[2]
-	coadd_ = sys.argv[3]
+	f = sys.argv[2]
+	filter_=sys.argv[3]
+	coadd_ = sys.argv[4]
 
 	if not coadd_:
 		folder=[f+'/g1002/ngmix/',f+'/g1n002/ngmix/', f+'/g2002/ngmix/',f+'/g2n002/ngmix/']
+		print('in here')
 	else:
 		folder=[f+'/g1002/ngmix/coadd/',f+'/g1n002/ngmix/coadd/', f+'/g2002/ngmix/coadd/',f+'/g2n002/ngmix/coadd/']
 	dirr='fiducial_'+filter_+'_'
