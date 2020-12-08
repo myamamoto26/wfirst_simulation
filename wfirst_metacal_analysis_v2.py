@@ -50,11 +50,11 @@ def main(argv):
             start+=len(new_)
     print('number of objects is, ', start)
 
-    fio.write(dirr+'fiducial_'+filter_+'_mcal_noshear.fits', new)
-    fio.write(dirr+'fiducial_'+filter_+'_mcal_1p.fits', new1p)
-    fio.write(dirr+'fiducial_'+filter_+'_mcal_1m.fits', new1m)
-    fio.write(dirr+'fiducial_'+filter_+'_mcal_2p.fits', new2p)
-    fio.write(dirr+'fiducial_'+filter_+'_mcal_2m.fits', new2m)
+    fio.write(dirr+'/fiducial_'+filter_+'_mcal_noshear.fits', new)
+    fio.write(dirr+'/fiducial_'+filter_+'_mcal_1p.fits', new1p)
+    fio.write(dirr+'/fiducial_'+filter_+'_mcal_1m.fits', new1m)
+    fio.write(dirr+'/fiducial_'+filter_+'_mcal_2p.fits', new2p)
+    fio.write(dirr+'/fiducial_'+filter_+'_mcal_2m.fits', new2m)
 
 if __name__ == "__main__":
     main(sys.argv)
