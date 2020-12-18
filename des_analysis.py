@@ -204,7 +204,7 @@ def main(argv):
 	old = None
 	f = sys.argv[2]
 	filter_ = sys.argv[3]
-	coadd_ = False
+	coadd_ = True
 
 	if not coadd_:
 		folder=[f+'/g1002/ngmix/',f+'/g1n002/ngmix/', f+'/g2002/ngmix/',f+'/g2n002/ngmix/']
