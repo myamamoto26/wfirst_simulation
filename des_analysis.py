@@ -63,7 +63,7 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False):
 
 		gamma1_obs = new['coadd_e1']/avg_R11
 		gamma2_obs = new['coadd_e2']/avg_R22
-
+		print('R', avg_R11, avg_R22)
 		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['coadd_e1'], new['coadd_e2']
 
 def shear_response(new,new1p,new1m,new2p,new2m):
@@ -209,7 +209,7 @@ def main(argv):
 	if not coadd_:
 		folder=[f+'/g1002/ngmix/',f+'/g1n002/ngmix/', f+'/g2002/ngmix/',f+'/g2n002/ngmix/']
 	else:
-		folder=[f+'/g1002/ngmix/coadd/',f+'/g1n002/ngmix/coadd/', f+'/g2002/ngmix/coadd/',f+'/g2n002/ngmix/coadd/']
+		folder=[f+'/g1002/ngmix/coadd_oversample_psf/',f+'/g1n002/ngmix/coadd_oversample_psf/', f+'/g2002/ngmix/coadd_oversample_psf/',f+'/g2n002/ngmix/coadd_oversample_psf/']
 	dirr='fiducial_'+filter_+'_'
 	model='mcal'
 
