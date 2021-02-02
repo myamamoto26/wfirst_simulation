@@ -207,7 +207,7 @@ def main(argv):
 	coadd_ = False
 
 	if not coadd_:
-		folder=[f+'/g1002/ngmix/single',f+'/g1n002/ngmix/single', f+'/g2002/ngmix/single',f+'/g2n002/ngmix/single']
+		folder=[f+'/g1002/ngmix/single/',f+'/g1n002/ngmix/single/', f+'/g2002/ngmix/single/',f+'/g2n002/ngmix/single/']
 	else:
 		folder=[f+'/g1002/ngmix/coadd_oversample_psf/',f+'/g1n002/ngmix/coadd_oversample_psf/', f+'/g2002/ngmix/coadd_oversample_psf/',f+'/g2n002/ngmix/coadd_oversample_psf/']
 	dirr='fiducial_'+filter_+'_'
