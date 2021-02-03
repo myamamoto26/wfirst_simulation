@@ -81,7 +81,7 @@ def get_exp_list_coadd(m,i,m2=None,size=None):
 
     return m3
 
-local_meds = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_2285117.fits'
+local_meds = './fiducial_H158_2285117.fits'
 m  = meds.MEDS(local_meds)
 indices = np.arange(len(m['number'][:]))
 for i,ii in enumerate(indices):
