@@ -69,7 +69,7 @@ def get_exp_list_coadd(m,i,m2=None):
         offset_x = m['orig_col'][i][jj] - gal_stamp_center_col 
         offset_y = m['orig_row'][i][jj] - gal_stamp_center_row 
         offset = galsim.PositionD(offset_x, offset_y)
-        psf_.drawImage(image=psf_stamp, offset=offset)#, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
+        st_model.drawImage(image=psf_stamp, offset=offset)#, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
         m3.append(psf_stamp.array)
 
     return m3
@@ -85,3 +85,5 @@ for i,ii in enumerate(indices): # looping through all the objects in meds file.
     sca_list = m[ii]['sca'] # List of SCAs for the same object in multiple observations. 
     m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
     m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
+    if i>=100:
+        break
