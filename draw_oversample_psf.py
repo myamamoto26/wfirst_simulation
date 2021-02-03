@@ -77,10 +77,11 @@ def get_exp_list_coadd(m,i,m2=None):
 local_meds = './fiducial_H158_2285117.fits'
 m  = meds.MEDS(local_meds)
 indices = np.arange(len(m['number'][:]))
+roman_psfs = get_psf_SCA('H158')
 for i,ii in enumerate(indices): # looping through all the objects in meds file. 
     if i%100==0:
         print('object number ',i)
     ind = m['number'][ii]
     sca_list = m[ii]['sca'] # List of SCAs for the same object in multiple observations. 
-    m2_coadd = [get_psf_SCA('H158')[j-1] for j in sca_list[:m['ncutout'][i]]]
+    m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
     m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
