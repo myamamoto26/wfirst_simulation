@@ -27,7 +27,7 @@ def get_psf_SCA(filter_):
         all_psfs.append(psf_sca)
     return all_psfs
 
-def get_exp_list_coadd(m,i,m2=None,size=None):
+def get_exp_list_coadd(m,i,m2=None):
 
     def make_jacobian(self,dudx,dudy,dvdx,dvdy,x,y):
         j = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
@@ -85,9 +85,9 @@ local_meds = './fiducial_H158_2285117.fits'
 m  = meds.MEDS(local_meds)
 indices = np.arange(len(m['number'][:]))
 for i,ii in enumerate(indices):
+    if i%100==0:
+        print('object number ',i)
     ind = m['number'][ii]
-    t   = truth[ind]
-
     sca_list = m[ii]['sca']
     m2_coadd = [get_psf_SCA('H158')[j-1] for j in sca_list[:m['ncutout'][i]]]
-    m3 = get_exp_list_coadd(m,ii,m2=m2_coadd,size=t['size'])
+    m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
