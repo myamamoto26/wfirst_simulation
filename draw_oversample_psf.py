@@ -3,17 +3,10 @@ import sys, os, io
 import math
 import galsim as galsim
 import galsim.roman as wfirst
-import galsim.config.process as process
-import galsim.des as des
 import ngmix
-import fitsio as fio
-import pickle as pickle
-import pickletools
-from astropy.time import Time
-# from mpi_pool import MPIPool
+from ngmix.jacobian import Jacobian
+from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
 import meds
-import psc
-from skimage.measure import block_reduce
 
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
@@ -37,7 +30,7 @@ def get_exp_list_coadd(m,i,m2=None):
     #def psf_offset(i,j,star_):
     m3=[0]
     #relative_offset=[0]
-    for jj,psf_ in enumerate(m2): # m2 has 18 psfs that are centered at each SCA. Created at line 117. 
+    for jj,psf_ in enumerate(m2): # m2 has psfs for each observation. 
         if jj==0:
             continue
         gal_stamp_center_row=m['orig_start_row'][i][jj] + m['box_size'][i]/2 # m['box_size'] is the galaxy stamp size. 
