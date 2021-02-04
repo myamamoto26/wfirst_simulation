@@ -26,7 +26,7 @@ def get_exp_list_coadd(m,i,m2=None):
         j = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
         return j.withOrigin(galsim.PositionD(x,y))
 
-    oversample = 4
+    oversample = 1
     #def psf_offset(i,j,star_):
     m3=[0]
     #relative_offset=[0]
@@ -55,11 +55,11 @@ def get_exp_list_coadd(m,i,m2=None):
         psf_ = wcs_.toWorld(scale.toImage(psf_), image_pos=galsim.PositionD(wfirst.n_pix/2, wfirst.n_pix/2))
         
         # Convolve with the star model and get the psf stamp. 
-        st_model = galsim.DeltaFunction(flux=1.)
-        st_model = st_model.evaluateAtWavelength(wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
-        st_model = st_model.withFlux(1.)
-        st_model = galsim.Convolve(st_model, psf_)
-        st_model = galsim.Convolve(st_model, galsim.Pixel(wfirst.pixel_scale))
+        #st_model = galsim.DeltaFunction(flux=1.)
+        #st_model = st_model.evaluateAtWavelength(wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
+        #st_model = st_model.withFlux(1.)
+        #st_model = galsim.Convolve(st_model, psf_)
+        #psf_ = galsim.Convolve(psf_, galsim.Pixel(wfirst.pixel_scale))
         psf_stamp = galsim.Image(b, wcs=wcs_) 
 
         # Galaxy is being drawn with some subpixel offsets, so we apply the offsets when drawing the psf too. 
@@ -67,7 +67,7 @@ def get_exp_list_coadd(m,i,m2=None):
         offset_y = m['orig_row'][i][jj] - gal_stamp_center_row 
         offset = galsim.PositionD(offset_x, offset_y)
         ## not working -> st_model.drawImage(image=psf_stamp, offset=offset) ## 
-        st_model.drawImage(image=psf_stamp, offset=offset, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
+        psf_.drawImage(image=psf_stamp, offset=offset)#, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
         m3.append(psf_stamp.array)
 
     return m3
