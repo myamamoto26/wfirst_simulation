@@ -51,15 +51,15 @@ def get_exp_list_coadd(m,i,m2=None):
                             m['orig_col'][i][jj]*oversample,
                             m['orig_row'][i][jj]*oversample) 
         # Taken from galsim/roman_psfs.py line 266. Update each psf to an object-specific psf using the wcs. 
-        scale = galsim.PixelScale(wfirst.pixel_scale)
+        scale = galsim.PixelScale(wfirst.pixel_scale/oversample)
         psf_ = wcs_.toWorld(scale.toImage(psf_), image_pos=galsim.PositionD(wfirst.n_pix/2, wfirst.n_pix/2))
         
         # Convolve with the star model and get the psf stamp. 
-        st_model = galsim.DeltaFunction(flux=1.)
-        st_model = st_model.evaluateAtWavelength(wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
-        st_model = st_model.withFlux(1.)
-        st_model = galsim.Convolve(st_model, psf_)
-        st_model = galsim.Convolve(st_model, galsim.Pixel(wfirst.pixel_scale))
+        #st_model = galsim.DeltaFunction(flux=1.)
+        #st_model = st_model.evaluateAtWavelength(wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
+        #st_model = st_model.withFlux(1.)
+        #st_model = galsim.Convolve(st_model, psf_)
+        psf_ = galsim.Convolve(psf_, galsim.Pixel(wfirst.pixel_scale/oversample))
         psf_stamp = galsim.Image(b, wcs=wcs_) 
 
         # Galaxy is being drawn with some subpixel offsets, so we apply the offsets when drawing the psf too. 
@@ -67,7 +67,7 @@ def get_exp_list_coadd(m,i,m2=None):
         offset_y = m['orig_row'][i][jj] - gal_stamp_center_row 
         offset = galsim.PositionD(offset_x, offset_y)
         ## not working -> st_model.drawImage(image=psf_stamp, offset=offset) ## 
-        st_model.drawImage(image=psf_stamp, offset=offset, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
+        psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
         m3.append(psf_stamp.array)
 
     return m3
@@ -84,6 +84,6 @@ for i,ii in enumerate(indices): # looping through all the objects in meds file.
     m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
     m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
     if i==50:
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/test_star4'+str(i)+'.txt', m3[1])
+        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/psf_oversample_'+str(i)+'.txt', m3[1])
     if i>=100:
         break
