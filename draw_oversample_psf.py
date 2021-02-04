@@ -59,7 +59,7 @@ def get_exp_list_coadd(m,i,m2=None):
         #st_model = st_model.evaluateAtWavelength(wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
         #st_model = st_model.withFlux(1.)
         #st_model = galsim.Convolve(st_model, psf_)
-        psf_ = galsim.Convolve(psf_, galsim.Pixel(wfirst.pixel_scale/oversample))
+        psf_ = galsim.Convolve(psf_, galsim.Pixel(wfirst.pixel_scale))
         psf_stamp = galsim.Image(b, wcs=wcs_) 
 
         # Galaxy is being drawn with some subpixel offsets, so we apply the offsets when drawing the psf too. 
