@@ -59,9 +59,6 @@ def get_exp_list_coadd(m,i,m2=None):
         st_model = st_model.evaluateAtWavelength(wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
         st_model = st_model.withFlux(1.)
         st_model = galsim.Convolve(st_model, psf_)
-        if i==50: 
-            print('k', psf_.stepk, psf_.maxk)
-            print('k', st_model.stepk, st_model.maxk)
         #st_model = galsim.Convolve(st_model, galsim.Pixel(wfirst.pixel_scale))
         psf_stamp = galsim.Image(b, wcs=wcs_) 
 
@@ -87,6 +84,7 @@ for i,ii in enumerate(indices): # looping through all the objects in meds file.
     m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
     m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
     if i==50:
-        np.savetxt('/hpc/group/cosmology/masaya/roman_imsim/wfirst_imsim/oversample_psf1'+str(i)+'.txt', m3[0])
+        print(m3)
+        #np.savetxt('/hpc/group/cosmology/masaya/roman_imsim/wfirst_imsim/oversample_psf1'+str(i)+'.txt', m3[0])
     if i>=100:
         break
