@@ -26,7 +26,7 @@ def get_exp_list_coadd(m,i,m2=None):
         j = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
         return j.withOrigin(galsim.PositionD(x,y))
 
-    oversample = 2
+    oversample = 4
     #def psf_offset(i,j,star_):
     m3=[0]
     #relative_offset=[0]
@@ -84,6 +84,6 @@ for i,ii in enumerate(indices): # looping through all the objects in meds file.
     m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
     m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
     if i==50:
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/test3_'+str(i)+'.txt', m3[1])
+        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/test4_'+str(i)+'.txt', m3[1])
     if i>=100:
         break
