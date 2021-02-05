@@ -7,6 +7,8 @@ import ngmix
 from ngmix.jacobian import Jacobian
 from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
 import meds
+import psc
+from skimage.measure import block_reduce
 
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
@@ -26,7 +28,7 @@ def get_exp_list_coadd(m,i,m2=None):
         j = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
         return j.withOrigin(galsim.PositionD(x,y))
 
-    oversample = 8
+    oversample = 4
     #def psf_offset(i,j,star_):
     m3=[0]
     #relative_offset=[0]
@@ -70,20 +72,95 @@ def get_exp_list_coadd(m,i,m2=None):
         psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
         m3.append(psf_stamp.array)
 
-    return m3
+    obs_list=ObsList()
+    psf_list=ObsList()
+
+    included = []
+    w        = []
+    # For each of these objects create an observation
+    for j in range(m['ncutout'][i]):
+        if j==0:
+            continue
+        # if j>1:
+        #     continue
+        im = m.get_cutout(i, j, type='image')
+        weight = m.get_cutout(i, j, type='weight')
+
+        im_psf = m3[j] 
+        im_psf2 = im_psf 
+        if np.sum(im)==0.:
+            print(local_meds, i, j, np.sum(im))
+            print('no flux in image ',i,j)
+            continue
+
+        jacob = m.get_jacobian(i, j)
+        # Get a galaxy jacobian. 
+        gal_jacob=Jacobian(
+            row=(m['orig_row'][i][j]-m['orig_start_row'][i][j]),
+            col=(m['orig_col'][i][j]-m['orig_start_col'][i][j]),
+            dvdrow=jacob['dvdrow'],
+            dvdcol=jacob['dvdcol'],
+            dudrow=jacob['dudrow'],
+            dudcol=jacob['dudcol']) 
+
+        psf_center = (32/2.)+0.5 
+        # Get a oversampled psf jacobian. 
+        psf_jacob2=Jacobian(
+            row=(m['orig_row'][i][j]-m['orig_start_row'][i][j]-(m['box_size'][i]-32)/2.)*oversample,
+            col=(m['orig_col'][i][j]-m['orig_start_col'][i][j]-(m['box_size'][i]-32)/2.)*oversample, 
+            dvdrow=jacob['dvdrow']/oversample,
+            dvdcol=jacob['dvdcol']/oversample,
+            dudrow=jacob['dudrow']/oversample,
+            dudcol=jacob['dudcol']/oversample)
+
+        # Create an obs for each cutout
+        mask = np.where(weight!=0)
+        if 1.*len(weight[mask])/np.product(np.shape(weight))<0.8:
+            continue
+
+        w.append(np.mean(weight[mask]))
+        noise = np.ones_like(weight)/w[-1]
+
+        psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
+        psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
+        #obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
+        # oversampled PSF
+        obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs2, meta={'offset_pixels':None,'file_id':None})
+        obs.set_noise(noise)
+
+        obs_list.append(obs)
+        psf_list.append(psf_obs2)
+        included.append(j)
+
+    return obs_list,psf_list,np.array(included)-1,np.array(w)
 
 local_meds = './fiducial_H158_2285117.fits'
 m  = meds.MEDS(local_meds)
 indices = np.arange(len(m['number'][:]))
 roman_psfs = get_psf_SCA('H158')
+oversample = 4
 for i,ii in enumerate(indices): # looping through all the objects in meds file. 
     if i%100==0:
         print('object number ',i)
     ind = m['number'][ii]
     sca_list = m[ii]['sca'] # List of SCAs for the same object in multiple observations. 
     m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
-    m3 = get_exp_list_coadd(m,ii,m2=m2_coadd)
+    obs_list,psf_list,included,w = get_exp_list_coadd(m,ii,m2=m2_coadd)
+    coadd            = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
+    coadd.psf.image[coadd.psf.image<0] = 0 # set negative pixels to zero. 
+    coadd.set_meta({'offset_pixels':None,'file_id':None})
+
     if i==50:
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/psf_oversample8_'+str(i)+'.txt', m3[1])
-    if i>=100:
-        break
+        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/psf_oversample_coadd_'+str(i)+'.txt', coadd.psf.image)
+    new_coadd_psf_block = block_reduce(coadd.psf.image, block_size=(4,4), func=np.sum)
+    new_coadd_psf_jacob = Jacobian( row=(coadd.psf.jacobian.row0/oversample),
+                                    col=(coadd.psf.jacobian.col0/oversample), 
+                                    dvdrow=(coadd.psf.jacobian.dvdrow*oversample),
+                                    dvdcol=(coadd.psf.jacobian.dvdcol*oversample),
+                                    dudrow=(coadd.psf.jacobian.dudrow*oversample),
+                                    dudcol=(coadd.psf.jacobian.dudcol*oversample))
+    coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
+    coadd.psf = coadd_psf_obs
+    if i==50:
+        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/psf_oversample_ngmix_'+str(i)+'.txt', coadd.psf.image)
+print('done')
