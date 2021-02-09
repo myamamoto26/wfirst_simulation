@@ -3,6 +3,7 @@ import sys, os, io
 import math
 import galsim as galsim
 import galsim.roman as wfirst
+import fitsio as fio
 import ngmix
 from ngmix.jacobian import Jacobian
 from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
