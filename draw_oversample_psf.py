@@ -171,9 +171,6 @@ def get_exp_list_coadd(m,i,m2=None):
 
     return obs_list,psf_list,np.array(included)-1,np.array(w)
 
-def get_exp_list_JHF(m,i,m2=None):
-
-
 
 local_Hmeds = './fiducial_H158_2285117.fits'
 local_Jmeds = './fiducial_J129_2285117.fits'
