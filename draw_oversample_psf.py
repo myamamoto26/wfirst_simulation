@@ -6,6 +6,10 @@ import galsim.roman as wfirst
 import ngmix
 from ngmix.jacobian import Jacobian
 from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
+from ngmix.galsimfit import GalsimRunner,GalsimSimple,GalsimTemplateFluxFitter
+from ngmix.guessers import R50FluxGuesser
+from ngmix.bootstrap import PSFRunner
+from ngmix import priors, joint_prior
 import meds
 import psc
 from skimage.measure import block_reduce
@@ -21,6 +25,39 @@ def get_psf_SCA(filter_):
                                 wavelength=wfirst.getBandpasses(AB_zeropoint=True)[filter_].effective_wavelength)
         all_psfs.append(psf_sca)
     return all_psfs
+
+def measure_shape_metacal_multiband(self, obs_list, T, method='bootstrap', flux_=1000.0, fracdev=None, use_e=None):
+
+    metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
+    #T = self.hlr
+    pix_range = old_div(galsim.roman.pixel_scale,10.)
+    e_range = 0.1
+    fdev = 1.
+    def pixe_guess(n):
+        return 2.*n*np.random.random() - n
+
+    cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.roman.pixel_scale, galsim.roman.pixel_scale)
+    gp = ngmix.priors.GPriorBA(0.3)
+    hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
+    fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
+    fluxp = [ngmix.priors.FlatPrior(0, 1.0e5),ngmix.priors.FlatPrior(0, 1.0e5),ngmix.priors.FlatPrior(0, 1.0e5)]
+
+    prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
+    guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
+
+    boot = ngmix.bootstrap.MaxMetacalBootstrapper(obs_list)
+    psf_model = "gauss"
+    gal_model = "gauss"
+
+    lm_pars={'maxfev':2000, 'xtol':5.0e-5, 'ftol':5.0e-5}
+    max_pars={'method': 'lm', 'lm_pars':lm_pars}
+
+    Tguess=T**2/(2*np.log(2))
+    ntry=2
+    boot.fit_metacal(psf_model, gal_model, max_pars, Tguess, prior=prior, ntry=ntry, metacal_pars=metacal_pars) 
+    res_ = boot.get_metacal_result()
+
+    return res_
 
 def get_exp_list_coadd(m,i,m2=None):
 
@@ -134,33 +171,66 @@ def get_exp_list_coadd(m,i,m2=None):
 
     return obs_list,psf_list,np.array(included)-1,np.array(w)
 
-local_meds = './fiducial_H158_2285117.fits'
-m  = meds.MEDS(local_meds)
-indices = np.arange(len(m['number'][:]))
-roman_psfs = get_psf_SCA('H158')
+def get_exp_list_JHF(m,i,m2=None):
+
+
+
+local_Hmeds = './fiducial_H158_2285117.fits'
+local_Jmeds = './fiducial_J129_2285117.fits'
+local_Fmeds = './fiducial_F184_2285117.fits'
+truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
+m_H158  = meds.MEDS(local_Hmeds)
+m_J129  = meds.MEDS(local_Jmeds)
+m_F184  = meds.MEDS(local_Fmeds)
+indices_H = np.arange(len(m_H158['number'][:]))
+indices_J = np.arange(len(m_J129['number'][:]))
+indices_F = np.arange(len(m_F184['number'][:]))
+roman_H158_psfs = get_psf_SCA('H158')
+roman_J129_psfs = get_psf_SCA('J129')
+roman_F184_psfs = get_psf_SCA('F184')
 oversample = 4
 for i,ii in enumerate(indices): # looping through all the objects in meds file. 
     if i%100==0:
         print('object number ',i)
-    ind = m['number'][ii]
-    sca_list = m[ii]['sca'] # List of SCAs for the same object in multiple observations. 
-    m2_coadd = [roman_psfs[j-1] for j in sca_list[:m['ncutout'][i]]]
-    obs_list,psf_list,included,w = get_exp_list_coadd(m,ii,m2=m2_coadd)
-    coadd            = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
-    coadd.psf.image[coadd.psf.image<0] = 0 # set negative pixels to zero. 
-    coadd.set_meta({'offset_pixels':None,'file_id':None})
+    ind = m_H158['number'][ii]
+    t   = truth[ind]
+    sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
+    sca_Jlist = m_J129[ii]['sca']
+    sca_Flist = m_F184[ii]['sca']
+    m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
+    m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][i]]]
+    m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][i]]]
 
-    if i==50:
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/psf_oversample_coadd_'+str(i)+'.txt', coadd.psf.image)
-    new_coadd_psf_block = block_reduce(coadd.psf.image, block_size=(4,4), func=np.sum)
-    new_coadd_psf_jacob = Jacobian( row=(coadd.psf.jacobian.row0/oversample),
-                                    col=(coadd.psf.jacobian.col0/oversample), 
-                                    dvdrow=(coadd.psf.jacobian.dvdrow*oversample),
-                                    dvdcol=(coadd.psf.jacobian.dvdcol*oversample),
-                                    dudrow=(coadd.psf.jacobian.dudrow*oversample),
-                                    dudcol=(coadd.psf.jacobian.dudcol*oversample))
-    coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
-    coadd.psf = coadd_psf_obs
-    if i==50:
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/psf_oversample_ngmix_'+str(i)+'.txt', coadd.psf.image)
+    obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,m2=m2_H158_coadd)
+    coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+    coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
+    coadd_H.set_meta({'offset_pixels':None,'file_id':None})
+
+    obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii,m2=m2_J129_coadd)
+    coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
+    coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+    coadd_J.set_meta({'offset_pixels':None,'file_id':None})
+
+    obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii,m2=m2_F184_coadd)
+    coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
+    coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+    coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+
+    coadd = [coadd_H, coadd_J, coadd_F]
+    mb_obs_list = MultiBandObsList()
+    for band in range(3):
+        new_coadd_psf_block = block_reduce(coadd[band].psf.image, block_size=(4,4), func=np.sum)
+        new_coadd_psf_jacob = Jacobian( row=(coadd[band].psf.jacobian.row0/oversample),
+                                        col=(coadd[band].psf.jacobian.col0/oversample), 
+                                        dvdrow=(coadd[band].psf.jacobian.dvdrow*oversample),
+                                        dvdcol=(coadd[band].psf.jacobian.dvdcol*oversample),
+                                        dudrow=(coadd[band].psf.jacobian.dudrow*oversample),
+                                        dudcol=(coadd[band].psf.jacobian.dudcol*oversample))
+        coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
+        coadd[band].psf = coadd_psf_obs
+        mb_obs_list.append(coadd[band])
+
+    res_ = self.measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+
+print(res_['noshear'].dtype.names)
 print('done')
