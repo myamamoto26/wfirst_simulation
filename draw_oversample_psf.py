@@ -187,7 +187,7 @@ roman_H158_psfs = get_psf_SCA('H158')
 roman_J129_psfs = get_psf_SCA('J129')
 roman_F184_psfs = get_psf_SCA('F184')
 oversample = 4
-for i,ii in enumerate(indices): # looping through all the objects in meds file. 
+for i,ii in enumerate(indices_H): # looping through all the objects in meds file. 
     if i%100==0:
         print('object number ',i)
     ind = m_H158['number'][ii]
