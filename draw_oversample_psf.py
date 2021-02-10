@@ -36,7 +36,7 @@ def get_psf_SCA(filter_):
         all_psfs.append(psf_sca)
     return all_psfs
 
-def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', flux_=1000.0, fracdev=None, use_e=None):
+def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=None, use_e=None):
 
     metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
     #T = self.hlr
@@ -236,13 +236,10 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
                                         dudcol=(coadd[band].psf.jacobian.dudcol*oversample))
         coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
         coadd[band].psf = coadd_psf_obs
-        print(coadd[band])
         obs_list.append(coadd[band])
         mb_obs_list.append(obs_list)
-    print(mb_obs_list)
-    print(mb_obs_list[0][0].image)
 
-    res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
 print(res_['noshear'].dtype.names)
 print('done')
