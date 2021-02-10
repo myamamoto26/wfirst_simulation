@@ -15,6 +15,15 @@ import meds
 import psc
 from skimage.measure import block_reduce
 
+def get_flux(obs_list):
+    flux = 0.
+    for obs in obs_list:
+        flux += obs.image.sum()
+    flux /= len(obs_list)
+    if flux<0:
+        flux = 10.
+    return flux
+
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
     all_psfs = []
