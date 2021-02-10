@@ -27,7 +27,7 @@ def get_psf_SCA(filter_):
         all_psfs.append(psf_sca)
     return all_psfs
 
-def measure_shape_metacal_multiband(self, obs_list, T, method='bootstrap', flux_=1000.0, fracdev=None, use_e=None):
+def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', flux_=1000.0, fracdev=None, use_e=None):
 
     metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
     #T = self.hlr
@@ -230,7 +230,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
         obs_list.append(coadd[band])
         mb_obs_list.append(obs_list)
 
-    res_ = self.measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
 print(res_['noshear'].dtype.names)
 print('done')
