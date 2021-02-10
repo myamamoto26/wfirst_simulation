@@ -14,6 +14,7 @@ from ngmix import priors, joint_prior
 import meds
 import psc
 from skimage.measure import block_reduce
+from past.utils import old_div
 
 def get_flux(obs_list):
     flux = 0.
