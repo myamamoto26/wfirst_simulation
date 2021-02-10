@@ -217,6 +217,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
     coadd = [coadd_H, coadd_J, coadd_F]
     mb_obs_list = MultiBandObsList()
     for band in range(3):
+        obs_list = Obslist()
         new_coadd_psf_block = block_reduce(coadd[band].psf.image, block_size=(4,4), func=np.sum)
         new_coadd_psf_jacob = Jacobian( row=(coadd[band].psf.jacobian.row0/oversample),
                                         col=(coadd[band].psf.jacobian.col0/oversample), 
@@ -226,7 +227,8 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
                                         dudcol=(coadd[band].psf.jacobian.dudcol*oversample))
         coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
         coadd[band].psf = coadd_psf_obs
-        mb_obs_list.append(coadd[band])
+        obs_list.append(coadd[band])
+        mb_obs_list.append(obs_list)
 
     res_ = self.measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
