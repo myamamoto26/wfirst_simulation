@@ -230,7 +230,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
         obs_list.append(coadd[band])
         mb_obs_list.append(obs_list)
 
-    res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', flux_=get_flux(mb_obs_list), fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
 print(res_['noshear'].dtype.names)
 print('done')
