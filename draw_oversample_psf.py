@@ -217,7 +217,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
     coadd = [coadd_H, coadd_J, coadd_F]
     mb_obs_list = MultiBandObsList()
     for band in range(3):
-        obs_list = Obslist()
+        obs_list = ObsList()
         new_coadd_psf_block = block_reduce(coadd[band].psf.image, block_size=(4,4), func=np.sum)
         new_coadd_psf_jacob = Jacobian( row=(coadd[band].psf.jacobian.row0/oversample),
                                         col=(coadd[band].psf.jacobian.col0/oversample), 
