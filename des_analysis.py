@@ -209,7 +209,7 @@ def main(argv):
 	if not coadd_:
 		folder=[f+'/g1002/ngmix/single/',f+'/g1n002/ngmix/single/', f+'/g2002/ngmix/single/',f+'/g2n002/ngmix/single/']
 	else:
-		folder=[f+'/g1002/ngmix/coadd_oversample_08scaling/',f+'/g1n002/ngmix/coadd_oversample_08scaling/', f+'/g2002/ngmix/coadd_oversample_08scaling/',f+'/g2n002/ngmix/coadd_oversample_08scaling/']
+		folder=[f+'/g1002/ngmix/coadd/',f+'/g1n002/ngmix/coadd/', f+'/g2002/ngmix/coadd/',f+'/g2n002/ngmix/coadd/']
 	dirr='fiducial_'+filter_+'_'
 	model='mcal'
 
