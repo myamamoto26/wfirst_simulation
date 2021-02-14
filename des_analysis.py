@@ -336,7 +336,7 @@ def main(argv):
 
 		#print(m11,c11,m22,c22,m12,c12,m21,c21)
 
-		print('off-diagonal cpomponents: ')
+		print('off-diagonal components: ')
 		print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
 		print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
 
