@@ -116,7 +116,7 @@ def get_exp_list_coadd(m,i,m2=None):
         offset_x = m['orig_col'][i][jj] - gal_stamp_center_col 
         offset_y = m['orig_row'][i][jj] - gal_stamp_center_row 
         offset = galsim.PositionD(offset_x, offset_y)
-        ## not working -> st_model.drawImage(image=psf_stamp, offset=offset) ## 
+        print(offset)
         psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
         m3.append(psf_stamp.array)
 
@@ -196,7 +196,7 @@ indices_F = np.arange(len(m_F184['number'][:]))
 roman_H158_psfs = get_psf_SCA('H158')
 roman_J129_psfs = get_psf_SCA('J129')
 roman_F184_psfs = get_psf_SCA('F184')
-oversample = 4
+oversample = 1
 for i,ii in enumerate(indices_H): # looping through all the objects in meds file. 
     if i%100==0:
         print('object number ',i)
@@ -213,7 +213,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
     coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
     coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
     coadd_H.set_meta({'offset_pixels':None,'file_id':None})
-
+    """
     obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii,m2=m2_J129_coadd)
     coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
     coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
@@ -241,6 +241,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
         mb_obs_list.append(obs_list)
 
     res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    """
 
-print(res_['noshear'].dtype.names)
+#print(res_['noshear'].dtype.names)
 print('done')
