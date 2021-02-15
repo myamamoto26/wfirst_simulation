@@ -116,7 +116,9 @@ def get_exp_list_coadd(m,i,m2=None):
         offset_x = m['orig_col'][i][jj] - gal_stamp_center_col 
         offset_y = m['orig_row'][i][jj] - gal_stamp_center_row 
         offset = galsim.PositionD(offset_x, offset_y)
-        if (offset_x>=0 or offset_y>=0):
+        if (offset_x<=-1.0 or offset_y<=-1.0):
+            print(offset)
+        elif (offset_x>=1.0 or offset_y>=1.0):
             print(offset)
         psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') 
         m3.append(psf_stamp.array)
