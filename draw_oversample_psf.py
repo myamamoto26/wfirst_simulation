@@ -83,8 +83,8 @@ def get_exp_list_coadd(m,i,m2=None):
     for jj,psf_ in enumerate(m2): # m2 has psfs for each observation. 
         if jj==0:
             continue
-        gal_stamp_center_row=m['orig_start_row'][i][jj] + m['box_size'][i]/2 # m['box_size'] is the galaxy stamp size. 
-        gal_stamp_center_col=m['orig_start_col'][i][jj] + m['box_size'][i]/2 # m['orig_start_row/col'] is in SCA coordinates. 
+        gal_stamp_center_row=m['orig_start_row'][i][jj] + m['box_size'][i]/2 - 0.5 # m['box_size'] is the galaxy stamp size. 
+        gal_stamp_center_col=m['orig_start_col'][i][jj] + m['box_size'][i]/2 - 0.5 # m['orig_start_row/col'] is in SCA coordinates. 
         psf_stamp_size=32*oversample
         
         # Make the bounds for the psf stamp. 
@@ -118,7 +118,7 @@ def get_exp_list_coadd(m,i,m2=None):
         offset = galsim.PositionD(offset_x, offset_y)
         if (offset_x>=0 or offset_y>=0):
             print(offset)
-        psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') # We're not sure if we should use method='no_pixel' here. 
+        psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') 
         m3.append(psf_stamp.array)
 
     obs_list=ObsList()
