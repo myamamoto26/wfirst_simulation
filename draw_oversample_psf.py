@@ -88,10 +88,10 @@ def get_exp_list_coadd(m,i,m2=None):
         psf_stamp_size=32
         
         # Make the bounds for the psf stamp. 
-        b = galsim.BoundsI( xmin=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2. - 1)*self.params['oversample']+1, 
-                            xmax=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*self.params['oversample'],
-                            ymin=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2. - 1)*self.params['oversample']+1,
-                            ymax=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*self.params['oversample'])
+        b = galsim.BoundsI( xmin=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2. - 1)*oversample+1, 
+                            xmax=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*oversample,
+                            ymin=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2. - 1)*oversample+1,
+                            ymax=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*oversample)
         
         # Make wcs for oversampled psf. 
         wcs_ = make_jacobian(m.get_jacobian(i,jj)['dudcol']/oversample,
@@ -158,20 +158,20 @@ def get_exp_list_coadd(m,i,m2=None):
         # Get a oversampled psf jacobian. 
         if self.params['oversample']==1:
             psf_jacob2=Jacobian(
-                row=15.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'],
-                col=15.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'], 
-                dvdrow=jacob['dvdrow']/self.params['oversample'],
-                dvdcol=jacob['dvdcol']/self.params['oversample'],
-                dudrow=jacob['dudrow']/self.params['oversample'],
-                dudcol=jacob['dudcol']/self.params['oversample']) 
+                row=15.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample,
+                col=15.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample, 
+                dvdrow=jacob['dvdrow']/oversample,
+                dvdcol=jacob['dvdcol']/oversample,
+                dudrow=jacob['dudrow']/oversample,
+                dudcol=jacob['dudcol']/oversample) 
         elif self.params['oversample']==4:
             psf_jacob2=Jacobian(
-                row=63.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'],
-                col=63.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'], 
-                dvdrow=jacob['dvdrow']/self.params['oversample'],
-                dvdcol=jacob['dvdcol']/self.params['oversample'],
-                dudrow=jacob['dudrow']/self.params['oversample'],
-                dudcol=jacob['dudcol']/self.params['oversample']) 
+                row=63.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample,
+                col=63.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample, 
+                dvdrow=jacob['dvdrow']/oversample,
+                dvdcol=jacob['dvdcol']/oversample,
+                dudrow=jacob['dudrow']/oversample,
+                dudcol=jacob['dudcol']/oversample) 
 
         # Create an obs for each cutout
         mask = np.where(weight!=0)
