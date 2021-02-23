@@ -156,7 +156,7 @@ def get_exp_list_coadd(m,i,m2=None):
 
         psf_center = (32/2.)+0.5 
         # Get a oversampled psf jacobian. 
-        if self.params['oversample']==1:
+        if oversample==1:
             psf_jacob2=Jacobian(
                 row=15.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample,
                 col=15.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample, 
@@ -164,7 +164,7 @@ def get_exp_list_coadd(m,i,m2=None):
                 dvdcol=jacob['dvdcol']/oversample,
                 dudrow=jacob['dudrow']/oversample,
                 dudcol=jacob['dudcol']/oversample) 
-        elif self.params['oversample']==4:
+        elif oversample==4:
             psf_jacob2=Jacobian(
                 row=63.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample,
                 col=63.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*oversample, 
