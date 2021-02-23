@@ -85,13 +85,13 @@ def get_exp_list_coadd(m,i,m2=None):
             continue
         gal_stamp_center_row=m['orig_start_row'][i][jj] + m['box_size'][i]/2 - 0.5 # m['box_size'] is the galaxy stamp size. 
         gal_stamp_center_col=m['orig_start_col'][i][jj] + m['box_size'][i]/2 - 0.5 # m['orig_start_row/col'] is in SCA coordinates. 
-        psf_stamp_size=32*oversample
+        psf_stamp_size=32
         
         # Make the bounds for the psf stamp. 
-        b = galsim.BoundsI( xmin=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2.)*oversample, 
-                            xmax=(m['orig_start_col'][i][jj]+m['box_size'][i]-(m['box_size'][i]-32)/2.)*oversample - 1,
-                            ymin=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2.)*oversample,
-                            ymax=(m['orig_start_row'][i][jj]+m['box_size'][i]-(m['box_size'][i]-32)/2.)*oversample - 1)
+        b = galsim.BoundsI( xmin=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2. - 1)*self.params['oversample']+1, 
+                            xmax=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*self.params['oversample'],
+                            ymin=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2. - 1)*self.params['oversample']+1,
+                            ymax=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*self.params['oversample'])
         
         # Make wcs for oversampled psf. 
         wcs_ = make_jacobian(m.get_jacobian(i,jj)['dudcol']/oversample,
@@ -156,13 +156,22 @@ def get_exp_list_coadd(m,i,m2=None):
 
         psf_center = (32/2.)+0.5 
         # Get a oversampled psf jacobian. 
-        psf_jacob2=Jacobian(
-            row=(m['orig_row'][i][j]-m['orig_start_row'][i][j]-(m['box_size'][i]-32)/2.)*oversample,
-            col=(m['orig_col'][i][j]-m['orig_start_col'][i][j]-(m['box_size'][i]-32)/2.)*oversample, 
-            dvdrow=jacob['dvdrow']/oversample,
-            dvdcol=jacob['dvdcol']/oversample,
-            dudrow=jacob['dudrow']/oversample,
-            dudcol=jacob['dudcol']/oversample)
+        if self.params['oversample']==1:
+            psf_jacob2=Jacobian(
+                row=15.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'],
+                col=15.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'], 
+                dvdrow=jacob['dvdrow']/self.params['oversample'],
+                dvdcol=jacob['dvdcol']/self.params['oversample'],
+                dudrow=jacob['dudrow']/self.params['oversample'],
+                dudcol=jacob['dudcol']/self.params['oversample']) 
+        elif self.params['oversample']==4:
+            psf_jacob2=Jacobian(
+                row=63.5 + (m['orig_row'][i][j]-m['orig_start_row'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'],
+                col=63.5 + (m['orig_col'][i][j]-m['orig_start_col'][i][j]+1-(m['box_size'][i]/2.+0.5))*self.params['oversample'], 
+                dvdrow=jacob['dvdrow']/self.params['oversample'],
+                dvdcol=jacob['dvdcol']/self.params['oversample'],
+                dudrow=jacob['dudrow']/self.params['oversample'],
+                dudcol=jacob['dudcol']/self.params['oversample']) 
 
         # Create an obs for each cutout
         mask = np.where(weight!=0)
@@ -229,9 +238,12 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
 
     coadd = [coadd_H, coadd_J, coadd_F]
     mb_obs_list = MultiBandObsList()
-    for band in range(3):
-        obs_list = ObsList()
+    """
+    coadd = [coadd_H]
+    for band in range(1):
+        #obs_list = ObsList()
         new_coadd_psf_block = block_reduce(coadd[band].psf.image, block_size=(4,4), func=np.sum)
+        print(coadd[band].psf.jacobian.row0,coadd[band].psf.jacobian.col0)
         new_coadd_psf_jacob = Jacobian( row=(coadd[band].psf.jacobian.row0/oversample),
                                         col=(coadd[band].psf.jacobian.col0/oversample), 
                                         dvdrow=(coadd[band].psf.jacobian.dvdrow*oversample),
@@ -240,11 +252,11 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
                                         dudcol=(coadd[band].psf.jacobian.dudcol*oversample))
         coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
         coadd[band].psf = coadd_psf_obs
-        obs_list.append(coadd[band])
-        mb_obs_list.append(obs_list)
+        #obs_list.append(coadd[band])
+        #mb_obs_list.append(obs_list)
 
-    res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-    """
+    #res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    
 
 #print(res_['noshear'].dtype.names)
 print('done')
