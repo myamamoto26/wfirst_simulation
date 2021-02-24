@@ -225,7 +225,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
     coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
     coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
     coadd_H.set_meta({'offset_pixels':None,'file_id':None})
-    """
+    
     obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii,m2=m2_J129_coadd)
     coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
     coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
@@ -238,24 +238,23 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
 
     coadd = [coadd_H, coadd_J, coadd_F]
     mb_obs_list = MultiBandObsList()
-    """
+    
     coadd = [coadd_H]
     for band in range(1):
-        #obs_list = ObsList()
+        obs_list = ObsList()
         new_coadd_psf_block = block_reduce(coadd[band].psf.image, block_size=(4,4), func=np.sum)
-        print(coadd[band].psf.jacobian.row0,coadd[band].psf.jacobian.col0)
-        new_coadd_psf_jacob = Jacobian( row=(coadd[band].psf.jacobian.row0/oversample),
-                                        col=(coadd[band].psf.jacobian.col0/oversample), 
+        new_coadd_psf_jacob = Jacobian( row=15.5,
+                                        col=15.5, 
                                         dvdrow=(coadd[band].psf.jacobian.dvdrow*oversample),
                                         dvdcol=(coadd[band].psf.jacobian.dvdcol*oversample),
                                         dudrow=(coadd[band].psf.jacobian.dudrow*oversample),
                                         dudcol=(coadd[band].psf.jacobian.dudcol*oversample))
         coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
         coadd[band].psf = coadd_psf_obs
-        #obs_list.append(coadd[band])
-        #mb_obs_list.append(obs_list)
+        obs_list.append(coadd[band])
+        mb_obs_list.append(obs_list)
 
-    #res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+    res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     
 
 #print(res_['noshear'].dtype.names)
