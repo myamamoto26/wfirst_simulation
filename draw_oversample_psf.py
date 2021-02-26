@@ -282,7 +282,6 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
         elif res_[key]['flags']==0:
             res_tot[iteration]['coadd_px'][i]                  = res_[key]['pars'][0]
             res_tot[iteration]['coadd_py'][i]                  = res_[key]['pars'][1]
-            res_tot[iteration]['coadd_flux'][i]                = res_[key]['pars'][5] / wcs.pixelArea()
             res_tot[iteration]['coadd_snr'][i]                 = res_[key]['s2n']
             res_tot[iteration]['coadd_e1'][i]                  = res_[key]['pars'][2]
             res_tot[iteration]['coadd_e2'][i]                  = res_[key]['pars'][3]
