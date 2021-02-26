@@ -65,8 +65,12 @@ def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=Non
 
     Tguess=T**2/(2*np.log(2))
     ntry=2
-    boot.fit_metacal(psf_model, gal_model, max_pars, Tguess, prior=prior, ntry=ntry, metacal_pars=metacal_pars) 
-    res_ = boot.get_metacal_result()
+    try:
+        boot.fit_metacal(psf_model, gal_model, max_pars, Tguess, prior=prior, ntry=ntry, metacal_pars=metacal_pars) 
+        res_ = boot.get_metacal_result()
+    except BootGalFailure, BootPSFFailure:
+        print('it failed')
+        res_ = [{'flags:1'},{'flags:1'},{'flags:1'},{'flags:1'},{'flags:1'}]
 
     return res_
 
