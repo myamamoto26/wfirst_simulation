@@ -253,7 +253,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
         coadd[band].psf = coadd_psf_obs
         obs_list.append(coadd[band])
         mb_obs_list.append(obs_list)
-    print(mb_obs_list)
+    print(i, t['size'], mb_obs_list[0][0].image.sum(), mb_obs_list[1][0].image.sum(), mb_obs_list[2][0].image.sum())
     res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     
 
