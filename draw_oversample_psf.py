@@ -144,7 +144,7 @@ def get_exp_list_coadd(m,i,m2=None):
         im_psf = m3[j] 
         im_psf2 = im_psf 
         if np.sum(im)==0.:
-            print(local_meds, i, j, np.sum(im))
+            #print(local_meds, i, j, np.sum(im))
             print('no flux in image ',i,j)
             continue
 
