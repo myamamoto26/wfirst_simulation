@@ -51,7 +51,7 @@ def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=Non
     gp = ngmix.priors.GPriorBA(0.3)
     hlrp = ngmix.priors.FlatPrior(1.0e-5, 1.0e4)
     fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
-    fluxp = [ngmix.priors.FlatPrior(0, 1.0e5),ngmix.priors.FlatPrior(0, 1.0e5),ngmix.priors.FlatPrior(0, 1.0e5)]
+    fluxp = [ngmix.priors.FlatPrior(0, 1.0e7),ngmix.priors.FlatPrior(0, 1.0e7),ngmix.priors.FlatPrior(0, 1.0e7)]
 
     prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
     guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
