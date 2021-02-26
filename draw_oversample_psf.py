@@ -272,7 +272,7 @@ for i,ii in enumerate(indices_H): # looping through all the objects in meds file
         res_tot[iteration]['dec'][i]                       = t['dec']
         iteration+=1
     
-    print(i, t['size'], mb_obs_list[0][0].image.sum(), mb_obs_list[1][0].image.sum(), mb_obs_list[2][0].image.sum())
+    #print(i, t['size'], mb_obs_list[0][0].image.sum(), mb_obs_list[1][0].image.sum(), mb_obs_list[2][0].image.sum())
     res_ = measure_shape_metacal_multiband(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
     iteration=0
     for key in metacal_keys:
