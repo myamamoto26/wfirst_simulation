@@ -39,7 +39,7 @@ def get_psf_SCA(filter_):
 
 def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=None, use_e=None):
 
-    metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
+    metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'fitgauss'}
     #T = self.hlr
     pix_range = old_div(galsim.roman.pixel_scale,10.)
     e_range = 0.1
@@ -49,7 +49,7 @@ def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=Non
 
     cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.roman.pixel_scale, galsim.roman.pixel_scale)
     gp = ngmix.priors.GPriorBA(0.3)
-    hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
+    hlrp = ngmix.priors.FlatPrior(1.0e-5, 1.0e4)
     fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
     fluxp = [ngmix.priors.FlatPrior(0, 1.0e5),ngmix.priors.FlatPrior(0, 1.0e5),ngmix.priors.FlatPrior(0, 1.0e5)]
 
@@ -76,7 +76,7 @@ def get_exp_list_coadd(m,i,m2=None):
         j = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
         return j.withOrigin(galsim.PositionD(x,y))
 
-    oversample = 4
+    oversample = 1
     #def psf_offset(i,j,star_):
     m3=[0]
     #relative_offset=[0]
