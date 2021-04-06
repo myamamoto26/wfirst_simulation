@@ -39,7 +39,7 @@ def get_psf_SCA(filter_):
 
 def measure_shape_metacal(obs_list, T, method='bootstrap', fracdev=None, use_e=None):
 
-    metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'fitgauss'}
+    metacal_pars = {'types': ['noshear', '1p', '1m', '2p', '2m'], 'psf': 'gauss'}
     #T = self.hlr
     pix_range = old_div(galsim.roman.pixel_scale,10.)
     e_range = 0.1
