@@ -203,7 +203,7 @@ def check_multiband_objects():
     medsn = f.read().split('\n')
     start = 0
     multibandobjects = 0
-    for j,pix in enumerate(medsn):
+    for i,pix in enumerate(medsn):
         #H_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz'
         #F_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz'
         #J_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz'
@@ -217,18 +217,18 @@ def check_multiband_objects():
         #shutil.copy(J_medsfilename, cwd+'/fiducial_J129_'+str(pix)+'.fits.gz')
         #os.system('gunzip '+'fiducial_J129_'+str(pix)+'.fits.gz')
 
-        H = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz')
-        F = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz')
-        J = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz')
+        H = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz')['number']
+        F = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz')['number']
+        J = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz')['number']
 
-        print('total count', len(H['id']), len(F['id']), len(J['id']))
-        start += len(H['id'])
-        print('non-zero count', len(H['number']!=0), len(F['number']!=0), len(J['number']!=0))
-        for j in range(len(H['id'])):
-            obj_number = H['number']
-            if (obj_number in F['number']) and (obj_number in J['number']):
+        print('total count', len(H), len(F), len(J))
+        start += len(H)
+        print('non-zero count', len(H!=0), len(F!=0), len(J!=0))
+        for j in range(len(H)):
+            obj_number = H[j]
+            if (obj_number in F) and (obj_number in J):
                 multibandobjects += 1
-        print('out of '+str(len(H['id']))+' objects, there are '+str(multibandobjects)+' objects that have 3 filters.')
+        print('out of '+str(len(H))+' objects, there are '+str(multibandobjects)+' objects that have 3 filters.')
         #os.remove('fiducial_H158_'+str(pix)+'.fits')
         #os.remove('fiducial_F184_'+str(pix)+'.fits')
         #os.remove('fiducial_J129_'+str(pix)+'.fits')
