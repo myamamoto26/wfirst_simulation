@@ -199,37 +199,25 @@ def get_exp_list_coadd(m,i,m2=None):
     return obs_list,psf_list,np.array(included)-1,np.array(w)
 
 def check_multiband_objects():
-    f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
-    medsn = f.read().split('\n')
+    #f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
+    #medsn = f.read().split('\n')
     start = 0
     multibandobjects = 0
-    for i,pix in enumerate(medsn):
-        #H_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz'
-        #F_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz'
-        #J_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz'
-        #os.chdir('/scratch')
-        #cwd = os.getcwd()
-        #assert cwd == '/scratch'
-        #shutil.copy(H_medsfilename, cwd+'/fiducial_H158_'+str(pix)+'.fits.gz')
-        #os.system('gunzip '+'fiducial_H158_'+str(pix)+'.fits.gz')
-        #shutil.copy(F_medsfilename, cwd+'/fiducial_F184_'+str(pix)+'.fits.gz')
-        #os.system('gunzip '+'fiducial_F184_'+str(pix)+'.fits.gz')
-        #shutil.copy(J_medsfilename, cwd+'/fiducial_J129_'+str(pix)+'.fits.gz')
-        #os.system('gunzip '+'fiducial_J129_'+str(pix)+'.fits.gz')
 
-        H = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz')['number']
-        F = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz')['number']
-        J = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz')['number']
+    H = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_H158_index_sorted.fits.gz')[-1].read()
+    F = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/truth/fiducial_F184_index_sorted.fits.gz')[-1].read()
+    J = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/truth/fiducial_J129_index_sorted.fits.gz')[-1].read()
 
-        print('total count', len(H), len(F), len(J))
-        start += len(H)
-        for j in range(len(H)):
-            obj_number = H[j]
-            if (obj_number in F) and (obj_number in J):
+    obj_number = -1
+    for i,j in enumerate(H['ind']):
+        assert len(H[H['ind']==j]['dither'])==1
+        if j==obj_number:
+            continue 
+        else:
+            obj_number = j
+            start += 1
+            if (obj_number in F['ind']) and (obj_number in J['ind']):
                 multibandobjects += 1
-        #os.remove('fiducial_H158_'+str(pix)+'.fits')
-        #os.remove('fiducial_F184_'+str(pix)+'.fits')
-        #os.remove('fiducial_J129_'+str(pix)+'.fits')
 
     print('DONE')
     print('Total number of objects: '+str(start))
