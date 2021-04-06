@@ -204,22 +204,21 @@ def check_multiband_objects():
     start = 0
     multibandobjects = 0
 
-    H = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_H158_index_sorted.fits.gz')[-1].read()
-    F = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/truth/fiducial_F184_index_sorted.fits.gz')[-1].read()
+    H = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158_final/g1002/truth/fiducial_H158_index_sorted.fits.gz')[-1].read()
+    F = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_F184_final/g1002/truth/fiducial_F184_index_sorted.fits.gz')[-1].read()
     J = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/truth/fiducial_J129_index_sorted.fits.gz')[-1].read()
 
-    obj_number = -1
-    for i,j in enumerate(H['ind']):
+    H_unique = np.unique(H['ind'], axis=0)
+    F_unique = np.unique(F['ind'], axis=0)
+    J_unique = np.unique(J['ind'], axis=0)
+    for i,j in enumerate(H_unique):
         if i%10000==0:
             print('processing...')
-        assert len(H[H['ind']==j]['dither'])!=1
-        if j==obj_number:
-            continue 
-        else:
-            obj_number = j
-            start += 1
-            if (obj_number in F['ind']) and (obj_number in J['ind']):
-                multibandobjects += 1
+
+        obj_number = j
+        start += 1
+        if (obj_number in F_unique) and (obj_number in J_unique):
+            multibandobjects += 1
 
     print('DONE')
     print('Total number of objects: '+str(start))
