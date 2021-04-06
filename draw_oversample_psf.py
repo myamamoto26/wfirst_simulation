@@ -208,14 +208,14 @@ def check_multiband_objects():
         F = meds.MEDS('/hpc/group/cosmology/masaya/wfirst_simulation/fiducial_F184_'+str(pix)+'.fits')
         J = meds.MEDS('/hpc/group/cosmology/masaya/wfirst_simulation/fiducial_J129_'+str(pix)+'.fits')
 
-        print('total count', len(H), len(F), len(J))
-        start += len(H)
+        print('total count', len(H['id']), len(F['id']), len(J['id']))
+        start += len(H['id'])
         print('non-zero count', len(H['number']!=0), len(F['number']!=0), len(J['number']!=0))
-        for j in range(len(H)):
+        for j in range(len(H['id'])):
             obj_number = H['number']
             if (obj_number in F['number']) and (obj_number in J['number']):
                 multibandobjects += 1
-        print('out of '+str(len(H))+' objects, there are '+str(multibandobjects)+' objects that have 3 filters.')
+        print('out of '+str(len(H['id']))+' objects, there are '+str(multibandobjects)+' objects that have 3 filters.')
     print('DONE')
     print('Total number of objects: '+str(start))
     print('3 filters objects: '+str(multibandobjects))
