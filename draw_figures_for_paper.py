@@ -294,8 +294,8 @@ def single_vs_coadd_images():
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
         if i==1 or i==1546:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling_'+str(i)+'.txt', coadd.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling_'+str(i)+'.txt', coadd.psf.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling_'+str(i)+'.txt', coadd_H.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling_'+str(i)+'.txt', coadd_H.psf.image)
 
         iteration=0
         for key in metacal_keys:
