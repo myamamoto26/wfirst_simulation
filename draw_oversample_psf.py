@@ -201,7 +201,6 @@ def get_exp_list_coadd(m,i,m2=None):
 def check_multiband_objects():
     f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
     medsn = int(2285117) #f.read().split('\n')
-    obj_num = int(sys.argv[4])
     start = 0
     multibandobjects = 0
     for j,pix in enumerate(medsn):
