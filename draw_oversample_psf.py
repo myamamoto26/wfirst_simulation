@@ -212,9 +212,7 @@ def check_multiband_objects():
     for i,j in enumerate(H['ind']):
         if i%10000==0:
             print('processing...')
-        if len(H[H['ind']==j]['dither'])!=1:
-            print(H[H['ind']==j])
-            exit()
+        assert len(H[H['ind']==j]['dither'])!=1
         if j==obj_number:
             continue 
         else:
