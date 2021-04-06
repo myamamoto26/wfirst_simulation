@@ -49,9 +49,9 @@ def measure_shape_metacal(obs_list, T, method='bootstrap', fracdev=None, use_e=N
 
     cp = ngmix.priors.CenPrior(0.0, 0.0, galsim.roman.pixel_scale, galsim.roman.pixel_scale)
     gp = ngmix.priors.GPriorBA(0.3)
-    hlrp = ngmix.priors.FlatPrior(1.0e-5, 1.0e4)
+    hlrp = ngmix.priors.FlatPrior(1.0e-4, 1.0e2)
     fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
-    fluxp = ngmix.priors.FlatPrior(-1.0e3, 1.0e6)
+    fluxp = ngmix.priors.FlatPrior(0, 1.0e5)
 
     prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
     guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
