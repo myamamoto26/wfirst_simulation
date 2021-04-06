@@ -223,12 +223,10 @@ def check_multiband_objects():
 
         print('total count', len(H), len(F), len(J))
         start += len(H)
-        print('non-zero count', len(H!=0), len(F!=0), len(J!=0))
         for j in range(len(H)):
             obj_number = H[j]
             if (obj_number in F) and (obj_number in J):
                 multibandobjects += 1
-        print('out of '+str(len(H))+' objects, there are '+str(multibandobjects)+' objects that have 3 filters.')
         #os.remove('fiducial_H158_'+str(pix)+'.fits')
         #os.remove('fiducial_F184_'+str(pix)+'.fits')
         #os.remove('fiducial_J129_'+str(pix)+'.fits')
