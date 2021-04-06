@@ -210,6 +210,8 @@ def check_multiband_objects():
 
     obj_number = -1
     for i,j in enumerate(H['ind']):
+        if i%10000==0:
+            print('processing...')
         assert len(H[H['ind']==j]['dither'])==1
         if j==obj_number:
             continue 
