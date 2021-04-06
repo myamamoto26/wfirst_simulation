@@ -204,9 +204,22 @@ def check_multiband_objects():
     start = 0
     multibandobjects = 0
     for j,pix in enumerate(medsn):
-        H = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz')
-        F = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz')
-        J = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz')
+        H_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits.gz'
+        F_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits.gz'
+        J_medsfilename = '/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits.gz'
+        os.chdir('/scratch')
+        cwd = os.getcwd()
+        assert cwd == '/scratch'
+        shutil.copy(H_medsfilename, cwd+'fiducial_H158_'+str(pix)+'.fits.gz')
+        os.system('gunzip '+'fiducial_H158_'+str(pix)+'.fits.gz')
+        shutil.copy(F_medsfilename, cwd+'fiducial_F184_'+str(pix)+'.fits.gz')
+        os.system('gunzip '+'fiducial_F184_'+str(pix)+'.fits.gz')
+        shutil.copy(J_medsfilename, cwd+'fiducial_J129_'+str(pix)+'.fits.gz')
+        os.system('gunzip '+'fiducial_J129_'+str(pix)+'.fits.gz')
+
+        H = meds.MEDS('fiducial_H158_'+str(pix)+'.fits')
+        F = meds.MEDS('fiducial_F184_'+str(pix)+'.fits')
+        J = meds.MEDS('fiducial_J129_'+str(pix)+'.fits')
 
         print('total count', len(H['id']), len(F['id']), len(J['id']))
         start += len(H['id'])
@@ -216,6 +229,10 @@ def check_multiband_objects():
             if (obj_number in F['number']) and (obj_number in J['number']):
                 multibandobjects += 1
         print('out of '+str(len(H['id']))+' objects, there are '+str(multibandobjects)+' objects that have 3 filters.')
+        os.remove('fiducial_H158_'+str(pix)+'.fits')
+        os.remove('fiducial_F184_'+str(pix)+'.fits')
+        os.remove('fiducial_J129_'+str(pix)+'.fits')
+
     print('DONE')
     print('Total number of objects: '+str(start))
     print('3 filters objects: '+str(multibandobjects))
