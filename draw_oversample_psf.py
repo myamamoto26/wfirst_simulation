@@ -204,9 +204,9 @@ def check_multiband_objects():
     start = 0
     multibandobjects = 0
     for j,pix in enumerate(medsn):
-        H = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_'+str(pix)+'.fits')
-        F = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/meds/fiducial_F184_'+str(pix)+'.fits')
-        J = meds.MEDS('/hpc/group/cosmology/phy-lsst/my137/roman_J129/g1002/meds/fiducial_J129_'+str(pix)+'.fits')
+        H = meds.MEDS('/hpc/group/cosmology/masaya/wfirst_simulation/fiducial_H158_'+str(pix)+'.fits')
+        F = meds.MEDS('/hpc/group/cosmology/masaya/wfirst_simulation/fiducial_F184_'+str(pix)+'.fits')
+        J = meds.MEDS('/hpc/group/cosmology/masaya/wfirst_simulation/fiducial_J129_'+str(pix)+'.fits')
 
         print('total count', len(H), len(F), len(J))
         start += len(H)
