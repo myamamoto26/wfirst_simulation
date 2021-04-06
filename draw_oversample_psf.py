@@ -210,11 +210,11 @@ def check_multiband_objects():
         os.chdir('/scratch')
         cwd = os.getcwd()
         assert cwd == '/scratch'
-        shutil.copy(H_medsfilename, cwd+'fiducial_H158_'+str(pix)+'.fits.gz')
+        shutil.copy(H_medsfilename, cwd+'/fiducial_H158_'+str(pix)+'.fits.gz')
         os.system('gunzip '+'fiducial_H158_'+str(pix)+'.fits.gz')
-        shutil.copy(F_medsfilename, cwd+'fiducial_F184_'+str(pix)+'.fits.gz')
+        shutil.copy(F_medsfilename, cwd+'/fiducial_F184_'+str(pix)+'.fits.gz')
         os.system('gunzip '+'fiducial_F184_'+str(pix)+'.fits.gz')
-        shutil.copy(J_medsfilename, cwd+'fiducial_J129_'+str(pix)+'.fits.gz')
+        shutil.copy(J_medsfilename, cwd+'/fiducial_J129_'+str(pix)+'.fits.gz')
         os.system('gunzip '+'fiducial_J129_'+str(pix)+'.fits.gz')
 
         H = meds.MEDS('fiducial_H158_'+str(pix)+'.fits')
