@@ -1,5 +1,5 @@
 import numpy as np
-import sys, os, io
+import sys, os, io, shutil
 import math
 import galsim as galsim
 import galsim.roman as wfirst
