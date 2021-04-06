@@ -225,6 +225,31 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
 
     return obs_list,psf_list,np.array(included)-1,np.array(w)
 
+def search_se_snr():
+    local_Hmeds = './fiducial_H158_2285117.fits'
+    truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158_final/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
+    m_H158  = meds.MEDS(local_Hmeds)
+    indices_H = np.arange(len(m_H158['number'][:]))
+    roman_H158_psfs = get_psf_SCA('H158')
+    oversample = 1
+    metacal_keys=['noshear', '1p', '1m', '2p', '2m']
+    snr=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('snr',float)])
+    for i,ii in enumerate(indices_H): # looping through all the objects in meds file. 
+        if i%100==0:
+            print('object number ',i)
+        ind = m_H158['number'][ii]
+        t   = truth[ind]
+        sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
+        m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
+
+        obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
+        res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+        snr['ind'][i] = i # different from ind defined. 
+        snr['snr'][i] = res_['noshear']['s2n']
+    np.savetxt('snr_example.txt', snr)
+    print(min(snr['snr']), snr['ind'][snr['snr'].index(min(snr['snr']))])
+    print(max(snr['snr']), snr['ind'][snr['snr'].index(max(snr['snr']))])
+
 def single_vs_coadd_images():
     local_Hmeds = './fiducial_H158_2285117.fits'
     truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158_final/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
@@ -249,9 +274,9 @@ def single_vs_coadd_images():
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        if i==1215:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os108scaling.txt', obs_Hlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_psf_os108scaling.txt', obs_Hlist[0].psf.image)
+        #if i==1215:
+        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os108scaling.txt', obs_Hlist[0].image)
+        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_psf_os108scaling.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
@@ -268,9 +293,9 @@ def single_vs_coadd_images():
             coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
-        if i==1215:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling.txt', coadd.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling.txt', coadd.psf.image)
+        #if i==1215:
+        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling.txt', coadd.image)
+        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling.txt', coadd.psf.image)
 
         iteration=0
         for key in metacal_keys:
@@ -298,3 +323,4 @@ def single_vs_coadd_images():
     #print(res_['noshear'].dtype.names)
     print('done')
 
+search_se_snr()
