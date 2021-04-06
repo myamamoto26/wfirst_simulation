@@ -274,9 +274,9 @@ def single_vs_coadd_images():
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        #if i==1215:
-        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os108scaling.txt', obs_Hlist[0].image)
-        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_psf_os108scaling.txt', obs_Hlist[0].psf.image)
+        if i==1 or i==1546:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os108scaling_'+str(i)+'.txt', obs_Hlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_psf_os108scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
@@ -293,9 +293,9 @@ def single_vs_coadd_images():
             coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
-        #if i==1215:
-        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling.txt', coadd.image)
-        #    np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling.txt', coadd.psf.image)
+        if i==1 or i==1546:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling_'+str(i)+'.txt', coadd.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling_'+str(i)+'.txt', coadd.psf.image)
 
         iteration=0
         for key in metacal_keys:
@@ -323,4 +323,4 @@ def single_vs_coadd_images():
     #print(res_['noshear'].dtype.names)
     print('done')
 
-search_se_snr()
+single_vs_coadd_images()
