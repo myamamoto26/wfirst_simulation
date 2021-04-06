@@ -243,7 +243,7 @@ def search_se_snr():
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+        res_ = measure_shape_metacal(obs_Hlist, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
         snr['ind'][i] = i # different from ind defined. 
         snr['snr'][i] = res_['noshear']['s2n']
     np.savetxt('snr_example.txt', snr)
