@@ -339,6 +339,6 @@ def roman_psf_rotation():
     star_model1.drawImage(image=star_stamp1)
     star_model2.drawImage(image=star_stamp2)
 
-    np.savetxt("roman_psf_PA0.txt", star_stamp1.array)
-    np.savetxt("roman_psf_PA45.txt", star_stamp2.array)
+    np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA0.txt", star_stamp1.array)
+    np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA45.txt", star_stamp2.array)
 roman_psf_rotation()
