@@ -323,4 +323,22 @@ def single_vs_coadd_images():
     #print(res_['noshear'].dtype.names)
     print('done')
 
-single_vs_coadd_images()
+def roman_psf_rotation():
+    b = galsim.BoundsI(1,32,1,32)
+    WCS1 = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=100*galsim.degrees, dec=-10*galsim.degrees), PA = 0.*galsim.radians, PA_is_FPA = True)[1]
+    WCS2 = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=100*galsim.degrees, dec=-10*galsim.degrees), PA = 45.*galsim.radians, PA_is_FPA = True)[1]
+    psf1 = wfirst.getPSF(1, 'H158', wcs=WCS1, pupil_bin=4, wavelength=wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
+    psf2 = wfirst.getPSF(1, 'H158', wcs=WCS2, pupil_bin=4, wavelength=wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
+
+    star_model1 = galsim.DeltaFunction(flux=1.)
+    star_model2 = galsim.DeltaFunction(flux=1.)
+    star_stamp1 = galsim.Image(b, wcs=WCS1)
+    star_stamp2 = galsim.Image(b, wcs=WCS2)
+    star_model1 = galsim.Convolve(star_model1, psf1)
+    star_model2 = galsim.Convolve(star_model2, psf2)
+    star_model1.drawImage(image=star_stamp1)
+    star_model2.drawImage(image=star_stamp2)
+
+    np.savetxt("roman_psf_PA0.txt", star_stamp1.array)
+    np.savetxt("roman_psf_PA45.txt", star_stamp2.array)
+roman_psf_rotation()
