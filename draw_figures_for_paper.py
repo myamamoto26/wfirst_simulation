@@ -256,7 +256,7 @@ def single_vs_coadd_images():
     m_H158  = meds.MEDS(local_Hmeds)
     indices_H = np.arange(len(m_H158['number'][:]))
     roman_H158_psfs = get_psf_SCA('H158')
-    oversample = 1
+    oversample = 4
     metacal_keys=['noshear', '1p', '1m', '2p', '2m']
     res_noshear=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
     res_1p=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
@@ -275,8 +275,8 @@ def single_vs_coadd_images():
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
         if i==1 or i==1546:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os108scaling_'+str(i)+'.txt', obs_Hlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_psf_os108scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os408scaling_'+str(i)+'.txt', obs_Hlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_psf_os408scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
@@ -294,8 +294,8 @@ def single_vs_coadd_images():
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
         if i==1 or i==1546:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os108scaling_'+str(i)+'.txt', coadd_H.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os108scaling_'+str(i)+'.txt', coadd_H.psf.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os408scaling_'+str(i)+'.txt', coadd_H.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_os408scaling_'+str(i)+'.txt', coadd_H.psf.image)
 
         iteration=0
         for key in metacal_keys:
