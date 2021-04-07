@@ -326,7 +326,7 @@ def single_vs_coadd_images():
 def roman_psf_rotation():
     b = galsim.BoundsI(1,32,1,32)
     WCS1 = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=100*galsim.degrees, dec=-10*galsim.degrees), PA = 0.*galsim.radians)[1]
-    WCS2 = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=100*galsim.degrees, dec=-10*galsim.degrees), PA = 30.*galsim.radians)[1]
+    WCS2 = wfirst.getWCS(world_pos  = galsim.CelestialCoord(ra=100*galsim.degrees, dec=-10*galsim.degrees), PA = 45.*galsim.radians)[1]
     psf1 = wfirst.getPSF(1, 'H158', wcs=WCS1, pupil_bin=4, wavelength=wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
     psf2 = wfirst.getPSF(1, 'H158', wcs=WCS2, pupil_bin=4, wavelength=wfirst.getBandpasses(AB_zeropoint=True)['H158'].effective_wavelength)
 
@@ -340,5 +340,5 @@ def roman_psf_rotation():
     star_model2.drawImage(image=star_stamp2)
 
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA0.txt", star_stamp1.array)
-    np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA30.txt", star_stamp2.array)
+    np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA45.txt", star_stamp2.array)
 roman_psf_rotation()
