@@ -202,14 +202,15 @@ def main(argv):
 
 	g = 0.01
 	old = None
-	f = sys.argv[2]
+	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
 	coadd_ = True
+	f_coadd = sys.argv[4] # example, coadd_multiband
 
 	if not coadd_:
 		folder=[f+'/g1002/ngmix/single/',f+'/g1n002/ngmix/single/', f+'/g2002/ngmix/single/',f+'/g2n002/ngmix/single/']
 	else:
-		folder=[f+'/g1002/ngmix/coadd/',f+'/g1n002/ngmix/coadd/', f+'/g2002/ngmix/coadd/',f+'/g2n002/ngmix/coadd/']
+		folder=[f+'/g1002/ngmix/'+f_coadd+'/',f+'/g1n002/ngmix/'+f_coadd+'/', f+'/g2002/ngmix/'+f_coadd+'/',f+'/g2n002/ngmix/'+f_coadd+'/']
 	dirr='fiducial_'+filter_+'_'
 	model='mcal'
 
@@ -238,31 +239,28 @@ def main(argv):
 		new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
 		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
 		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-		object_number = len(new_['ind'])
+		mask = (new_['flags']==0) # exclude non-zero flags object. 
+		#object_number = len(new_['ind'])
+		object_number = len(new_[mask])
 		new   = np.zeros(object_number,dtype=new_.dtype)
 		new1p = np.zeros(object_number,dtype=new_.dtype)
 		new1m = np.zeros(object_number,dtype=new_.dtype)
 		new2p = np.zeros(object_number,dtype=new_.dtype)
 		new2m = np.zeros(object_number,dtype=new_.dtype)
 		for col in new.dtype.names:
-			new[col][start:start+len(new_)] += new_[col]
-			new1p[col][start:start+len(new_)] += new1p_[col]
-			new1m[col][start:start+len(new_)] += new1m_[col]
-			new2p[col][start:start+len(new_)] += new2p_[col]
-			new2m[col][start:start+len(new_)] += new2m_[col]
+			new[col][start:start+len(new_)] += new_[mask][col]
+			new1p[col][start:start+len(new_)] += new1p_[mask][col]
+			new1m[col][start:start+len(new_)] += new1m_[mask][col]
+			new2p[col][start:start+len(new_)] += new2p_[mask][col]
+			new2m[col][start:start+len(new_)] += new2m_[mask][col]
 		start = 0
-		#start+=len(new_)
+
 		noshear.append(new)
 		shear1p.append(new1p)
 		shear1m.append(new1m)
 		shear2p.append(new2p)
 		shear2m.append(new2m)
 
-		#	new = new[np.where(new['ind']!=40118)]
-		#	new1p = new1p[np.where(new1p['ind']!=40118)]
-		#	new1m = new1m[np.where(new1m['ind']!=40118)]
-		#	new2p = new2p[np.where(new2p['ind']!=40118)]
-		#	new2m = new2m[np.where(new2m['ind']!=40118)]
 	## finding common indices. 
 	a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
 	b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
