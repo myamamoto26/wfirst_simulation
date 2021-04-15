@@ -27,12 +27,12 @@ def main(argv):
             new2p_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_2p.fits')[-1].read()
             new2m_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_2m.fits')[-1].read()
 
-            mask = (new_['ind']!=0)
-            new_ = new_[mask]
-            new1p_ = new1p_[mask]
-            new1m_ = new1m_[mask]
-            new2p_ = new2p_[mask]
-            new2m_ = new2m_[mask]
+            #mask = (new_['flags']==0) #(new_['ind']!=0)
+            #new_ = new_[mask]
+            #new1p_ = new1p_[mask]
+            #new1m_ = new1m_[mask]
+            #new2p_ = new2p_[mask]
+            #new2m_ = new2m_[mask]
             print(j,i,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
             if (j==0)&(i==0):
                 new   = np.zeros(obj_num,dtype=new_.dtype)
