@@ -15,6 +15,8 @@ import meds
 import psc
 from skimage.measure import block_reduce
 from past.utils import old_div
+import pandas as pd
+from des_analysis import analyze_gamma_obs
 
 def get_flux(obs_list):
     flux = 0.
@@ -341,4 +343,73 @@ def roman_psf_rotation():
 
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA0b.txt", star_stamp1.array)
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA30b.txt", star_stamp2.array)
-roman_psf_rotation()
+
+def mcal_catalog_properties(single_filter=True):
+
+    which_filter = "roman_H158"
+    folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", which_filter)
+
+    ## g1 positive sim. (get SNR and magnitude from this. )
+    mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))
+    mcal_1p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))
+    mcal_1m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))
+    mcal_2p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))
+    mcal_2m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))
+
+    mask = (mcal_noshear['flags']==0)
+    mcal_noshear = mcal_noshear[mask]
+
+    properties = np.zeros((len(mcal_noshear),5))
+    columns = ['coadd_snr', 'coadd_hlr', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
+
+    properties[:,0] = mcal_noshear['coadd_snr']
+    properties[:,1] = mcal_noshear['coadd_hlr']
+    properties[:,2] = mcal_noshear['coadd_psf_e1']
+    properties[:,3] = mcal_noshear['coadd_psf_e2']
+    properties[:,4] = mcal_noshear['coadd_psf_T']
+
+    # total_obj = []
+    # total_obj = np.append(len(mcal_noshear))
+    # properties = np.zeros((np.sum(total_obj), 7))
+    # start = 0
+    # for i in range(4): # four sets of sim. 
+    #     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(mcal_noshear,mcal_1p,mcal_1m,mcal_2p,mcal_2m,coadd_=True)
+    #     properties[start:total_obj[i], 0] = gamma1_t
+    #     properties[start:total_obj[i], 1] = gamma2_t
+    #     properties[start:total_obj[i], 2] = gamma1_o
+    #     properties[start:total_obj[i], 3] = gamma2_o
+    #     properties[start:total_obj[i], 4] = mcal_noshear['coadd_psf_e1']
+    #     properties[start:total_obj[i], 5] = mcal_noshear['coadd_psf_e2']
+    #     properties[start:total_obj[i], 6] = mcal_noshear['coadd_psf_T']
+
+    #     start += total_obj[i]
+
+    df = pd.DataFrame(data=properties, columns=columns)
+    df.to_csv('multiband_coadd_properties.csv', columns=columns)
+
+mcal_catalog_properties(single_filter=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
