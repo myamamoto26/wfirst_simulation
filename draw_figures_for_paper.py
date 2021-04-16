@@ -350,11 +350,11 @@ def mcal_catalog_properties(single_filter=True):
     folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", which_filter)
 
     ## g1 positive sim. (get SNR and magnitude from this. )
-    mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))
-    mcal_1p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))
-    mcal_1m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))
-    mcal_2p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))
-    mcal_2m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))
+    mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
+    mcal_1p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))[-1].read()
+    mcal_1m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))[-1].read()
+    mcal_2p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))[-1].read()
+    mcal_2m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))[-1].read()
 
     mask = (mcal_noshear['flags']==0)
     mcal_noshear = mcal_noshear[mask]
