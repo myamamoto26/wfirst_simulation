@@ -350,39 +350,72 @@ def mcal_catalog_properties(single_filter=True):
     folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", which_filter)
 
     ## g1 positive sim. (get SNR and magnitude from this. )
-    mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
-    mcal_1p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))[-1].read()
-    mcal_1m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))[-1].read()
-    mcal_2p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))[-1].read()
-    mcal_2m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))[-1].read()
+    # mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
+    # mcal_1p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))[-1].read()
+    # mcal_1m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))[-1].read()
+    # mcal_2p = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))[-1].read()
+    # mcal_2m = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))[-1].read()
 
-    mask = (mcal_noshear['flags']==0)
-    mcal_noshear = mcal_noshear[mask]
+    # mask = (mcal_noshear['flags']==0)
+    # mcal_noshear = mcal_noshear[mask]
 
-    properties = np.zeros((len(mcal_noshear),5))
-    columns = ['coadd_snr', 'coadd_hlr', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
+    # properties = np.zeros((len(mcal_noshear),5))
+    columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
 
-    properties[:,0] = mcal_noshear['coadd_snr']
-    properties[:,1] = mcal_noshear['coadd_hlr']
-    properties[:,2] = mcal_noshear['coadd_psf_e1']
-    properties[:,3] = mcal_noshear['coadd_psf_e2']
-    properties[:,4] = mcal_noshear['coadd_psf_T']
+    # properties[:,0] = mcal_noshear['coadd_snr']
+    # properties[:,1] = mcal_noshear['coadd_hlr']
+    # properties[:,2] = mcal_noshear['coadd_psf_e1']
+    # properties[:,3] = mcal_noshear['coadd_psf_e2']
+    # properties[:,4] = mcal_noshear['coadd_psf_T']
 
-    # total_obj = []
+    total_obj = []
     # total_obj = np.append(len(mcal_noshear))
-    # properties = np.zeros((np.sum(total_obj), 7))
-    # start = 0
-    # for i in range(4): # four sets of sim. 
-    #     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(mcal_noshear,mcal_1p,mcal_1m,mcal_2p,mcal_2m,coadd_=True)
-    #     properties[start:total_obj[i], 0] = gamma1_t
-    #     properties[start:total_obj[i], 1] = gamma2_t
-    #     properties[start:total_obj[i], 2] = gamma1_o
-    #     properties[start:total_obj[i], 3] = gamma2_o
-    #     properties[start:total_obj[i], 4] = mcal_noshear['coadd_psf_e1']
-    #     properties[start:total_obj[i], 5] = mcal_noshear['coadd_psf_e2']
-    #     properties[start:total_obj[i], 6] = mcal_noshear['coadd_psf_T']
+    properties = np.zeros((np.sum(total_obj), 7))
+    start = 0
+    sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
+    noshear = []
+    shear1p = []
+    shear1m = []
+    shear2p = []
+    shear2m = []
+    for i in range(4): # four sets of sim. 
+        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
+        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))[-1].read()
+        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))[-1].read()
+        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))[-1].read()
+        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))[-1].read()
 
-    #     start += total_obj[i]
+        mask = (mcal_noshear['flags']==0)
+        noshear.append(mcal_noshear[mask])
+        shear1p.append(mcal_1p[mask])
+        shear1m.append(mcal_1m[mask])
+        shear2p.append(mcal_2p[mask])
+        shear2m.append(mcal_2m[mask])
+
+    a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
+    b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
+    c,c02,c3 = np.intersect1d(noshear[0]['ind'][c01], noshear[3]['ind'], return_indices=True)
+    tmp_ind = noshear[0]['ind'][c00][c01][c02]
+    for run in range(4):
+        new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+        new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+        new1m = shear1m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+        new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+        new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+
+        total_obj = len(new)
+        print('object number', total_obj)
+
+        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
+        properties[start:start+total_obj, 0] = gamma1_t
+        properties[start:start+total_obj, 1] = gamma2_t
+        properties[start:start+total_obj, 2] = gamma1_o
+        properties[start:start+total_obj, 3] = gamma2_o
+        properties[start:start+total_obj, 4] = mcal_noshear['coadd_psf_e1']
+        properties[start:start+total_obj, 5] = mcal_noshear['coadd_psf_e2']
+        properties[start:start+total_obj, 6] = mcal_noshear['coadd_psf_T']
+
+        start += total_obj
 
     df = pd.DataFrame(data=properties, columns=columns)
     df.to_csv('multiband_coadd_properties.csv', columns=columns)
