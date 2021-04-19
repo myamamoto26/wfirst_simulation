@@ -239,39 +239,40 @@ def main(argv):
 		new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
 		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
 		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-		mask = (new_['flags']==0) # exclude non-zero flags object. 
+		mask = (new_['flags']==0) & (new_['ind']!=0) # exclude non-zero flags object. 
 		#object_number = len(new_['ind'])
-		object_number = len(new_[mask])
-		new   = np.zeros(object_number,dtype=new_.dtype)
-		new1p = np.zeros(object_number,dtype=new_.dtype)
-		new1m = np.zeros(object_number,dtype=new_.dtype)
-		new2p = np.zeros(object_number,dtype=new_.dtype)
-		new2m = np.zeros(object_number,dtype=new_.dtype)
-		for col in new.dtype.names:
-			new[col][start:start+len(new_)] += new_[mask][col]
-			new1p[col][start:start+len(new_)] += new1p_[mask][col]
-			new1m[col][start:start+len(new_)] += new1m_[mask][col]
-			new2p[col][start:start+len(new_)] += new2p_[mask][col]
-			new2m[col][start:start+len(new_)] += new2m_[mask][col]
-		start = 0
+		# object_number = len(new_[mask])
+		# new   = np.zeros(object_number,dtype=new_.dtype)
+		# new1p = np.zeros(object_number,dtype=new_.dtype)
+		# new1m = np.zeros(object_number,dtype=new_.dtype)
+		# new2p = np.zeros(object_number,dtype=new_.dtype)
+		# new2m = np.zeros(object_number,dtype=new_.dtype)
+		# for col in new.dtype.names:
+		# 	new[col][start:start+len(new_)] += new_[mask][col]
+		# 	new1p[col][start:start+len(new_)] += new1p_[mask][col]
+		# 	new1m[col][start:start+len(new_)] += new1m_[mask][col]
+		# 	new2p[col][start:start+len(new_)] += new2p_[mask][col]
+		# 	new2m[col][start:start+len(new_)] += new2m_[mask][col]
+		# start = 0
 
-		noshear.append(new)
-		shear1p.append(new1p)
-		shear1m.append(new1m)
-		shear2p.append(new2p)
-		shear2m.append(new2m)
+		noshear.append(new_[mask])
+		shear1p.append(new1p_[mask])
+		shear1m.append(new1m_[mask])
+		shear2p.append(new2p_[mask])
+		shear2m.append(new2m_[mask])
 
 	## finding common indices. 
 	a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
 	b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
-	c,c02,c3 = np.intersect1d(noshear[0]['ind'][c01], noshear[3]['ind'], return_indices=True)
+	c,c02,c3 = np.intersect1d(noshear[0]['ind'][c00][c01], noshear[3]['ind'], return_indices=True)
 	tmp_ind = noshear[0]['ind'][c00][c01][c02]
 	for run in range(4):
-		new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-		new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-		new1m = shear1m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-		new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-		new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+		masking = np.isin(noshear[run]['ind'] ,tmp_ind)
+		new = noshear[run][masking]
+		new1p = shear1p[run][masking]
+		new1m = shear1m[run][masking]
+		new2p = shear2p[run][masking]
+		new2m = shear2m[run][masking]
 		print('the final object number is, ', len(new))
 
 		if sys.argv[1]=='shear':
