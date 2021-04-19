@@ -370,7 +370,7 @@ def mcal_catalog_properties(single_filter=True):
 
     total_obj = []
     # total_obj = np.append(len(mcal_noshear))
-    properties = np.zeros((np.sum(total_obj), 7))
+    # properties = np.zeros((np.sum(total_obj), 7))
     start = 0
     sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
     noshear = []
@@ -396,6 +396,7 @@ def mcal_catalog_properties(single_filter=True):
     b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
     c,c02,c3 = np.intersect1d(noshear[0]['ind'][c01], noshear[3]['ind'], return_indices=True)
     tmp_ind = noshear[0]['ind'][c00][c01][c02]
+    properties = np.zeros((4*len(noshear[0][np.isin(noshear[0]['ind'],tmp_ind)]), 7))
     for run in range(4):
         new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
         new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
