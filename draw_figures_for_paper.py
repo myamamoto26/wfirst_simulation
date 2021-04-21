@@ -384,7 +384,7 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
         mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_2p.fits"))[-1].read()
         mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_2m.fits"))[-1].read()
 
-        mask = (new_['flags']==0) & (new_['ind']!=0)
+        mask = (mcal_noshear['flags']==0) & (mcal_noshear['ind']!=0)
         noshear.append(mcal_noshear[mask])
         shear1p.append(mcal_1p[mask])
         shear1m.append(mcal_1m[mask])
