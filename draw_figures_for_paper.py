@@ -346,8 +346,9 @@ def roman_psf_rotation():
 
 def mcal_catalog_properties(single_filter=True):
 
-    which_filter = "roman_H158"
+    which_filter = sys.argv[2]
     folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", which_filter)
+    which_coadd = sys.argv[1]
 
     ## g1 positive sim. (get SNR and magnitude from this. )
     # mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
@@ -379,13 +380,13 @@ def mcal_catalog_properties(single_filter=True):
     shear2p = []
     shear2m = []
     for i in range(4): # four sets of sim. 
-        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
-        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_1p.fits"))[-1].read()
-        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_1m.fits"))[-1].read()
-        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_2p.fits"))[-1].read()
-        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/coadd_multiband/fiducial_H158_mcal_2m.fits"))[-1].read()
+        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
+        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_1p.fits"))[-1].read()
+        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_1m.fits"))[-1].read()
+        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_2p.fits"))[-1].read()
+        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_2m.fits"))[-1].read()
 
-        mask = (mcal_noshear['flags']==0)
+        mask = (new_['flags']==0) & (new_['ind']!=0)
         noshear.append(mcal_noshear[mask])
         shear1p.append(mcal_1p[mask])
         shear1m.append(mcal_1m[mask])
@@ -394,7 +395,7 @@ def mcal_catalog_properties(single_filter=True):
 
     a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
     b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
-    c,c02,c3 = np.intersect1d(noshear[0]['ind'][c01], noshear[3]['ind'], return_indices=True)
+    c,c02,c3 = np.intersect1d(noshear[0]['ind'][c00][c01], noshear[3]['ind'], return_indices=True)
     tmp_ind = noshear[0]['ind'][c00][c01][c02]
     properties = np.zeros((4*len(noshear[0][np.isin(noshear[0]['ind'],tmp_ind)]), 7))
     for run in range(4):
@@ -419,7 +420,7 @@ def mcal_catalog_properties(single_filter=True):
         start += total_obj
 
     df = pd.DataFrame(data=properties, columns=columns)
-    df.to_csv('multiband_coadd_properties.csv', columns=columns)
+    df.to_csv(which_filter+'_coadd_properties.csv', columns=columns)
 
 mcal_catalog_properties(single_filter=False)
 
