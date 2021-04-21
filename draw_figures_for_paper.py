@@ -344,11 +344,9 @@ def roman_psf_rotation():
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA0b.txt", star_stamp1.array)
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA30b.txt", star_stamp2.array)
 
-def mcal_catalog_properties(single_filter=True):
+def mcal_catalog_properties(filter_, coadd_, single_filter=False):
 
-    which_filter = sys.argv[2]
-    folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", which_filter)
-    which_coadd = sys.argv[1]
+    folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", filter_)
 
     ## g1 positive sim. (get SNR and magnitude from this. )
     # mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
@@ -380,11 +378,11 @@ def mcal_catalog_properties(single_filter=True):
     shear2p = []
     shear2m = []
     for i in range(4): # four sets of sim. 
-        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
-        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_1p.fits"))[-1].read()
-        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_1m.fits"))[-1].read()
-        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_2p.fits"))[-1].read()
-        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+which_coadd+"/fiducial_H158_mcal_2m.fits"))[-1].read()
+        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
+        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_1p.fits"))[-1].read()
+        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_1m.fits"))[-1].read()
+        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_2p.fits"))[-1].read()
+        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_2m.fits"))[-1].read()
 
         mask = (new_['flags']==0) & (new_['ind']!=0)
         noshear.append(mcal_noshear[mask])
@@ -420,9 +418,13 @@ def mcal_catalog_properties(single_filter=True):
         start += total_obj
 
     df = pd.DataFrame(data=properties, columns=columns)
-    df.to_csv(which_filter+'_coadd_properties.csv', columns=columns)
+    df.to_csv(filter_+'_coadd_properties.csv', columns=columns)
 
-mcal_catalog_properties(single_filter=False)
+def main(argv):
+    mcal_catalog_properties(sys.argv[1], sys.argv[2], single_filter=False):
+
+if __name__ == "__main__":
+    main(sys.argv)
 
 
 
