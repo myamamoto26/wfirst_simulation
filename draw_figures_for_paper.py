@@ -421,7 +421,7 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
     df.to_csv(filter_+'_coadd_properties.csv', columns=columns)
 
 def main(argv):
-    mcal_catalog_properties(sys.argv[1], sys.argv[2], single_filter=False):
+    mcal_catalog_properties(sys.argv[1], sys.argv[2], single_filter=False)
 
 if __name__ == "__main__":
     main(sys.argv)
