@@ -411,9 +411,9 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
         properties[start:start+total_obj, 1] = gamma2_t
         properties[start:start+total_obj, 2] = gamma1_o
         properties[start:start+total_obj, 3] = gamma2_o
-        properties[start:start+total_obj, 4] = mcal_noshear['coadd_psf_e1']
-        properties[start:start+total_obj, 5] = mcal_noshear['coadd_psf_e2']
-        properties[start:start+total_obj, 6] = mcal_noshear['coadd_psf_T']
+        properties[start:start+total_obj, 4] = new['coadd_psf_e1']
+        properties[start:start+total_obj, 5] = new['coadd_psf_e2']
+        properties[start:start+total_obj, 6] = new['coadd_psf_T']
 
         start += total_obj
 
