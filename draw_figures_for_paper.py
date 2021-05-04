@@ -359,7 +359,7 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
     # mcal_noshear = mcal_noshear[mask]
 
     # properties = np.zeros((len(mcal_noshear),5))
-    columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
+    columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr']
 
     # properties[:,0] = mcal_noshear['coadd_snr']
     # properties[:,1] = mcal_noshear['coadd_hlr']
@@ -414,6 +414,7 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
         properties[start:start+total_obj, 4] = new['coadd_psf_e1']
         properties[start:start+total_obj, 5] = new['coadd_psf_e2']
         properties[start:start+total_obj, 6] = new['coadd_psf_T']
+        properties[start:start+total_obj, 7] = new['coadd_snr']
 
         start += total_obj
 
