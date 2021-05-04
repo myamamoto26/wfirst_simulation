@@ -395,7 +395,7 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
     b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
     c,c02,c3 = np.intersect1d(noshear[0]['ind'][c00][c01], noshear[3]['ind'], return_indices=True)
     tmp_ind = noshear[0]['ind'][c00][c01][c02]
-    properties = np.zeros((4*len(noshear[0][np.isin(noshear[0]['ind'],tmp_ind)]), 7))
+    properties = np.zeros((4*len(noshear[0][np.isin(noshear[0]['ind'],tmp_ind)]), len(columns)))
     for run in range(4):
         new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
         new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
