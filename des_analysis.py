@@ -205,12 +205,18 @@ def main(argv):
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
 	coadd_ = True
+	v2 = True
 	f_coadd = sys.argv[4] # example, coadd_multiband
+	if v2:
+		f_v2 = sys.argv[2]+'_v2'
+		f_coadd_v2 = sys.argv[5]
 
 	if not coadd_:
-		folder=[f+'/g1002/ngmix/single/',f+'/g1n002/ngmix/single/', f+'/g2002/ngmix/single/',f+'/g2n002/ngmix/single/']
+		folder = [f+'/g1002/ngmix/single/', f+'/g1n002/ngmix/single/', f+'/g2002/ngmix/single/', f+'/g2n002/ngmix/single/']
 	else:
-		folder=[f+'/g1002/ngmix/'+f_coadd+'/',f+'/g1n002/ngmix/'+f_coadd+'/', f+'/g2002/ngmix/'+f_coadd+'/',f+'/g2n002/ngmix/'+f_coadd+'/']
+		folder = [f+'/g1002/ngmix/'+f_coadd+'/', f+'/g1n002/ngmix/'+f_coadd+'/', f+'/g2002/ngmix/'+f_coadd+'/', f+'/g2n002/ngmix/'+f_coadd+'/']
+		if v2:
+			folder_v2 = [f_v2+'/g1002/ngmix/'+f_coadd_v2+'/', f_v2+'/g1n002/ngmix/'+f_coadd_v2+'/', f_v2+'/g2002/ngmix/'+f_coadd_v2+'/', f_v2+'/g2n002/ngmix/'+f_coadd_v2+'/']
 	dirr='fiducial_'+filter_+'_'
 	model='mcal'
 
@@ -231,7 +237,7 @@ def main(argv):
 	g1snr_obs = []
 	g2snr_obs = []
 	snr_x = []
-    #object_number = 863305+863306+863306+863306
+
 	for j in range(len(folder)):
 		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
 		new1p_ = fio.FITS(folder[j]+dirr+model+'_1p.fits')[-1].read()
@@ -240,20 +246,6 @@ def main(argv):
 		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
 		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
 		mask = (new_['flags']==0) & (new_['ind']!=0) # exclude non-zero flags object. 
-		#object_number = len(new_['ind'])
-		# object_number = len(new_[mask])
-		# new   = np.zeros(object_number,dtype=new_.dtype)
-		# new1p = np.zeros(object_number,dtype=new_.dtype)
-		# new1m = np.zeros(object_number,dtype=new_.dtype)
-		# new2p = np.zeros(object_number,dtype=new_.dtype)
-		# new2m = np.zeros(object_number,dtype=new_.dtype)
-		# for col in new.dtype.names:
-		# 	new[col][start:start+len(new_)] += new_[mask][col]
-		# 	new1p[col][start:start+len(new_)] += new1p_[mask][col]
-		# 	new1m[col][start:start+len(new_)] += new1m_[mask][col]
-		# 	new2p[col][start:start+len(new_)] += new2p_[mask][col]
-		# 	new2m[col][start:start+len(new_)] += new2m_[mask][col]
-		# start = 0
 
 		noshear.append(new_[mask])
 		shear1p.append(new1p_[mask])
@@ -261,19 +253,55 @@ def main(argv):
 		shear2p.append(new2p_[mask])
 		shear2m.append(new2m_[mask])
 
+	if v2:
+		noshear_v2 = []
+		shear1p_v2 = []
+		shear1m_v2 = []
+		shear2p_v2 = []
+		shear2m_v2 = []
+		for j in range(len(folder_v2)):
+		new_ = fio.FITS(folder_v2[j]+dirr+model+'_noshear.fits')[-1].read()
+		new1p_ = fio.FITS(folder_v2[j]+dirr+model+'_1p.fits')[-1].read()
+		new1m_ = fio.FITS(folder_v2[j]+dirr+model+'_1m.fits')[-1].read()
+		new2p_ = fio.FITS(folder_v2[j]+dirr+model+'_2p.fits')[-1].read()
+		new2m_ = fio.FITS(folder_v2[j]+dirr+model+'_2m.fits')[-1].read()
+		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
+		mask_v2 = (new_['flags']==0) & (new_['ind']!=0) # exclude non-zero flags object. 
+
+		noshear_v2.append(new_[mask_v2])
+		shear1p_v2.append(new1p_[mask_v2])
+		shear1m_v2.append(new1m_[mask_v2])
+		shear2p_v2.append(new2p_[mask_v2])
+		shear2m_v2.append(new2m_[mask_v2])
+
 	## finding common indices. 
 	a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
 	b,c01,c2 = np.intersect1d(noshear[0]['ind'][c00], noshear[2]['ind'], return_indices=True)
 	c,c02,c3 = np.intersect1d(noshear[0]['ind'][c00][c01], noshear[3]['ind'], return_indices=True)
 	tmp_ind = noshear[0]['ind'][c00][c01][c02]
+	if v2:
+		a_v2,c00_v2,c1_v2 = np.intersect1d(noshear_v2[0]['ind'], noshear_v2[1]['ind'], return_indices=True)
+		b_v2,c01_v2,c2_v2 = np.intersect1d(noshear_v2[0]['ind'][c00_v2], noshear_v2[2]['ind'], return_indices=True)
+		c_v2,c02_v2,c3_v2 = np.intersect1d(noshear_v2[0]['ind'][c00_v2][c01_v2], noshear_v2[3]['ind'], return_indices=True)
+		tmp_ind_v2 = noshear_v2[0]['ind'][c00_v2][c01_v2][c02_v2]
 	for run in range(4):
-		masking = np.isin(noshear[run]['ind'] ,tmp_ind)
-		new = noshear[run][masking]
-		new1p = shear1p[run][masking]
-		new1m = shear1m[run][masking]
-		new2p = shear2p[run][masking]
-		new2m = shear2m[run][masking]
-		print('the final object number is, ', len(new))
+		if not v2:
+			masking = np.isin(noshear[run]['ind'] ,tmp_ind)
+			new = noshear[run][masking]
+			new1p = shear1p[run][masking]
+			new1m = shear1m[run][masking]
+			new2p = shear2p[run][masking]
+			new2m = shear2m[run][masking]
+			print('the final object number is, ', len(new))
+		else:
+			masking = np.isin(noshear[run]['ind'] ,tmp_ind)
+			masking_v2 = np.isin(noshear_v2[run]['ind'] ,tmp_ind_v2)
+			new = np.concatenate((noshear[run][masking], noshear_v2[run][masking_v2]))
+			new1p = np.concatenate((shear1p[run][masking], shear1p_v2[run][masking_v2]))
+			new1m = np.concatenate((shear1m[run][masking], shear1m_v2[run][masking_v2]))
+			new2p = np.concatenate((shear2p[run][masking], shear2p_v2[run][masking_v2]))
+			new2m = np.concatenate((shear2m[run][masking], shear2m_v2[run][masking_v2]))
+			print('the final object number is, ', len(new))
 
 		if sys.argv[1]=='shear':
 			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
