@@ -260,19 +260,19 @@ def main(argv):
 		shear2p_v2 = []
 		shear2m_v2 = []
 		for j in range(len(folder_v2)):
-		new_ = fio.FITS(folder_v2[j]+dirr+model+'_noshear.fits')[-1].read()
-		new1p_ = fio.FITS(folder_v2[j]+dirr+model+'_1p.fits')[-1].read()
-		new1m_ = fio.FITS(folder_v2[j]+dirr+model+'_1m.fits')[-1].read()
-		new2p_ = fio.FITS(folder_v2[j]+dirr+model+'_2p.fits')[-1].read()
-		new2m_ = fio.FITS(folder_v2[j]+dirr+model+'_2m.fits')[-1].read()
-		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-		mask_v2 = (new_['flags']==0) & (new_['ind']!=0) # exclude non-zero flags object. 
+			new_ = fio.FITS(folder_v2[j]+dirr+model+'_noshear.fits')[-1].read()
+			new1p_ = fio.FITS(folder_v2[j]+dirr+model+'_1p.fits')[-1].read()
+			new1m_ = fio.FITS(folder_v2[j]+dirr+model+'_1m.fits')[-1].read()
+			new2p_ = fio.FITS(folder_v2[j]+dirr+model+'_2p.fits')[-1].read()
+			new2m_ = fio.FITS(folder_v2[j]+dirr+model+'_2m.fits')[-1].read()
+			print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
+			mask_v2 = (new_['flags']==0) & (new_['ind']!=0) # exclude non-zero flags object. 
 
-		noshear_v2.append(new_[mask_v2])
-		shear1p_v2.append(new1p_[mask_v2])
-		shear1m_v2.append(new1m_[mask_v2])
-		shear2p_v2.append(new2p_[mask_v2])
-		shear2m_v2.append(new2m_[mask_v2])
+			noshear_v2.append(new_[mask_v2])
+			shear1p_v2.append(new1p_[mask_v2])
+			shear1m_v2.append(new1m_[mask_v2])
+			shear2p_v2.append(new2p_[mask_v2])
+			shear2m_v2.append(new2m_[mask_v2])
 
 	## finding common indices. 
 	a,c00,c1 = np.intersect1d(noshear[0]['ind'], noshear[1]['ind'], return_indices=True)
