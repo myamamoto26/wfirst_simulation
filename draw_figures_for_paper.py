@@ -459,9 +459,9 @@ def make_multiband_coadd_stamp():
         sca_Flist = m_F184[ii_F]['sca']
         m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
 
-        obs_Hlist,psf_Hlist,included_H,w_H = self.get_exp_list_coadd(m_H158,ii,m2=m2_H158_coadd,size=t['size'])
-        obs_Jlist,psf_Jlist,included_J,w_J = self.get_exp_list_coadd(m_J129,ii_J,m2=m2_J129_coadd,size=t['size'])
-        obs_Flist,psf_Flist,included_F,w_F = self.get_exp_list_coadd(m_F184,ii_F,m2=m2_F184_coadd,size=t['size'])
+        obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,m2=m2_H158_coadd,size=t['size'])
+        obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,m2=m2_J129_coadd,size=t['size'])
+        obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,m2=m2_F184_coadd,size=t['size'])
         # check if masking is less than 20%
         if len(obs_Hlist)==0 or len(obs_Jlist)==0: 
             continue
