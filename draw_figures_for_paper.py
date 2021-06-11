@@ -421,8 +421,75 @@ def mcal_catalog_properties(filter_, coadd_, single_filter=False):
     df = pd.DataFrame(data=properties, columns=columns)
     df.to_csv(filter_+'_coadd_properties.csv', columns=columns)
 
+def make_multiband_coadd_stamp():
+
+    H = './fiducial_H158_2285117.fits'
+    J = './fiducial_J129_2285117.fits'
+    F = './fiducial_F184_2285117.fits'
+    truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
+    m_H158  = meds.MEDS(H)
+    m_J129  = meds.MEDS(J)
+    m_F184  = meds.MEDS(F)
+    indices_H = np.arange(len(m_H158['number'][:]))
+    indices_J = np.arange(len(m_J129['number'][:]))
+    indices_F = np.arange(len(m_F184['number'][:]))
+    roman_H158_psfs = get_psf_SCA('H158')
+    roman_J129_psfs = get_psf_SCA('J129')
+    roman_F184_psfs = get_psf_SCA('F184')
+
+    for i,ii in enumerate(indices_H):
+
+        if i%100==0:
+            print('made it to object',i)
+
+        try_save = False
+
+        ind = m_H158['number'][ii]
+        t   = truth[ind]
+
+        if (ind not in m_J129['number']) or (ind not in m_F184['number']):
+            continue
+
+        sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
+        ii_J = m_J129[m_J129['number']==ind]['id'][0]
+        sca_Jlist = m_J129[ii_J]['sca']
+        m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
+        m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
+        ii_F = m_F184[m_F184['number']==ind]['id'][0]
+        sca_Flist = m_F184[ii_F]['sca']
+        m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
+
+        obs_Hlist,psf_Hlist,included_H,w_H = self.get_exp_list_coadd(m_H158,ii,m2=m2_H158_coadd,size=t['size'])
+        obs_Jlist,psf_Jlist,included_J,w_J = self.get_exp_list_coadd(m_J129,ii_J,m2=m2_J129_coadd,size=t['size'])
+        obs_Flist,psf_Flist,included_F,w_F = self.get_exp_list_coadd(m_F184,ii_F,m2=m2_F184_coadd,size=t['size'])
+        # check if masking is less than 20%
+        if len(obs_Hlist)==0 or len(obs_Jlist)==0: 
+            continue
+        coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+        coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_H.set_meta({'offset_pixels':None,'file_id':None})
+        
+        coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
+        coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_J.set_meta({'offset_pixels':None,'file_id':None})
+
+        coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
+        coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+
+        obs_list = ObsList()
+        multiband = [coadd_H, coadd_J, coadd_F]
+        for f in range(3):
+            obs_list.append(multiband[f])
+        multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
+
+        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
+        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.psf.image)
+        exit()
+
 def main(argv):
-    mcal_catalog_properties(sys.argv[1], sys.argv[2], single_filter=False)
+    #mcal_catalog_properties(sys.argv[1], sys.argv[2], single_filter=False)
+    make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
     main(sys.argv)
