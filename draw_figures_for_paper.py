@@ -478,7 +478,7 @@ def make_multiband_coadd_stamp():
         coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
-        obs_list = MultiBandObsList()
+        obs_list = ObsList()
         multiband = [coadd_H, coadd_J, coadd_F]
         for f in range(3):
             obs_list.append(multiband[f])
