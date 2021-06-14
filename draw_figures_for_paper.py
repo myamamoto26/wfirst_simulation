@@ -487,12 +487,13 @@ def make_multiband_coadd_stamp():
             obs_list.append(multiband[f])
         multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
 
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
-        np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image.txt', multiband_coadd.psf.image)
-        exit()
+        if ii>100:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image.txt', multiband_coadd.psf.image)
+            exit()
 
 def main(argv):
     #mcal_catalog_properties(sys.argv[1], sys.argv[2], single_filter=False)
