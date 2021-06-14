@@ -464,7 +464,7 @@ def make_multiband_coadd_stamp():
         obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
         obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
         # check if masking is less than 20%
-        if len(obs_Hlist)==0 or len(obs_Jlist)==0: 
+        if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
             continue
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
@@ -478,7 +478,7 @@ def make_multiband_coadd_stamp():
         coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
-        obs_list = ObsList()
+        obs_list = MultiBandObsList()
         multiband = [coadd_H, coadd_J, coadd_F]
         for f in range(3):
             obs_list.append(multiband[f])
