@@ -487,7 +487,7 @@ def make_multiband_coadd_stamp():
             obs_list.append(multiband[f])
         multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
 
-        if ii>100:
+        if ii>20:
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
