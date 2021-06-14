@@ -468,14 +468,17 @@ def make_multiband_coadd_stamp():
             continue
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
         
         coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
         coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
         coadd_J.set_meta({'offset_pixels':None,'file_id':None})
 
         coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
         coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
         coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
         obs_list = ObsList()
