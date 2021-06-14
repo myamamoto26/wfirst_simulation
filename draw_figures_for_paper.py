@@ -466,28 +466,29 @@ def make_multiband_coadd_stamp():
         # check if masking is less than 20%
         if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
             continue
-        coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
-        coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
-        coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
-        coadd_H.set_meta({'offset_pixels':None,'file_id':None})
         
-        coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
-        coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
-        coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
-        coadd_J.set_meta({'offset_pixels':None,'file_id':None})
+        if ii>10:
+            coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+            coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
+            coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
+            coadd_H.set_meta({'offset_pixels':None,'file_id':None})
+            
+            coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
+            coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+            coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
+            coadd_J.set_meta({'offset_pixels':None,'file_id':None})
 
-        coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
-        coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
-        coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
-        coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+            coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
+            coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+            coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
+            coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
-        obs_list = ObsList()
-        multiband = [coadd_H, coadd_J, coadd_F]
-        for f in range(3):
-            obs_list.append(multiband[f])
-        multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
+            obs_list = ObsList()
+            multiband = [coadd_H, coadd_J, coadd_F]
+            for f in range(3):
+                obs_list.append(multiband[f])
+            multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
 
-        if ii>20:
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
