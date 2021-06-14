@@ -452,7 +452,7 @@ def make_multiband_coadd_stamp():
             continue
 
         print(i)
-        if i==6:
+        if i==5:
             sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
             ii_J = m_J129[m_J129['number']==ind]['id'][0]
             sca_Jlist = m_J129[ii_J]['sca']
