@@ -344,7 +344,7 @@ def roman_psf_rotation():
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA0b.txt", star_stamp1.array)
     np.savetxt("/hpc/group/cosmology/masaya/wfirst_simulation/paper/roman_psf_PA30b.txt", star_stamp2.array)
 
-def mcal_catalog_properties(filter_, coadd_, single_filter):
+def mcal_catalog_properties(filter_, coadd_):
 
     folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", filter_)
 
@@ -359,6 +359,7 @@ def mcal_catalog_properties(filter_, coadd_, single_filter):
     # mcal_noshear = mcal_noshear[mask]
 
     # properties = np.zeros((len(mcal_noshear),5))
+    single_filter = True
     if not single_filter:
         columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_hlr']
     else:
@@ -518,7 +519,7 @@ def make_multiband_coadd_stamp():
             exit()
 
 def main(argv):
-    mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
+    mcal_catalog_properties(sys.argv[1], sys.argv[2])
     #make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
