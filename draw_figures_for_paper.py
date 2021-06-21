@@ -359,7 +359,7 @@ def mcal_catalog_properties(filter_, coadd_):
     # mcal_noshear = mcal_noshear[mask]
 
     # properties = np.zeros((len(mcal_noshear),5))
-    single_filter = True
+    single_filter = False
     if not single_filter:
         columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_hlr']
     else:
