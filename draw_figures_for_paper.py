@@ -254,7 +254,7 @@ def search_se_snr():
 
 def single_vs_coadd_images():
     local_Hmeds = './fiducial_H158_2285117.fits'
-    truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158_final/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
+    truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
     m_H158  = meds.MEDS(local_Hmeds)
     indices_H = np.arange(len(m_H158['number'][:]))
     roman_H158_psfs = get_psf_SCA('H158')
