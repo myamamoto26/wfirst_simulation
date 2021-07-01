@@ -278,6 +278,7 @@ def single_vs_coadd_images():
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
         if i==1546: # i==1 or i==1546:
             #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os408scaling_'+str(i)+'.txt', obs_Hlist[0].image)
+            print(obs_Hlist[0].jacobian, obs_Hlist[0].psf.jacobian)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
@@ -297,6 +298,7 @@ def single_vs_coadd_images():
         obs_list.append(coadd_H)
         if i==1546: # i==1 or i==1546:
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os408scaling_'+str(i)+'.txt', coadd_H.image)
+            print(coadd_H.jacobian, coadd_H.psf.jacobian)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_oversample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
             sys.exit()
 
