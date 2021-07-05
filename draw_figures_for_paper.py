@@ -260,11 +260,11 @@ def single_vs_coadd_images():
     roman_H158_psfs = get_psf_SCA('H158')
     oversample = 4
     metacal_keys=['noshear', '1p', '1m', '2p', '2m']
-    res_noshear=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
-    res_1p=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
-    res_1m=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
-    res_2p=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
-    res_2m=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
+    res_noshear=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
+    res_1p=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
+    res_1m=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
+    res_2p=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
+    res_2m=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
 
     res_tot=[res_noshear, res_1p, res_1m, res_2p, res_2m]
     for i,ii in enumerate(indices_H): # looping through all the objects in meds file. 
@@ -276,17 +276,17 @@ def single_vs_coadd_images():
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        if i==500 or i==1000 or i==1546: # i==1 or i==1546:
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os408scaling_'+str(i)+'.txt', obs_Hlist[0].image)
-            for l in range(len(obs_Hlist)):
-                print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
+        # if i==500 or i==1000 or i==1546: # i==1 or i==1546:
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/SE_image_os408scaling_'+str(i)+'.txt', obs_Hlist[0].image)
+        #     for l in range(len(obs_Hlist)):
+        #         print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
-        if i==500 or i==1000 or i==1546: # i==1 or i==1546:
-            print(i, coadd_H.jacobian, coadd_H.psf.jacobian)
+        # if i==500 or i==1000 or i==1546: # i==1 or i==1546:
+        #     print(i, coadd_H.jacobian, coadd_H.psf.jacobian)
         #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_oversample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
         obs_list = ObsList()
         if oversample == 4:
@@ -311,12 +311,15 @@ def single_vs_coadd_images():
             res_tot[iteration]['ind'][i]                       = ind
             res_tot[iteration]['ra'][i]                        = t['ra']
             res_tot[iteration]['dec'][i]                       = t['dec']
+            res_tot[iteration]['int_e1'][i]                    = t['int_e1']
+            res_tot[iteration]['int_e2'][i]                    = t['int_e2']
+
             iteration+=1
         
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-        if res_[key]['s2n'] > 1e7:
-            print('coadd snr', res_[key]['s2n'])
-            np.savetxt('large_coadd_snr_image.txt', coadd_H.image)
+        # if res_[key]['s2n'] > 1e7:
+        #     print('coadd snr', res_[key]['s2n'])
+        #     np.savetxt('large_coadd_snr_image.txt', coadd_H.image)
         iteration=0
         for key in metacal_keys:
             if res_==0:
@@ -332,6 +335,8 @@ def single_vs_coadd_images():
 
     mask=res_tot[0]['ind']!=0
     print(len(res_tot[0]), len(res_tot[0][mask]))
+    print(min(res_tot[0]['int_e1']), max(res_tot[0]['int_e1']),np.where(res_tot[0]['int_e1'] == min(res_tot[0]['int_e1'])), np.where(res_tot[0]['int_e1'] == max(res_tot[0]['int_e1'])))
+    print(min(res_tot[0]['int_e2']), max(res_tot[0]['int_e2']),np.where(res_tot[0]['int_e2'] == min(res_tot[0]['int_e2'])), np.where(res_tot[0]['int_e2'] == max(res_tot[0]['int_e2'])))
     #print(res_['noshear'].dtype.names)
     print('done')
 
