@@ -276,19 +276,15 @@ def single_vs_coadd_images():
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        if i==309: # i==1 or i==1546:
+        if i in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].image)
-            for l in range(len(obs_Hlist)):
-                print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
+            # for l in range(len(obs_Hlist)):
+            #     print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
-        if i==309: # i==1 or i==1546:
-            print(i, coadd_H.jacobian, coadd_H.psf.jacobian)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_oversample4_08scaling_'+str(i)+'.txt', coadd_H.image)
-            exit()
         obs_list = ObsList()
         if oversample == 4:
             new_coadd_psf_block = block_reduce(coadd_H.psf.image, block_size=(4,4), func=np.sum)
@@ -301,11 +297,9 @@ def single_vs_coadd_images():
             coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
-        # if i==1: # i==1 or i==1546:
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_os408scaling_'+str(i)+'.txt', coadd_H.image)
-        #     print(coadd_H.jacobian, coadd_H.psf.jacobian)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_over-downsample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
-        #     sys.exit()
+        if i in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_oversample4_08scaling_'+str(i)+'.txt', coadd_H.image)
+            #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_over-downsample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
 
         iteration=0
         for key in metacal_keys:
