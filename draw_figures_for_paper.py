@@ -295,7 +295,7 @@ def single_vs_coadd_images():
                 print(i, obs_Hlist[l].weight)
                 # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_oversample4_08scaling_'+str(i)+'_'+str(l)+'.txt', obs_Hlist[l].image)
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
-        coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+        coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True,weight_type='noise-fwhm').coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
