@@ -295,6 +295,7 @@ def single_vs_coadd_images():
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
+        s2n_coadd = get_snr(coadd_H)
 
         obs_list = ObsList()
         if oversample == 4:
@@ -323,7 +324,7 @@ def single_vs_coadd_images():
             iteration+=1
         
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-        print('signal to noise test', s2n_test, res_['noshear']['s2n'])
+        print('signal to noise test', i, s2n_test, s2n_coadd, res_['noshear']['s2n'])
         # if res_[key]['s2n'] > 1e7:
         #     print('coadd snr', res_[key]['s2n'])
         #     np.savetxt('large_coadd_snr_image.txt', coadd_H.image)
@@ -541,8 +542,8 @@ def make_multiband_coadd_stamp():
             exit()
 
 def main(argv):
-    # single_vs_coadd_images()
-    mcal_catalog_properties(sys.argv[1], sys.argv[2])
+    single_vs_coadd_images()
+    # mcal_catalog_properties(sys.argv[1], sys.argv[2])
     # make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
