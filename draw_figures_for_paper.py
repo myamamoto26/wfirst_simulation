@@ -32,9 +32,9 @@ def get_snr(obs_list):
     for i in range(len(obs_list)):
         obs = obs_list[i]
         if i == 0:
-            s2n = obs.image * obs.weight
+            s2n = (obs.image * obs.weight)/np.sqrt((obs.weight**2).sum())
         else:
-            s2n += obs.image * obs.weight
+            s2n += obs.image * obs.weight/np.sqrt((obs.weight**2).sum())
     return s2n.sum()
 
 def get_psf_SCA(filter_):
@@ -280,6 +280,8 @@ def single_vs_coadd_images():
     for i,ii in enumerate(indices_H): # looping through all the objects in meds file. 
         if i%100==0:
             print('object number ',i)
+        if i != 657:
+            continue
         ind = m_H158['number'][ii]
         t   = truth[ind]
         sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
@@ -324,7 +326,7 @@ def single_vs_coadd_images():
             iteration+=1
         
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-        print('signal to noise test', i, s2n_test, s2n_coadd, res_['noshear']['s2n'])
+        print('signal to noise test', i, s2n_test, s2n_coadd, res_['noshear']['s2n_r'])
         # if res_[key]['s2n'] > 1e7:
         #     print('coadd snr', res_[key]['s2n'])
         #     np.savetxt('large_coadd_snr_image.txt', coadd_H.image)
@@ -343,8 +345,6 @@ def single_vs_coadd_images():
 
     mask=res_tot[0]['ind']!=0
     print(len(res_tot[0]), len(res_tot[0][mask]))
-    print(min(res_tot[0]['int_e1']), max(res_tot[0]['int_e1']),np.where(res_tot[0]['int_e1'] == min(res_tot[0]['int_e1'])), np.where(res_tot[0]['int_e1'] == max(res_tot[0]['int_e1'])))
-    print(min(res_tot[0]['int_e2']), max(res_tot[0]['int_e2']),np.where(res_tot[0]['int_e2'] == min(res_tot[0]['int_e2'])), np.where(res_tot[0]['int_e2'] == max(res_tot[0]['int_e2'])))
     #print(res_['noshear'].dtype.names)
     print('done')
 
