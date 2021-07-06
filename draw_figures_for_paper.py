@@ -27,6 +27,16 @@ def get_flux(obs_list):
         flux = 10.
     return flux
 
+def get_snr(obs_list):
+    
+    for i in range(len(obs_list)):
+        obs = obs_list[i]
+        if i == 0:
+            s2n = obs.image.array * obs.weight
+        else:
+            s2n += obs.image.array * obs.weight
+    return s2n
+
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
     all_psfs = []
@@ -276,8 +286,9 @@ def single_vs_coadd_images():
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        if i in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].image)
+        s2n_test = get_snr(obs_Hlist)
+        # if i in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].image)
             # for l in range(len(obs_Hlist)):
             #     print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
@@ -297,8 +308,8 @@ def single_vs_coadd_images():
             coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
-        if i in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_oversample4_08scaling_'+str(i)+'.txt', coadd_H.image)
+        # if i in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_oversample4_08scaling_'+str(i)+'.txt', coadd_H.image)
             #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_over-downsample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
 
         iteration=0
@@ -312,6 +323,7 @@ def single_vs_coadd_images():
             iteration+=1
         
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+        print('signal to noise test', s2n_test, res_['noshear']['s2n'])
         # if res_[key]['s2n'] > 1e7:
         #     print('coadd snr', res_[key]['s2n'])
         #     np.savetxt('large_coadd_snr_image.txt', coadd_H.image)
