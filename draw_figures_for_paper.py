@@ -35,7 +35,7 @@ def get_snr(obs_list):
             s2n = obs.image * obs.weight
         else:
             s2n += obs.image * obs.weight
-    return s2n
+    return s2n.sum()
 
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
