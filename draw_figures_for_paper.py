@@ -293,10 +293,10 @@ def single_vs_coadd_images():
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
         s2n_test = get_snr(obs_Hlist)
-        if i in [1,600]: #in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
-            for l in range(len(obs_Hlist)):
-                #print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
-                print(i, obs_Hlist[l].weight)
+        # if i in [1,600]: #in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
+        #     for l in range(len(obs_Hlist)):
+        #         #print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
+        #         print(i, obs_Hlist[l].weight)
                 # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_oversample4_08scaling_'+str(i)+'_'+str(l)+'.txt', obs_Hlist[l].image)
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
@@ -316,8 +316,8 @@ def single_vs_coadd_images():
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
         s2n_coadd = get_snr(obs_list)
-        if i in [1,600]:
-            print(i, coadd_H.weight)
+        # if i in [1,600]:
+        #     print(i, coadd_H.weight)
             #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_oversample4_08scaling_'+str(i)+'.txt', coadd_H.image)
             # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_weight_oversample4_08scaling_'+str(i)+'.txt', coadd_H.weight)
             #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_over-downsample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
