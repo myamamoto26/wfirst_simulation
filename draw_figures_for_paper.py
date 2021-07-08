@@ -28,14 +28,18 @@ def get_flux(obs_list):
     return flux
 
 def get_snr(obs_list):
-    
+    ## ngmix s2n estimator ##
     for i in range(len(obs_list)):
         obs = obs_list[i]
+        w = np.where(obs.weight > 0)
+        Vsum = (1.0/obs.weight[w]).sum()
         if i == 0:
-            s2n = (obs.image * obs.weight)/np.sqrt((obs.weight**2).sum())
+            #s2n = (obs.image * obs.weight)/np.sqrt((obs.weight**2 ).sum())
+            s2n = obs.image.sum()/np.sqrt(Vsum)
         else:
-            s2n += obs.image * obs.weight/np.sqrt((obs.weight**2).sum())
-    return s2n.sum()
+            #s2n += obs.image * obs.weight/np.sqrt((obs.weight**2 ).sum())
+            s2n += obs.image.sum()/np.sqrt(Vsum)
+    return s2n
 
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
