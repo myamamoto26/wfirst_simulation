@@ -284,8 +284,8 @@ def single_vs_coadd_images():
     for i,ii in enumerate(indices_H): # looping through all the objects in meds file. 
         if i%100==0:
             print('object number ',i)
-        if i not in [1,600]:
-            continue
+        # if i not in [1,600]:
+        #     continue
         ind = m_H158['number'][ii]
         t   = truth[ind]
         sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
