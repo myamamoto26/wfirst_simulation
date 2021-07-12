@@ -503,55 +503,57 @@ def make_multiband_coadd_stamp():
             continue
 
         print(i)
-        if i==13:
-            sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
-            ii_J = m_J129[m_J129['number']==ind]['id'][0]
-            sca_Jlist = m_J129[ii_J]['sca']
-            m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
-            m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
-            ii_F = m_F184[m_F184['number']==ind]['id'][0]
-            sca_Flist = m_F184[ii_F]['sca']
-            m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
+        # if i==13:
+        sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
+        ii_J = m_J129[m_J129['number']==ind]['id'][0]
+        sca_Jlist = m_J129[ii_J]['sca']
+        m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
+        m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
+        ii_F = m_F184[m_F184['number']==ind]['id'][0]
+        sca_Flist = m_F184[ii_F]['sca']
+        m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
 
-            obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-            obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
-            obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
-            # check if masking is less than 20%
-            if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
-                continue
+        obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
+        obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
+        obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
+        # check if masking is less than 20%
+        if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
+            continue
+    
+        coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+        coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_H.set_meta({'offset_pixels':None,'file_id':None})
         
-            coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
-            coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
-            coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
-            coadd_H.set_meta({'offset_pixels':None,'file_id':None})
-            
-            coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
-            coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
-            coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
-            coadd_J.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
+        coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_J.set_meta({'offset_pixels':None,'file_id':None})
 
-            coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
-            coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
-            coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
-            coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
+        coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
-            obs_list = ObsList()
-            multiband = [coadd_H, coadd_J, coadd_F]
-            for f in range(3):
-                obs_list.append(multiband[f])
-            multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
+        obs_list = ObsList()
+        multiband = [coadd_H, coadd_J, coadd_F]
+        for f in range(3):
+            obs_list.append(multiband[f])
+        multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
 
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image.txt', multiband_coadd.psf.image)
-            exit()
+        print('single snr', get_snr(obs_Jlist), get_snr(obs_Hlist), get_snr(obs_Flist))
+        print('coadd snr', get_snr(coadd_J), get_snr(coadd_H), get_snr(coadd_F))
+        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
+        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
+        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
+        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
+        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image.txt', multiband_coadd.psf.image)
+        # exit()
 
 def main(argv):
-    single_vs_coadd_images()
+    # single_vs_coadd_images()
     # mcal_catalog_properties(sys.argv[1], sys.argv[2])
-    # make_multiband_coadd_stamp()
+    make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
     main(sys.argv)
