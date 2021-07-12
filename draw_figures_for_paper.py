@@ -542,8 +542,7 @@ def make_multiband_coadd_stamp():
         multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
 
         print('single snr', get_snr(obs_Jlist), get_snr(obs_Hlist), get_snr(obs_Flist))
-        print(len(coadd_H), len(coadd_J), len(coadd_F))
-        print('coadd snr', get_snr(coadd_J), get_snr(coadd_H), coadd_F)
+        print('coadd snr', get_snr([coadd_J]), get_snr([coadd_H]), get_snr([coadd_F]))
         print('final', get_snr(obs_list))
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
