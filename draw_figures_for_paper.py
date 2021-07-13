@@ -267,11 +267,11 @@ def search_se_snr():
     print(max(snr['snr']), snr['ind'][snr['snr'].index(max(snr['snr']))])
 
 def single_vs_coadd_images():
-    local_Hmeds = './fiducial_H158_2285117.fits'
-    truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
+    local_Hmeds = './fiducial_F184_2285117.fits'
+    truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
     m_H158  = meds.MEDS(local_Hmeds)
     indices_H = np.arange(len(m_H158['number'][:]))
-    roman_H158_psfs = get_psf_SCA('H158')
+    roman_H158_psfs = get_psf_SCA('F184')
     oversample = 4
     metacal_keys=['noshear', '1p', '1m', '2p', '2m']
     res_noshear=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
