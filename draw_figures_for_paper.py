@@ -43,9 +43,6 @@ def get_snr(obs_list):
 
 def get_snr2(obs_list,size_,flux_):
 
-    if res_full['flags']!=0:
-        return -1
-
     size = size_
     flux = flux_
 
