@@ -41,6 +41,34 @@ def get_snr(obs_list):
             s2n += obs.image.sum()/np.sqrt(Vsum)
     return s2n
 
+def get_snr2(obs_list,size_,flux_):
+
+    if res_full['flags']!=0:
+        return -1
+
+    size = size_
+    flux = flux_
+
+    # model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-res['pars'][5])) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*res['pars'][5])
+    model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-flux)) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*flux)
+    for i in range(len(obs_list)):
+        obs = obs_list[i]
+        im = obs.psf.image.copy()
+        im *= 1.0/im.sum()/len(obs_list)
+        psf_gsimage = galsim.Image(im,wcs=obs.psf.jacobian.get_galsim_wcs())
+        psf_ii = galsim.InterpolatedImage(psf_gsimage,x_interpolant='lanczos15')
+
+        model = galsim.Convolve(model_,psf_ii)
+        gal_stamp = galsim.Image(np.shape(obs.image)[0],np.shape(obs.image)[1], wcs=obs.jacobian.get_galsim_wcs())
+
+        model.drawImage(image=gal_stamp)
+        if i==0:
+            image = gal_stamp.array*obs.weight
+        else:
+            image += gal_stamp.array*obs.weight
+
+    return image.sum()
+
 def get_psf_SCA(filter_):
     all_scas = np.array([i for i in range(1,19)])
     all_psfs = []
@@ -541,9 +569,9 @@ def make_multiband_coadd_stamp():
             obs_list.append(multiband[f])
         multiband_coadd = psc.Coadder(obs_list,flat_wcs=True).coadd_obs
 
-        print('single snr', get_snr(obs_Jlist), get_snr(obs_Hlist), get_snr(obs_Flist))
-        print('coadd snr', get_snr([coadd_J]), get_snr([coadd_H]), get_snr([coadd_F]))
-        print('final', get_snr(obs_list))
+        print('single snr', get_snr2(obs_Jlist), get_snr2(obs_Hlist), get_snr2(obs_Flist))
+        print('coadd snr', get_snr2([coadd_J]), get_snr2([coadd_H]), get_snr2([coadd_F]))
+        print('final', get_snr2(obs_list))
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
