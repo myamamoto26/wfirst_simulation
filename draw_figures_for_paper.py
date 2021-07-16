@@ -41,13 +41,14 @@ def get_snr(obs_list):
             s2n += obs.image.sum()/np.sqrt(Vsum)
     return s2n
 
-def get_snr2(obs_list,size_,flux_):
+def get_snr2(obs_list,t,flux_):
 
-    size = size_
+    size = t['size']
     flux = flux_
+    fr = t['bflux']/t['dflux']
 
     # model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-res['pars'][5])) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*res['pars'][5])
-    model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-flux)) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*flux)
+    model_ = galsim.Sersic(1, half_light_radius=1.*size, flux=flux*(1.-fr)) + galsim.Sersic(4, half_light_radius=1.*size, flux=flux*fr)
     for i in range(len(obs_list)):
         obs = obs_list[i]
         im = obs.psf.image.copy()
@@ -569,9 +570,9 @@ def make_multiband_coadd_stamp():
 
         res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
-        print('single snr', get_snr2(obs_Jlist, t['size'], get_flux(obs_Jlist)), get_snr2(obs_Hlist, t['size'], get_flux(obs_Hlist)), get_snr2(obs_Flist, t['size'], get_flux(obs_Flist)))
-        print('coadd snr', get_snr2([coadd_J], t['size'], get_flux([coadd_J])), get_snr2([coadd_H], t['size'], get_flux([coadd_H])), get_snr2([coadd_F], t['size'], get_flux([coadd_F])))
-        print('final', get_snr2(obs_list, t['size'], get_flux(obs_list)))
+        print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
+        print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
+        print('final', get_snr2(obs_list, t, get_flux(obs_list)))
         print('ngmix measurement', res_['noshear']['s2n_r'])
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
