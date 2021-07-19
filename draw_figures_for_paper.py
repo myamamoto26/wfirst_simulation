@@ -251,8 +251,12 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
         if 1.*len(weight[mask])/np.product(np.shape(weight))<0.8:
             continue
 
-        w.append(np.mean(weight[mask]))
-        noise = np.ones_like(weight)/w[-1]
+        # w.append(np.mean(weight[mask]))
+        # noise = np.ones_like(weight)/w[-1]
+        noise = galsim.Image(np.ones_like(weight)/weight)
+        rng = galsim.BaseDeviate(215324)
+        noise = noise.addNoise(rng)
+        noise.array -= 1/np.mean(weight)
 
         psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
         psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
