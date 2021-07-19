@@ -572,6 +572,7 @@ def make_multiband_coadd_stamp():
 
         print('magnitude', t['J129'], t['H158'], t['F184'])
         print('flux sum', obs_Jlist[0].image.sum(), obs_Hlist[0].image.sum(), obs_Flist[0].image.sum())
+        print('weight', obs_Jlist[0].weight, obs_Hlist[0].weight, obs_Flist[0].weight)
         print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         print('final', get_snr2(obs_list, t, get_flux(obs_list)))
