@@ -572,10 +572,11 @@ def make_multiband_coadd_stamp():
 
         print('magnitude', t['J129'], t['H158'], t['F184'])
         print('flux sum', obs_Jlist[0].image.sum(), obs_Hlist[0].image.sum(), obs_Flist[0].image.sum())
-        if i==3:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_0.txt', obs_Jlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_0.txt', obs_Hlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_0.txt', obs_Flist[0].image)
+        # if i==3:
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_0.txt', obs_Jlist[0].noise.image)
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_0.txt', obs_Hlist[0].noise.image)
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_0.txt', obs_Flist[0].noise.image)
+        print('noise', obs_Jlist[0].noise.image, obs_Hlist[0].noise.image, obs_Flist[0].noise.image)
         print('weight', obs_Jlist[0].weight, obs_Hlist[0].weight, obs_Flist[0].weight)
         print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
