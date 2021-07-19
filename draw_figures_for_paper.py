@@ -570,6 +570,8 @@ def make_multiband_coadd_stamp():
 
         res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
+        print('magnitude', t['mag_J129'], t['mag_H158'], t['mag_F184'])
+        print('flux sum', obs_Jlist[0].image.sum(), obs_Hlist[0].image.sum(), obs_Flist[0].image.sum())
         print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         print('final', get_snr2(obs_list, t, get_flux(obs_list)))
