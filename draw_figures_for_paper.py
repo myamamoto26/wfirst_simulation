@@ -253,7 +253,7 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
 
         # w.append(np.mean(weight[mask]))
         # noise = np.ones_like(weight)/w[-1]
-        noise = galsim.Image(np.ones_like(weight)/weight)
+        noise = galsim.Image(np.ones_like(weight)/weight, scale=galsim.roman.pixel_scale)
         p_noise = galsim.PoissonNoise(galsim.BaseDeviate(1234), sky_level=0.)
         noise.addNoise(p_noise)
         print(noise)
@@ -264,7 +264,7 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
         #obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs, meta={'offset_pixels':None,'file_id':None})
         # oversampled PSF
         obs = Observation(im, weight=weight, jacobian=gal_jacob, psf=psf_obs2, meta={'offset_pixels':None,'file_id':None})
-        obs.set_noise(noise)
+        obs.set_noise(noise.array)
 
         obs_list.append(obs)
         psf_list.append(psf_obs2)
