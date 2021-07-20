@@ -551,8 +551,6 @@ def make_multiband_coadd_stamp():
         # check if masking is less than 20%
         if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
             continue
-        print('noise', obs_Jlist[0].noise, obs_Hlist[0].noise, obs_Flist[0].noise)
-        print('weight', obs_Jlist[0].weight, obs_Hlist[0].weight, obs_Flist[0].weight)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
@@ -579,17 +577,18 @@ def make_multiband_coadd_stamp():
 
         print('magnitude', t['J129'], t['H158'], t['F184'])
         print('flux sum', obs_Jlist[0].image.sum(), obs_Hlist[0].image.sum(), obs_Flist[0].image.sum())
-        # if i==3:
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_0.txt', obs_Jlist[0].noise.image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_0.txt', obs_Hlist[0].noise.image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_0.txt', obs_Flist[0].noise.image)
+        if i==3:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_1.txt', obs_Jlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_1.txt', obs_Hlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_1.txt', obs_Flist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H158_image_1.txt', coadd_H.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J129_image_1.txt', coadd_J.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F184_image_1.txt', coadd_F.image)
         print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         print('final', get_snr2(obs_list, t, get_flux(obs_list)))
         print('ngmix measurement', res_['noshear']['s2n_r'])
-        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H_image.txt', coadd_H.image)
-        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J_image.txt', coadd_J.image)
-        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F_image.txt', coadd_F.image)
+        
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
         # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image.txt', multiband_coadd.psf.image)
         # exit()
