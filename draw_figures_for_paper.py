@@ -253,11 +253,12 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
 
         # w.append(np.mean(weight[mask]))
         # noise = np.ones_like(weight)/w[-1]
+        mask_zero = np.where(weight==0)
         noise = galsim.Image(np.ones_like(weight)/weight, scale=galsim.roman.pixel_scale)
         p_noise = galsim.PoissonNoise(galsim.BaseDeviate(1234), sky_level=0.)
+        noise[mask_zero] = np.mean(weight[mask])
         noise.addNoise(p_noise)
-        print(noise)
-        noise -= (1/np.mean(weight))
+        noise -= (1/np.mean(weight[mask]))
 
         psf_obs = Observation(im_psf, jacobian=gal_jacob, meta={'offset_pixels':None,'file_id':None})
         psf_obs2 = Observation(im_psf2, jacobian=psf_jacob2, meta={'offset_pixels':None,'file_id':None})
@@ -550,7 +551,8 @@ def make_multiband_coadd_stamp():
         # check if masking is less than 20%
         if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
             continue
-    
+        print('noise', obs_Jlist[0].noise, obs_Hlist[0].noise, obs_Flist[0].noise)
+        print('weight', obs_Jlist[0].weight, obs_Hlist[0].weight, obs_Flist[0].weight)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
@@ -581,8 +583,6 @@ def make_multiband_coadd_stamp():
         #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_0.txt', obs_Jlist[0].noise.image)
         #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_0.txt', obs_Hlist[0].noise.image)
         #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_0.txt', obs_Flist[0].noise.image)
-        print('noise', obs_Jlist[0].noise, obs_Hlist[0].noise, obs_Flist[0].noise)
-        print('weight', obs_Jlist[0].weight, obs_Hlist[0].weight, obs_Flist[0].weight)
         print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         print('final', get_snr2(obs_list, t, get_flux(obs_list)))
