@@ -256,7 +256,7 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
         mask_zero = np.where(weight==0)
         noise = galsim.Image(np.ones_like(weight)/weight, scale=galsim.roman.pixel_scale)
         p_noise = galsim.PoissonNoise(galsim.BaseDeviate(1234), sky_level=0.)
-        noise[mask_zero] = np.mean(weight[mask])
+        noise.array[mask_zero] = np.mean(weight[mask])
         noise.addNoise(p_noise)
         noise -= (1/np.mean(weight[mask]))
 
