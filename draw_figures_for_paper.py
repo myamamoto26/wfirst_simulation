@@ -135,7 +135,7 @@ def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=Non
     prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
     guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
 
-    boot = ngmix.bootstrap.MaxMetacalBootstrapper(obs_list)
+    boot = ngmix.bootstrap.MaxMetacalBootstrapper(obs_list, use_noise_image=True)
     psf_model = "gauss"
     gal_model = "gauss"
 
