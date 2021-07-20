@@ -61,9 +61,9 @@ def get_snr2(obs_list,t,flux_):
 
         model.drawImage(image=gal_stamp)
         if i==0:
-            image = gal_stamp.array*obs.weight
+            image = gal_stamp.array*np.sqrt(obs.weight)
         else:
-            image += gal_stamp.array*obs.weight
+            image += gal_stamp.array*np.sqrt(obs.weight)
 
     return image.sum()
 
