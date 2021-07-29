@@ -575,21 +575,22 @@ def make_multiband_coadd_stamp():
 
         res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
-        # if i==3:
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_1.txt', obs_Jlist[0].image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_1.txt', obs_Hlist[0].image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_1.txt', obs_Flist[0].image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_H158_image_1.txt', coadd_H.image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_J129_image_1.txt', coadd_J.image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_F184_image_1.txt', coadd_F.image)
+        if i==5:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_5.txt', obs_Hlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_image_5.txt', coadd_H.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
+            multiband_coadd = psc.Coadder(mb_obs_list,flat_wcs=True).coadd_obs
+            multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
+            exit()
         print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         print('final', get_snr2(obs_list, t, get_flux(obs_list)))
         print('ngmix measurement', res_['noshear']['s2n_r'])
-        
-        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image.txt', multiband_coadd.image)
-        # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image.txt', multiband_coadd.psf.image)
-        # exit()
 
 def main(argv):
     # single_vs_coadd_images()
