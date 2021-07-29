@@ -567,10 +567,12 @@ def make_multiband_coadd_stamp():
         coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
         mb_obs_list = MultiBandObsList()
-        obs_list = ObsList()
+        obs_list2 = ObsList()
         multiband = [coadd_H, coadd_J, coadd_F]
         for f in range(3):
+            obs_list = ObsList()
             obs_list.append(multiband[f])
+            obs_list2.append(multiband[f])
         mb_obs_list.append(obs_list)
 
         res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
@@ -582,7 +584,7 @@ def make_multiband_coadd_stamp():
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_image_5.txt', coadd_H.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
-            multiband_coadd = psc.Coadder(mb_obs_list,flat_wcs=True).coadd_obs
+            multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
             multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
             np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
