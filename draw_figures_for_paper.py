@@ -596,8 +596,8 @@ def make_multiband_coadd_stamp():
 
 def main(argv):
     # single_vs_coadd_images()
-    # mcal_catalog_properties(sys.argv[1], sys.argv[2])
-    make_multiband_coadd_stamp()
+    mcal_catalog_properties(sys.argv[1], sys.argv[2])
+    # make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
     main(sys.argv)
