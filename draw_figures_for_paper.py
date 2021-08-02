@@ -500,7 +500,7 @@ def mcal_catalog_properties(filter_, coadd_):
 
     df = pd.DataFrame(data=properties, columns=columns)
     if not single_filter:
-        df.to_csv(filter_+'_coadd_properties.csv', columns=columns)
+        df.to_csv(filter_+'_coadd_3filter_properties.csv', columns=columns)
     else:
         df.to_csv(filter_+'_single_properties.csv', columns=columns)
 
