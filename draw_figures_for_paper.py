@@ -130,7 +130,7 @@ def measure_shape_metacal_multiband(obs_list, T, method='bootstrap', fracdev=Non
     gp = ngmix.priors.GPriorBA(0.3)
     hlrp = ngmix.priors.FlatPrior(1.0e-5, 1.0e4)
     fracdevp = ngmix.priors.Normal(0.5, 0.1, bounds=[0., 1.])
-    fluxp = [ngmix.priors.FlatPrior(-1.0e3, 1.0e6),ngmix.priors.FlatPrior(-1.0e3, 1.0e6),ngmix.priors.FlatPrior(-1.0e3, 1.0e6)]
+    fluxp = [ngmix.priors.FlatPrior(0, 1.0e6),ngmix.priors.FlatPrior(0, 1.0e6)]#,ngmix.priors.FlatPrior(-1.0e3, 1.0e6)]
 
     prior = joint_prior.PriorSimpleSep(cp, gp, hlrp, fluxp)
     guess = np.array([pixe_guess(pix_range),pixe_guess(pix_range),pixe_guess(e_range),pixe_guess(e_range),T,500.])
@@ -506,20 +506,20 @@ def mcal_catalog_properties(filter_, coadd_):
 
 def make_multiband_coadd_stamp():
 
-    oversample = 1
+    oversample = 4
     H = './fiducial_H158_2285117.fits'
-    J = './fiducial_J129_2285117.fits'
-    F = './fiducial_F184_2285117.fits'
+    # J = './fiducial_J129_2285117.fits'
+    # F = './fiducial_F184_2285117.fits'
     truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
     m_H158  = meds.MEDS(H)
-    m_J129  = meds.MEDS(J)
-    m_F184  = meds.MEDS(F)
+    # m_J129  = meds.MEDS(J)
+    # m_F184  = meds.MEDS(F)
     indices_H = np.arange(len(m_H158['number'][:]))
-    indices_J = np.arange(len(m_J129['number'][:]))
-    indices_F = np.arange(len(m_F184['number'][:]))
+    # indices_J = np.arange(len(m_J129['number'][:]))
+    # indices_F = np.arange(len(m_F184['number'][:]))
     roman_H158_psfs = get_psf_SCA('H158')
-    roman_J129_psfs = get_psf_SCA('J129')
-    roman_F184_psfs = get_psf_SCA('F184')
+    # roman_J129_psfs = get_psf_SCA('J129')
+    # roman_F184_psfs = get_psf_SCA('F184')
 
     for i,ii in enumerate(indices_H):
 
@@ -531,63 +531,64 @@ def make_multiband_coadd_stamp():
         ind = m_H158['number'][ii]
         t   = truth[ind]
 
-        if (ind not in m_J129['number']) or (ind not in m_F184['number']):
-            continue
+        # if (ind not in m_J129['number']) or (ind not in m_F184['number']):
+        #     continue
 
         print(i)
         sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
-        ii_J = m_J129[m_J129['number']==ind]['id'][0]
-        sca_Jlist = m_J129[ii_J]['sca']
+        # ii_J = m_J129[m_J129['number']==ind]['id'][0]
+        # sca_Jlist = m_J129[ii_J]['sca']
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
-        m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
-        ii_F = m_F184[m_F184['number']==ind]['id'][0]
-        sca_Flist = m_F184[ii_F]['sca']
-        m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
+        # m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
+        # ii_F = m_F184[m_F184['number']==ind]['id'][0]
+        # sca_Flist = m_F184[ii_F]['sca']
+        # m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
-        obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
+        # obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
+        # obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
         # check if masking is less than 20%
-        if len(obs_Hlist)==0 or len(obs_Jlist)==0 or len(obs_Flist)==0: 
+        if len(obs_Hlist)==0: # or len(obs_Jlist)==0 or len(obs_Flist)==0: 
             continue
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
         
-        coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
-        coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
-        coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
-        coadd_J.set_meta({'offset_pixels':None,'file_id':None})
+        # coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
+        # coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+        # coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
+        # coadd_J.set_meta({'offset_pixels':None,'file_id':None})
 
-        coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
-        coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
-        coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
-        coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+        # coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
+        # coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+        # coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
+        # coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
-        mb_obs_list = MultiBandObsList()
-        obs_list2 = ObsList()
-        multiband = [coadd_H, coadd_J, coadd_F]
-        for f in range(3):
-            obs_list = ObsList()
-            obs_list.append(multiband[f])
-            obs_list2.append(multiband[f])
-        mb_obs_list.append(obs_list)
+        # mb_obs_list = MultiBandObsList()
+        # obs_list2 = ObsList()
+        # multiband = [coadd_H, coadd_J, coadd_F]
+        # for f in range(3):
+        #     obs_list = ObsList()
+        #     obs_list.append(multiband[f])
+        #     obs_list2.append(multiband[f])
+        # mb_obs_list.append(obs_list)
+        obs_list = ObsList()
+        obs_list.append(coadd_H)
+        res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
-        res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-
-        if i==5:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_undersample_PSF_5.txt', obs_Hlist[0].psf.image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_undersample_PSF_image_5.txt', coadd_H.psf.image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
-            # multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
-            # multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
-            exit()
+        # if i==5:
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_undersample_PSF_5.txt', obs_Hlist[0].psf.image)
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_undersample_PSF_image_5.txt', coadd_H.psf.image)
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
+        #     # multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
+        #     # multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
+        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
+        #     exit()
         # print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         # print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         # print('final', get_snr2(obs_list, t, get_flux(obs_list)))
