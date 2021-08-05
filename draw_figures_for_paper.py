@@ -506,7 +506,7 @@ def mcal_catalog_properties(filter_, coadd_):
 
 def make_multiband_coadd_stamp():
 
-    oversample = 4
+    oversample = 1
     H = './fiducial_H158_2285117.fits'
     J = './fiducial_J129_2285117.fits'
     F = './fiducial_F184_2285117.fits'
