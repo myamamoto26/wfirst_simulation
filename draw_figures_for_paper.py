@@ -535,7 +535,6 @@ def make_multiband_coadd_stamp():
             continue
 
         print(i)
-        # if i==13:
         sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
         ii_J = m_J129[m_J129['number']==ind]['id'][0]
         sca_Jlist = m_J129[ii_J]['sca']
@@ -578,26 +577,26 @@ def make_multiband_coadd_stamp():
         res_ = measure_shape_metacal(mb_obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
         if i==5:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_5.txt', obs_Hlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_image_5.txt', coadd_H.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
-            multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
-            multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_oversample_PSF_5.txt', obs_Hlist[0].psf.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_oversample_PSF_image_5.txt', coadd_H.psf.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
+            # multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
+            # multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
             exit()
-        print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
-        print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
-        print('final', get_snr2(obs_list, t, get_flux(obs_list)))
-        print('ngmix measurement', res_['noshear']['s2n_r'])
+        # print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
+        # print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
+        # print('final', get_snr2(obs_list, t, get_flux(obs_list)))
+        # print('ngmix measurement', res_['noshear']['s2n_r'])
 
 def main(argv):
     # single_vs_coadd_images()
-    mcal_catalog_properties(sys.argv[1], sys.argv[2])
-    # make_multiband_coadd_stamp()
+    # mcal_catalog_properties(sys.argv[1], sys.argv[2])
+    make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
     main(sys.argv)
