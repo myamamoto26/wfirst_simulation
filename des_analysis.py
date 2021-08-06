@@ -205,6 +205,7 @@ def main(argv):
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
 	coadd_ = True
+	combine_m = True
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -321,6 +322,20 @@ def main(argv):
 			g2snr_obs.append(g2_obs_snr)
 			snr_x.append(snr_bin)
 	
+	if combine_m:
+		g_true_all = [np.concatenate([g1_true[0], g2_true[2]], axis=0), np.concatenate([g1_true[1], g2_true[3]], axis=0)]
+		g_obs_all = [np.concatenate([g1_obs[0], g2_obs[2]], axis=0), np.concatenate([g1_obs[1], g2_obs[3]], axis=0)]
+		g_noshear_all = [np.concatenate([g1_noshear[0], g2_noshear[2]], axis=0), np.concatenate([g1_noshear[1], g2_noshear[3]], axis=0)]
+
+		m = ((np.mean(g_obs_all[0])-np.mean(g_obs_all[1]))/0.04) - 1
+		m_err = bootstrap_cov_m(200,g_obs_all[0],g_obs_all[1])
+		c = (np.mean(g_obs_all[0] - (1+m)*g_true_all[0]) + np.mean(g_obs_all[1] - (1+m)*g_true_all[1]))/2
+		c_err = bootstrap_cov_c(200,m,g_obs_all[0],g_true_all[0],g_obs_all[1],g_true_all[1])
+
+		print("metacalibration correction: ")
+		print("m="+str("%6.4f"% m)+"+-"+str("%6.4f"% m_err), "c1="+str("%6.6f"% c)+"+-"+str("%6.6f"% c_err))
+		return None
+
 	if sys.argv[1]=='shear':
 		## m1,c1 calculation before metacalibration correction. 
 		m1 = ((np.mean(g1_noshear[0])-np.mean(g1_noshear[1]))/0.04) - 1
@@ -335,8 +350,8 @@ def main(argv):
 		c2_err = bootstrap_cov_c(200,m2,g2_noshear[2],g2_true[2],g2_noshear[3],g2_true[3])
 
 		print("before metacalibration correction: ")
-		print("m1="+str("%6.4f"% m1)+"+-"+str("%6.4f"% m1_err), "b1="+str("%6.6f"% c1)+"+-"+str("%6.6f"% c1_err))
-		print("m2="+str("%6.4f"% m2)+"+-"+str("%6.4f"% m2_err), "b2="+str("%6.6f"% c2)+"+-"+str("%6.6f"% c2_err))
+		print("m1="+str("%6.4f"% m1)+"+-"+str("%6.4f"% m1_err), "c1="+str("%6.6f"% c1)+"+-"+str("%6.6f"% c1_err))
+		print("m2="+str("%6.4f"% m2)+"+-"+str("%6.4f"% m2_err), "c2="+str("%6.6f"% c2)+"+-"+str("%6.6f"% c2_err))
 
 		## m1,c1 calculation
 		m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
@@ -364,12 +379,12 @@ def main(argv):
 		#print(m11,c11,m22,c22,m12,c12,m21,c21)
 
 		print('off-diagonal components: ')
-		print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "b12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
-		print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "b21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
+		print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "c12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
+		print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "c21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
 
 		print("metacalibration correction: ")
-		print("m1="+str("%6.4f"% m11)+"+-"+str("%6.4f"% m11_err), "b1="+str("%6.6f"% c11)+"+-"+str("%6.6f"% c11_err))
-		print("m2="+str("%6.4f"% m22)+"+-"+str("%6.4f"% m22_err), "b2="+str("%6.6f"% c22)+"+-"+str("%6.6f"% c22_err))
+		print("m1="+str("%6.4f"% m11)+"+-"+str("%6.4f"% m11_err), "c1="+str("%6.6f"% c11)+"+-"+str("%6.6f"% c11_err))
+		print("m2="+str("%6.4f"% m22)+"+-"+str("%6.4f"% m22_err), "c2="+str("%6.6f"% c22)+"+-"+str("%6.6f"% c22_err))
 	
 
 	elif sys.argv[1]=='selection':
