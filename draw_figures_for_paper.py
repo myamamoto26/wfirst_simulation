@@ -574,21 +574,31 @@ def make_multiband_coadd_stamp():
         #     obs_list2.append(multiband[f])
         # mb_obs_list.append(obs_list)
         obs_list = ObsList()
+        if oversample == 4:
+            new_coadd_psf_block = block_reduce(coadd_H.psf.image, block_size=(4,4), func=np.sum)
+            new_coadd_psf_jacob = Jacobian( row=15.5,
+                                            col=15.5, 
+                                            dvdrow=(coadd_H.psf.jacobian.dvdrow*oversample),
+                                            dvdcol=(coadd_H.psf.jacobian.dvdcol*oversample),
+                                            dudrow=(coadd_H.psf.jacobian.dudrow*oversample),
+                                            dudcol=(coadd_H.psf.jacobian.dudcol*oversample))
+            coadd_psf_obs = Observation(new_coadd_psf_block, jacobian=new_coadd_psf_jacob, meta={'offset_pixels':None,'file_id':None})
+            coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
 
-        # if i==5:
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_undersample_PSF_5.txt', obs_Hlist[0].psf.image)
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
-        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_undersample_PSF_image_5.txt', coadd_H.psf.image)
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
-        #     # multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
-        #     # multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
-        #     # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
-        #     exit()
+        if i==5:
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_H158_undersample_PSF_5.txt', obs_Hlist[0].psf.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_J129_5.txt', obs_Jlist[0].image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_F184_5.txt', obs_Flist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_H158_overdownsample_PSF_image_5.txt', coadd_H.psf.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_J129_image_5.txt', coadd_J.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_F184_image_5.txt', coadd_F.image)
+            # multiband_coadd = psc.Coadder(obs_list2,flat_wcs=True).coadd_obs
+            # multiband_coadd.psf.image[multiband_coadd.psf.image<0] = 0
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_image_5.txt', multiband_coadd.image)
+            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/multiband_coadd_psf_image_5.txt', multiband_coadd.psf.image)
+            exit()
         # print('single snr', get_snr2(obs_Jlist, t, get_flux(obs_Jlist)), get_snr2(obs_Hlist, t, get_flux(obs_Hlist)), get_snr2(obs_Flist, t, get_flux(obs_Flist)))
         # print('coadd snr', get_snr2([coadd_J], t, get_flux([coadd_J])), get_snr2([coadd_H], t, get_flux([coadd_H])), get_snr2([coadd_F], t, get_flux([coadd_F])))
         # print('final', get_snr2(obs_list, t, get_flux(obs_list)))
