@@ -566,13 +566,13 @@ def make_multiband_coadd_stamp():
         coadd_F.set_meta({'offset_pixels':None,'file_id':None})
 
         if i == 5:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_J129_image_5.txt', coadd_J.noise.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_F184_image_5.txt', coadd_F.noise.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_H158_image_5.txt', coadd_H.noise.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_J129_image_5.txt', coadd_J.noise)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_F184_image_5.txt', coadd_F.noise)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_H158_image_5.txt', coadd_H.noise)
 
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/weight_J129_image_5.txt', coadd_J.weight)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/weight_F184_image_5.txt', coadd_F.weight)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/weight_H158_image_5.txt', coadd_H.weight)
+            print(coadd_J.weight)
+            print(coadd_F.weight)
+            print(coadd_H.weight)
             exit()
         
 
