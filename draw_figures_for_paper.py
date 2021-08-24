@@ -508,18 +508,18 @@ def make_multiband_coadd_stamp():
 
     oversample = 4
     H = './fiducial_H158_2285117.fits'
-    # J = './fiducial_J129_2285117.fits'
-    # F = './fiducial_F184_2285117.fits'
+    J = './fiducial_J129_2285117.fits'
+    F = './fiducial_F184_2285117.fits'
     truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
     m_H158  = meds.MEDS(H)
-    # m_J129  = meds.MEDS(J)
-    # m_F184  = meds.MEDS(F)
+    m_J129  = meds.MEDS(J)
+    m_F184  = meds.MEDS(F)
     indices_H = np.arange(len(m_H158['number'][:]))
-    # indices_J = np.arange(len(m_J129['number'][:]))
-    # indices_F = np.arange(len(m_F184['number'][:]))
+    indices_J = np.arange(len(m_J129['number'][:]))
+    indices_F = np.arange(len(m_F184['number'][:]))
     roman_H158_psfs = get_psf_SCA('H158')
-    # roman_J129_psfs = get_psf_SCA('J129')
-    # roman_F184_psfs = get_psf_SCA('F184')
+    roman_J129_psfs = get_psf_SCA('J129')
+    roman_F184_psfs = get_psf_SCA('F184')
 
     for i,ii in enumerate(indices_H):
 
@@ -531,22 +531,22 @@ def make_multiband_coadd_stamp():
         ind = m_H158['number'][ii]
         t   = truth[ind]
 
-        # if (ind not in m_J129['number']) or (ind not in m_F184['number']):
-        #     continue
+        if (ind not in m_J129['number']) or (ind not in m_F184['number']):
+            continue
 
         print(i)
         sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
-        # ii_J = m_J129[m_J129['number']==ind]['id'][0]
-        # sca_Jlist = m_J129[ii_J]['sca']
+        ii_J = m_J129[m_J129['number']==ind]['id'][0]
+        sca_Jlist = m_J129[ii_J]['sca']
         m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][i]]]
-        # m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
-        # ii_F = m_F184[m_F184['number']==ind]['id'][0]
-        # sca_Flist = m_F184[ii_F]['sca']
-        # m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
+        m2_J129_coadd = [roman_J129_psfs[j-1] for j in sca_Jlist[:m_J129['ncutout'][ii_J]]]
+        ii_F = m_F184[m_F184['number']==ind]['id'][0]
+        sca_Flist = m_F184[ii_F]['sca']
+        m2_F184_coadd = [roman_F184_psfs[j-1] for j in sca_Flist[:m_F184['ncutout'][ii_F]]]
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-        # obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
-        # obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
+        obs_Jlist,psf_Jlist,included_J,w_J = get_exp_list_coadd(m_J129,ii_J,oversample,m2=m2_J129_coadd)
+        obs_Flist,psf_Flist,included_F,w_F = get_exp_list_coadd(m_F184,ii_F,oversample,m2=m2_F184_coadd)
         # check if masking is less than 20%
         if len(obs_Hlist)==0: # or len(obs_Jlist)==0 or len(obs_Flist)==0: 
             continue
@@ -555,15 +555,26 @@ def make_multiband_coadd_stamp():
         coadd_H.psf.set_meta({'offset_pixels':None,'file_id':None})
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
         
-        # coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
-        # coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
-        # coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
-        # coadd_J.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_J            = psc.Coadder(obs_Jlist,flat_wcs=True).coadd_obs
+        coadd_J.psf.image[coadd_J.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_J.psf.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_J.set_meta({'offset_pixels':None,'file_id':None})
 
-        # coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
-        # coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
-        # coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
-        # coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_F            = psc.Coadder(obs_Flist,flat_wcs=True).coadd_obs
+        coadd_F.psf.image[coadd_F.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_F.psf.set_meta({'offset_pixels':None,'file_id':None})
+        coadd_F.set_meta({'offset_pixels':None,'file_id':None})
+
+        if i == 5:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_J129_image_5.txt', coadd_J.noise.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_F184_image_5.txt', coadd_F.noise.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/noise_H158_image_5.txt', coadd_H.noise.image)
+
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/weight_J129_image_5.txt', coadd_J.weight)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/weight_F184_image_5.txt', coadd_F.weight)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/weight_H158_image_5.txt', coadd_H.weight)
+            exit()
+        
 
         # mb_obs_list = MultiBandObsList()
         # obs_list2 = ObsList()
@@ -606,8 +617,8 @@ def make_multiband_coadd_stamp():
 
 def main(argv):
     # single_vs_coadd_images()
-    mcal_catalog_properties(sys.argv[1], sys.argv[2])
-    # make_multiband_coadd_stamp()
+    # mcal_catalog_properties(sys.argv[1], sys.argv[2])
+    make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
     main(sys.argv)
