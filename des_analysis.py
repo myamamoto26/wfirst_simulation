@@ -205,7 +205,7 @@ def main(argv):
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
 	coadd_ = True
-	combine_m = True
+	combine_m = False
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -213,7 +213,7 @@ def main(argv):
 		f_coadd_v2 = sys.argv[5]
 
 	if not coadd_:
-		folder = [f+'/g1002/ngmix/single/', f+'/g1n002/ngmix/single/', f+'/g2002/ngmix/single/', f+'/g2n002/ngmix/single/']
+		folder = [f+'/g1002/ngmix/new_single/', f+'/g1n002/ngmix/new_single/', f+'/g2002/ngmix/new_single/', f+'/g2n002/ngmix/new_single/']
 	else:
 		folder = [f+'/g1002/ngmix/'+f_coadd+'/', f+'/g1n002/ngmix/'+f_coadd+'/', f+'/g2002/ngmix/'+f_coadd+'/', f+'/g2n002/ngmix/'+f_coadd+'/']
 		if v2:
