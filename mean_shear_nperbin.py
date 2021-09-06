@@ -21,7 +21,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
     print(len(hist['low']), len(hist['mean']))
     for i in range(bin_num):
         bin_mask = (x_ > hist['low'][i]) & (x_ < hist['high'][i])
-        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_=True)
+        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_=True)
         g_obs[i] = np.mean(gamma1_o)
         gerr_obs[i] = np.std(gamma1_o)/np.sqrt(len(gamma1_o))
 
