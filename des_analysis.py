@@ -230,11 +230,11 @@ def main(argv):
 
 		elif sys.argv[1]=='selection':
 			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
-			g1_true.extend(gamma1_t)
-			g1_obs.extend(gamma1_o)
-			g2_true.extend(gamma2_t)
-			g2_obs.extend(gamma2_o)
-			bin_x.append(bin_hist)
+			g1_true.append(gamma1_t)
+			g1_obs.append(gamma1_o)
+			g2_true.append(gamma2_t)
+			g2_obs.append(gamma2_o)
+			bin_x.extend(bin_hist)
 	
 	if combine_m:
 		g_true_all = [np.concatenate([g1_true[0], g2_true[2]], axis=0), np.concatenate([g1_true[1], g2_true[3]], axis=0)]
