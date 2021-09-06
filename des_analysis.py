@@ -66,6 +66,42 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False):
 		print('R', avg_R11, avg_R22)
 		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['coadd_e1'], new['coadd_e2']
 
+def analyze_gamma_obs_select(new,new1p,new1m,new2p,new2m,coadd_=False):
+	if not coadd_:
+		g=0.01
+		R11 = (new1p["e1"] - new1m["e1"])/(2*g)
+		R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+		R12 = (new2p["e1"] - new2m["e1"])/(2*g)
+		R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+
+		avg_R11 = np.mean(R11)
+		avg_R22 = np.mean(R22)
+		avg_R12 = np.mean(R12)
+		avg_R21 = np.mean(R21)
+
+		gamma1_obs = new['e1']/avg_R11
+		gamma2_obs = new['e2']/avg_R22
+
+		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['e1'], new['e2']
+
+	else:
+		g=0.01
+		mask_snr = (new['coadd_snr']>30)
+		R11 = (new1p["coadd_e1"][mask_snr] - new1m["coadd_e1"][mask_snr])/(2*g)
+		R22 = (new2p["coadd_e2"][mask_snr] - new2m["coadd_e2"][mask_snr])/(2*g)
+		R12 = (new2p["coadd_e1"][mask_snr] - new2m["coadd_e1"][mask_snr])/(2*g)
+		R21 = (new1p["coadd_e2"][mask_snr] - new1m["coadd_e2"][mask_snr])/(2*g)
+
+		avg_R11 = np.mean(R11)
+		avg_R22 = np.mean(R22)
+		avg_R12 = np.mean(R12)
+		avg_R21 = np.mean(R21)
+
+		gamma1_obs = new['coadd_e1'][mask_snr]/avg_R11
+		gamma2_obs = new['coadd_e2'][mask_snr]/avg_R22
+		print('R', avg_R11, avg_R22)
+		return new['g1'][mask_snr], new['g2'][mask_snr], gamma1_obs, gamma2_obs, new['coadd_e1'][mask_snr], new['coadd_e2'][mask_snr]
+
 def shear_response(new,new1p,new1m,new2p,new2m):
 	g=0.01
 	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
@@ -206,6 +242,7 @@ def main(argv):
 	filter_ = sys.argv[3]
 	coadd_ = True
 	combine_m = False
+	select = True
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -305,7 +342,10 @@ def main(argv):
 			print('the final object number is, ', len(new))
 
 		if sys.argv[1]=='shear':
-			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
+			if not select:
+				gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
+			else:
+				gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs_select(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
 			g1_true.append(gamma1_t)
 			g2_true.append(gamma2_t)
 			g1_obs.append(gamma1_o)
