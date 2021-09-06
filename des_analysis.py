@@ -100,6 +100,7 @@ def analyze_gamma_obs_select(new,new1p,new1m,new2p,new2m,coadd_=False):
 		gamma1_obs = new['coadd_e1'][mask_snr]/avg_R11
 		gamma2_obs = new['coadd_e2'][mask_snr]/avg_R22
 		print('R', avg_R11, avg_R22)
+		print('number of objects made cuts', len(new['coadd_e1'][mask_snr]))
 		return new['g1'][mask_snr], new['g2'][mask_snr], gamma1_obs, gamma2_obs, new['coadd_e1'][mask_snr], new['coadd_e2'][mask_snr]
 
 def shear_response(new,new1p,new1m,new2p,new2m):
