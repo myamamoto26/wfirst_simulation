@@ -149,7 +149,7 @@ def main(argv):
 	g2_obs = []
 	g1_noshear = []
 	g2_noshear = []
-	bin_x = []
+	bin_x = None
 
 	for j in range(len(folder)):
 		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
@@ -229,12 +229,14 @@ def main(argv):
 			g2_noshear.append(noshear2)
 
 		elif sys.argv[1]=='selection':
-			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
+			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
 			g1_true.append(gamma1_t)
 			g1_obs.append(gamma1_o)
 			g2_true.append(gamma2_t)
 			g2_obs.append(gamma2_o)
-			bin_x.extend(bin_hist)
+			print(bin_hist_mean)
+			if bin_x is None:
+				bin_x = bin_hist_mean
 	
 	if combine_m:
 		g_true_all = [np.concatenate([g1_true[0], g2_true[2]], axis=0), np.concatenate([g1_true[1], g2_true[3]], axis=0)]
@@ -308,9 +310,8 @@ def main(argv):
 		c11_err=np.zeros(len(bin_x))
 		c22=np.zeros(len(bin_x))
 		c22_err=np.zeros(len(bin_x))
-		print(g1_obs, len(g1_obs))
+		
 		for p in range(len(bin_x)):
-			print(len(g1_obs[0][p]),len(g1_true[0][p]))
 			m11[p] = ((np.mean(g1_obs[0][p])-np.mean(g1_obs[1][p]))/0.04) - 1
 			m11_err[p] = bootstrap_cov_m(200,g1_obs[0][p],g1_obs[1][p])
 			c11[p] = (np.mean(g1_obs[0][p] - (1+m11[p])*g1_true[0][p]) + np.mean(g1_obs[1][p] - (1+m11[p])*g1_true[1][p]))/2
