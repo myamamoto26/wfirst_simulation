@@ -113,45 +113,6 @@ def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
 	return g1_true,g1_obs,g2_true,g2_obs,hist_['mean']
 
 
-def residual_bias_selection_correction(new, new1p, new1m, new2p, new2m, R11, R22, bin_hist):
-
-	g1_true_snr=[]
-	g1_obs_snr=[]
-	g2_true_snr=[]
-	g2_obs_snr=[]
-	snr_bin=[]
-	"""
-	for p in range(10):
-		mask = (np.log10(new['snr']) >= snr_binslist[p]) & (np.log10(new['snr']) < snr_binslist[p+1])
-		#mask = (new['hlr'] >= snr_binslist[p]) & (new['hlr'] < snr_binslist[p+1])
-		g1_true_snr.append(new['g1'][mask])
-		g1_obs_snr.append(new['e1'][mask]/R11[p])
-
-		g2_true_snr.append(new['g2'][mask])
-		g2_obs_snr.append(new['e2'][mask]/R22[p])
-	"""
-
-	## equal nubmer of objects in each bin.
-	equal_bin = np.linspace(0,len(new['hlr']),11)#np.linspace(0,len(new['snr']),11)
-	idx = np.argsort(new['hlr'])#np.argsort(new['snr'])
-	sorted_g1 = np.array(new['g1'])[idx]
-	sorted_e1 = np.array(new['e1'])[idx]
-	sorted_g2 = np.array(new['g2'])[idx]
-	sorted_e2 = np.array(new['e2'])[idx]
-	start=0
-	for p in range(10):
-		end = int(equal_bin[p+1])
-		g1_true_snr.append(sorted_g1[start:end+1])
-		g1_obs_snr.append(sorted_e1[start:end+1]/R11[p])
-		g2_true_snr.append(sorted_g2[start:end+1])
-		g2_obs_snr.append(sorted_e2[start:end+1]/R22[p])
-		snr_bin.append(np.mean(np.array(new['hlr'])[idx][start:end+1]))#snr_bin.append(np.mean(np.array(new['snr'])[idx][start:end+1]))
-		start = end+1
-
-
-	return g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr,snr_bin
-
-
 def main(argv):
 
 	g = 0.01
@@ -268,11 +229,11 @@ def main(argv):
 			g2_noshear.append(noshear2)
 
 		elif sys.argv[1]=='selection':
-			g1_true,g1_obs,g2_true,g2_obs,bin_hist = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
-			g1_true.append(g1_true)
-			g1_obs.append(g1_obs)
-			g2_true.append(g2_true)
-			g2_obs.append(g2_obs)
+			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
+			g1_true.append(gamma1_t)
+			g1_obs.append(gamma1_o)
+			g2_true.append(gamma2_t)
+			g2_obs.append(gamma2_o)
 			bin_x.append(bin_hist)
 	
 	if combine_m:
