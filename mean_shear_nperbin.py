@@ -69,9 +69,9 @@ fig,axs = plt.subplots(1,4,figsize=(12,4))
 d_x = [new['coadd_snr'], new['coadd_hlr']]
 x_label = ['SNR', 'hlr']
 for q,ax in enumerate(axs.ravel()):
-    if q==3:
-        break
-    print(q)
+    if q==2 or q==3:
+        continue
+
     x_ = d_x[q]
     hist = stat.histogram(x_, nperbin=50000, more=True)
     bin_num = len(hist['hist'])
