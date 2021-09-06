@@ -7,6 +7,7 @@ from esutil import stat
 from matplotlib import pyplot as plt
 
 work = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/'
+work_out = '/hpc/group/cosmology/masaya/wfirst_simulation/paper/'
 coadd_path = 'new_coadd_oversample_original_coadd_pscfix'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
@@ -75,4 +76,4 @@ axs[1].set_ylabel('<e1>')
 axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-plt.savefig('mean_shear_snrhlr_perbin.png')
+plt.savefig(work_out+'mean_shear_snrhlr_perbin.png')
