@@ -159,7 +159,7 @@ def main(argv):
 		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
 		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
 		if additional_mask:
-			mask = ((new_['flags']==0) & (new_['ind']!=0) & (new_['coadd_hlr'] > 0.04))
+			mask = ((new_['flags']==0) & (new_['ind']!=0) & (new_['coadd_hlr'] > 0.08))
 		else:
 			mask = (new_['flags']==0) & (new_['ind']!=0) 
 
@@ -330,10 +330,10 @@ def main(argv):
 		print("m2="+str("%6.4f"% np.mean(m22))+"+-"+str("%6.4f"% np.mean(m22_err)), "b2="+str("%6.6f"% np.mean(c22))+"+-"+str("%6.6f"% np.mean(c22_err)))
 
 		fig,ax1=plt.subplots(figsize=(8,6))
-		ax1.plot(bin_x, m11, 'o', markeredgecolor='b',markerfacecolor='None', label='m1')
-		ax1.errorbar(bin_x, m11, yerr=m11_err, markeredgecolor='b',markerfacecolor='None', fmt='o')
-		ax1.plot(bin_x, m22, 'o', markeredgecolor='r',markerfacecolor='None', label='m2')
-		ax1.errorbar(bin_x, m22, yerr=m22_err, markeredgecolor='r',markerfacecolor='None', fmt='o')
+		ax1.plot(bin_x, m11, 'o',markerfacecolor='None', label='m1')
+		ax1.errorbar(bin_x, m11, yerr=m11_err,markerfacecolor='None', fmt='o')
+		ax1.plot(bin_x, m22, 'o',markerfacecolor='None', label='m2')
+		ax1.errorbar(bin_x, m22, yerr=m22_err,markerfacecolor='None', fmt='o')
 		ax1.set_xscale('log')
 		ax1.set_xlabel('log(hlr)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
