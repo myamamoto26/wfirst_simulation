@@ -308,7 +308,7 @@ def main(argv):
 		c11_err=np.zeros(len(bin_x))
 		c22=np.zeros(len(bin_x))
 		c22_err=np.zeros(len(bin_x))
-		print(g1_obs, g1_obs.shape)
+		print(g1_obs, len(g1_obs))
 		for p in range(len(bin_x)):
 			print(len(g1_obs[0][p]),len(g1_true[0][p]))
 			m11[p] = ((np.mean(g1_obs[0][p])-np.mean(g1_obs[1][p]))/0.04) - 1
