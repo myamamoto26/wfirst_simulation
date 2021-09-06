@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import fitsio as fio
+from esutil import stat
 
 ## bootstrap covariance function. 
 def bootstrap_cov_m(N,data1,data2):
@@ -64,139 +65,55 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False):
 		gamma1_obs = new['coadd_e1']/avg_R11
 		gamma2_obs = new['coadd_e2']/avg_R22
 		print('R', avg_R11, avg_R22)
+
 		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['coadd_e1'], new['coadd_e2']
 
-def analyze_gamma_obs_select(new,new1p,new1m,new2p,new2m,coadd_=False):
-	if not coadd_:
-		g=0.01
-		R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-		R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-		R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-		R21 = (new1p["e2"] - new1m["e2"])/(2*g)
-
-		avg_R11 = np.mean(R11)
-		avg_R22 = np.mean(R22)
-		avg_R12 = np.mean(R12)
-		avg_R21 = np.mean(R21)
-
-		gamma1_obs = new['e1']/avg_R11
-		gamma2_obs = new['e2']/avg_R22
-
-		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['e1'], new['e2']
-
-	else:
-		g=0.01
-		mask_snr = (new['coadd_snr']>30)
-		R11 = (new1p["coadd_e1"][mask_snr] - new1m["coadd_e1"][mask_snr])/(2*g)
-		R22 = (new2p["coadd_e2"][mask_snr] - new2m["coadd_e2"][mask_snr])/(2*g)
-		R12 = (new2p["coadd_e1"][mask_snr] - new2m["coadd_e1"][mask_snr])/(2*g)
-		R21 = (new1p["coadd_e2"][mask_snr] - new1m["coadd_e2"][mask_snr])/(2*g)
-
-		avg_R11 = np.mean(R11)
-		avg_R22 = np.mean(R22)
-		avg_R12 = np.mean(R12)
-		avg_R21 = np.mean(R21)
-
-		gamma1_obs = new['coadd_e1'][mask_snr]/avg_R11
-		gamma2_obs = new['coadd_e2'][mask_snr]/avg_R22
-		print('R', avg_R11, avg_R22)
-		print('number of objects made cuts', len(new['coadd_e1'][mask_snr]))
-		return new['g1'][mask_snr], new['g2'][mask_snr], gamma1_obs, gamma2_obs, new['coadd_e1'][mask_snr], new['coadd_e2'][mask_snr]
 
 def shear_response(new,new1p,new1m,new2p,new2m):
 	g=0.01
-	R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-	R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-	R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-	R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+	R11 = (new1p["coadd_e1"] - new1m["coadd_e1"])/(2*g)
+	R22 = (new2p["coadd_e2"] - new2m["coadd_e2"])/(2*g)
+	R12 = (new2p["coadd_e1"] - new2m["coadd_e1"])/(2*g)
+	R21 = (new1p["coadd_e2"] - new1m["coadd_e2"])/(2*g)
 	
-	return R11, R22, R12, R21
+	return np.mean(R11), np.mean(R22)
 
-def shear_response_correction(new,new1p,new1m,new2p,new2m):
+def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
 
 	g = 0.01
-	R11, R22, R12, R21 = shear_response(new, new1p, new1m, new2p, new2m)
+	x_ = new[par]
+	hist_ = stat.histogram(x_, nperbin=50000, more=True)
+	bin_num = len(hist_['hist'])
+	g1_true = np.zeros(bin_num)
+	g1_obs = np.zeros(bin_num)
+	g2_true = np.zeros(bin_num)
+	g2_obs = np.zeros(bin_num)
+	print('nbin ', bin_num)
+	for i in range(bin_num):
+		bin_mask = ((x_ > hist_['low'][i]) & (x_ < hist_['high'][i]))
+		mask_1p = ((new1p[par] > hist_['low'][i]) & (new1p[par] < hist_['high'][i]))
+		mask_1m = ((new1m[par] > hist_['low'][i]) & (new1m[par] < hist_['high'][i]))
+		mask_2p = ((new2p[par] > hist_['low'][i]) & (new2p[par] < hist_['high'][i]))
+		mask_2m = ((new2m[par] > hist_['low'][i]) & (new2m[par] < hist_['high'][i]))
+	
+		R11_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
+		R22_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
+		R11_s = (np.mean(new['coadd_e1'][mask_1p]) - np.mean(new['coadd_e1'][mask_1m]))/(2*g)
+		R22_s = (np.mean(new['coadd_e2'][mask_2p]) - np.mean(new['coadd_e2'][mask_2m]))/(2*g)
+		# R12_s[i] = (np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)
+		# R21_s[i] = (np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)
+		R11_tot = R11_g + R11_s
+		R22_tot = R22_g + R22_s
 
-	avg_R11 = np.mean(R11)
-	avg_R22 = np.mean(R22)
+		g1_true = new['g1'][bin_mask]
+		g2_true = new['g2'][bin_mask]
+		g1_obs = new['coadd_e1'][bin_mask]/R11_tot
+		g2_obs = new['coadd_e2'][bin_mask]/R22_tot
 
-	#snr_binslist = np.linspace(np.log10(15),np.log10(500),11)
-	#print(snr_min, snr_max, snr_binslist)
-
-	R11_g = np.zeros(10)
-	R22_g = np.zeros(10)
-	R12_g = np.zeros(10)
-	R21_g = np.zeros(10)
-	"""
-	for a in range(10):
-		mask = (np.log10(new['snr']) >= snr_binslist[a]) & (np.log10(new['snr']) < snr_binslist[a+1])
-
-		R11_g[a] = np.mean(R11[mask])
-		R22_g[a] = np.mean(R22[mask])
-		R12_g[a] = np.mean(R12[mask])
-		R21_g[a] = np.mean(R21[mask])
-	"""
-
-	## getting cuts on the snr from the sheared catalogs and calculating selection response <R>selection
-	R11_s = np.zeros(10)
-	R22_s = np.zeros(10)
-	R12_s = np.zeros(10)
-	R21_s = np.zeros(10)
-	"""
-	for i in range(10):
-		mask_1p = (np.log10(new1p['snr']) >= snr_binslist[i]) & (np.log10(new1p['snr']) < snr_binslist[i+1])
-		mask_1m = (np.log10(new1m['snr']) >= snr_binslist[i]) & (np.log10(new1m['snr']) < snr_binslist[i+1])
-		mask_2p = (np.log10(new2p['snr']) >= snr_binslist[i]) & (np.log10(new2p['snr']) < snr_binslist[i+1])
-		mask_2m = (np.log10(new2m['snr']) >= snr_binslist[i]) & (np.log10(new2m['snr']) < snr_binslist[i+1])
-
-		R11_s[i] = (np.mean(new['e1'][mask_1p]) - np.mean(new['e1'][mask_1m]))/(2*g)
-		R22_s[i] = (np.mean(new['e2'][mask_2p]) - np.mean(new['e2'][mask_2m]))/(2*g)
-		R12_s[i] = (np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)
-		R21_s[i] = (np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)
-
-	## total response
-	tot_R11 = R11_g + R11_s
-	tot_R22 = R22_g + R22_s
-	#tot_R12 = R12_g + R12_s
-	#tot_R21 = R21_g + R21_s
-	"""
-
-	## equal nubmer of objects in each bin.
-	equal_bin = np.linspace(0,len(new['hlr']),11)#np.linspace(0,len(new['snr']),11)
-	idx = np.argsort(new['hlr'])#np.argsort(new['snr'])
-	start=0
-	for a in range(10):
-		end = int(equal_bin[a+1])
-		R11_g[a] = np.mean(np.array(R11)[idx][start:end+1])
-		R22_g[a] = np.mean(np.array(R22)[idx][start:end+1])
-		R12_g[a] = np.mean(np.array(R12)[idx][start:end+1])
-		R21_g[a] = np.mean(np.array(R21)[idx][start:end+1])
-		start = end+1
-
-	mask_1p = np.argsort(new1p['hlr'])#np.argsort(new1p['snr'])
-	mask_1m = np.argsort(new1m['hlr'])#np.argsort(new1m['snr'])
-	mask_2p = np.argsort(new2p['hlr'])#np.argsort(new2p['snr'])
-	mask_2m = np.argsort(new2m['hlr'])#np.argsort(new2m['snr'])
-	start=0
-	for i in range(10):
-		end = int(equal_bin[i+1])
-		R11_s[i] = (np.mean(np.array(new['e1'])[mask_1p][start:end+1]) - np.mean(np.array(new['e1'])[mask_1m][start:end+1]))/(2*g)
-		R22_s[i] = (np.mean(np.array(new['e2'])[mask_2p][start:end+1]) - np.mean(np.array(new['e2'])[mask_2m][start:end+1]))/(2*g)
-		R12_s[i] = (np.mean(np.array(new['e1'])[mask_2p][start:end+1]) - np.mean(np.array(new['e1'])[mask_2m][start:end+1]))/(2*g)
-		R21_s[i] = (np.mean(np.array(new['e2'])[mask_1p][start:end+1]) - np.mean(np.array(new['e2'])[mask_1m][start:end+1]))/(2*g)
-		start = end+1
-	## total response
-	tot_R11 = R11_g + R11_s
-	tot_R22 = R22_g + R22_s
-	#tot_R12 = R12_g + R12_s
-	#tot_R21 = R21_g + R21_s
-
-	return tot_R11,tot_R22
+	return g1_true,g1_obs,g2_true,g2_obs,hist_['mean']
 
 
-def residual_bias_correction(new, new1p, new1m, new2p, new2m, R11, R22):
-
-	#snr_binslist = np.linspace(np.log10(15),np.log10(500),11)
+def residual_bias_selection_correction(new, new1p, new1m, new2p, new2m, R11, R22, bin_hist):
 
 	g1_true_snr=[]
 	g1_obs_snr=[]
@@ -243,7 +160,7 @@ def main(argv):
 	filter_ = sys.argv[3]
 	coadd_ = True
 	combine_m = False
-	select = True
+	additional_mask = True
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -271,11 +188,7 @@ def main(argv):
 	g2_obs = []
 	g1_noshear = []
 	g2_noshear = []
-	g1snr_true = []
-	g2snr_true = []
-	g1snr_obs = []
-	g2snr_obs = []
-	snr_x = []
+	bin_x = []
 
 	for j in range(len(folder)):
 		new_ = fio.FITS(folder[j]+dirr+model+'_noshear.fits')[-1].read()
@@ -284,7 +197,10 @@ def main(argv):
 		new2p_ = fio.FITS(folder[j]+dirr+model+'_2p.fits')[-1].read()
 		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
 		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-		mask = (new_['flags']==0) & (new_['ind']!=0) # exclude non-zero flags object. 
+		if additional_mask:
+			mask = ((new_['flags']==0) & (new_['ind']!=0) & (new_['coadd_snr'] > 30))
+		else:
+			mask = (new_['flags']==0) & (new_['ind']!=0) 
 
 		noshear.append(new_[mask])
 		shear1p.append(new1p_[mask])
@@ -343,10 +259,7 @@ def main(argv):
 			print('the final object number is, ', len(new))
 
 		if sys.argv[1]=='shear':
-			if not select:
-				gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
-			else:
-				gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs_select(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
+			gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
 			g1_true.append(gamma1_t)
 			g2_true.append(gamma2_t)
 			g1_obs.append(gamma1_o)
@@ -355,13 +268,12 @@ def main(argv):
 			g2_noshear.append(noshear2)
 
 		elif sys.argv[1]=='selection':
-			R11_correction, R22_correction = shear_response_correction(new,new1p,new1m,new2p,new2m)
-			g1_true_snr,g1_obs_snr,g2_true_snr,g2_obs_snr,snr_bin = residual_bias_correction(new,new1p,new1m,new2p,new2m,R11_correction,R22_correction)
-			g1snr_true.append(g1_true_snr)
-			g1snr_obs.append(g1_obs_snr)
-			g2snr_true.append(g2_true_snr)
-			g2snr_obs.append(g2_obs_snr)
-			snr_x.append(snr_bin)
+			g1_true,g1_obs,g2_true,g2_obs,bin_hist = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
+			g1_true.append(g1_true)
+			g1_obs.append(g1_obs)
+			g2_true.append(g2_true)
+			g2_obs.append(g2_obs)
+			bin_x.append(bin_hist)
 	
 	if combine_m:
 		g_true_all = [np.concatenate([g1_true[0], g2_true[2]], axis=0), np.concatenate([g1_true[1], g2_true[3]], axis=0)]
@@ -429,45 +341,43 @@ def main(argv):
 	
 
 	elif sys.argv[1]=='selection':
-		m11_snr=np.zeros(10)
-		m11_snr_err=np.zeros(10)
-		m22_snr=np.zeros(10)
-		m22_snr_err=np.zeros(10)
-		c11_snr=np.zeros(10)
-		c11_snr_err=np.zeros(10)
-		c22_snr=np.zeros(10)
-		c22_snr_err=np.zeros(10)
+		m11=np.zeros(10)
+		m11_err=np.zeros(10)
+		m22=np.zeros(10)
+		m22_err=np.zeros(10)
+		c11=np.zeros(10)
+		c11_err=np.zeros(10)
+		c22=np.zeros(10)
+		c22_err=np.zeros(10)
 		for p in range(10):
-			print(len(g1snr_obs[0][p]),len(g1snr_true[0][p]))
-			m11_snr[p] = ((np.mean(g1snr_obs[0][p])-np.mean(g1snr_obs[1][p]))/0.04) - 1
-			m11_snr_err[p] = bootstrap_cov_m(200,g1snr_obs[0][p],g1snr_obs[1][p])
-			c11_snr[p] = (np.mean(g1snr_obs[0][p] - (1+m11_snr[p])*g1snr_true[0][p]) + np.mean(g1snr_obs[1][p] - (1+m11_snr[p])*g1snr_true[1][p]))/2
-			c11_snr_err[p] = bootstrap_cov_c(200,m11_snr[p],g1snr_obs[0][p],g1snr_true[0][p],g1snr_obs[1][p],g1snr_true[1][p])
+			print(len(g1_obs[0][p]),len(g1_true[0][p]))
+			m11[p] = ((np.mean(g1_obs[0][p])-np.mean(g1_obs[1][p]))/0.04) - 1
+			m11_err[p] = bootstrap_cov_m(200,g1_obs[0][p],g1_obs[1][p])
+			c11[p] = (np.mean(g1_obs[0][p] - (1+m11[p])*g1_true[0][p]) + np.mean(g1_obs[1][p] - (1+m11[p])*g1_true[1][p]))/2
+			c11_err[p] = bootstrap_cov_c(200,m11[p],g1_obs[0][p],g1_true[0][p],g1_obs[1][p],g1_true[1][p])
 
 			## m2,c2 calculation
-			m22_snr[p] = ((np.mean(g2snr_obs[2][p])-np.mean(g2snr_obs[3][p]))/0.04) - 1
-			m22_snr_err[p] = bootstrap_cov_m(200,g2snr_obs[2][p],g2snr_obs[3][p])
-			c22_snr[p] = (np.mean(g2snr_obs[2][p] - (1+m22_snr[p])*g2snr_true[2][p]) + np.mean(g2snr_obs[3][p] - (1+m22_snr[p])*g2snr_true[3][p]))/2
-			c22_snr_err[p] = bootstrap_cov_c(200,m22_snr[p],g2snr_obs[2][p],g2snr_true[2][p],g2snr_obs[3][p],g2snr_true[3][p])
+			m22[p] = ((np.mean(g2_obs[2][p])-np.mean(g2_obs[3][p]))/0.04) - 1
+			m22_err[p] = bootstrap_cov_m(200,g2_obs[2][p],g2_obs[3][p])
+			c22[p] = (np.mean(g2_obs[2][p] - (1+m22[p])*g2_true[2][p]) + np.mean(g2_obs[3][p] - (1+m22[p])*g2_true[3][p]))/2
+			c22_err[p] = bootstrap_cov_c(200,m22[p],g2_obs[2][p],g2_true[2][p],g2_obs[3][p],g2_true[3][p])
 		## shear response correction. 
-		print(m11_snr, m11_snr_err)
-		print(m22_snr, m22_snr_err)
-		print('corrected m, b: ')
-		print("m1="+str("%6.4f"% np.mean(m11_snr))+"+-"+str("%6.4f"% np.mean(m11_snr_err)), "b1="+str("%6.6f"% np.mean(c11_snr))+"+-"+str("%6.6f"% np.mean(c11_snr_err)))
-		print("m2="+str("%6.4f"% np.mean(m22_snr))+"+-"+str("%6.4f"% np.mean(m22_snr_err)), "b2="+str("%6.6f"% np.mean(c22_snr))+"+-"+str("%6.6f"% np.mean(c22_snr_err)))
+		print(m11, m11_err)
+		print(m22, m22_err)
+		print('selection corrected m, b: ')
+		print("m1="+str("%6.4f"% np.mean(m11))+"+-"+str("%6.4f"% np.mean(m11_err)), "b1="+str("%6.6f"% np.mean(c11))+"+-"+str("%6.6f"% np.mean(c11_err)))
+		print("m2="+str("%6.4f"% np.mean(m22))+"+-"+str("%6.4f"% np.mean(m22_err)), "b2="+str("%6.6f"% np.mean(c22))+"+-"+str("%6.6f"% np.mean(c22_err)))
 
 		fig,ax1=plt.subplots(figsize=(8,6))
-		#snr = np.linspace(np.log10(10),np.log10(500),11)
-		#x_ = [(snr[i]+snr[i+1])/2 for i in range(len(snr)-1)]
-		x_ = [np.log10(np.mean([snr_x[0][i],snr_x[1][i],snr_x[2][i],snr_x[3][i]])) for i in range(10)]
-		ax1.plot(x_, m11_snr, 'o', markeredgecolor='b',markerfacecolor='None', label='m1')
-		ax1.errorbar(x_, m11_snr, yerr=m11_snr_err, markeredgecolor='b',markerfacecolor='None', fmt='o')
-		ax1.plot(x_, m22_snr, 'o', markeredgecolor='r',markerfacecolor='None', label='m2')
-		ax1.errorbar(x_, m22_snr, yerr=m22_snr_err, markeredgecolor='r',markerfacecolor='None', fmt='o')
-		ax1.set_xlabel('log(hlr)', fontsize=15)
+		ax1.plot(bin_x, m11, 'o', markeredgecolor='b',markerfacecolor='None', label='m1')
+		ax1.errorbar(bin_x, m11, yerr=m11_err, markeredgecolor='b',markerfacecolor='None', fmt='o')
+		ax1.plot(bin_x, m22, 'o', markeredgecolor='r',markerfacecolor='None', label='m2')
+		ax1.errorbar(bin_x, m22, yerr=m22_err, markeredgecolor='r',markerfacecolor='None', fmt='o')
+		ax1.set_xscale('log')
+		ax1.set_xlabel('log(SNR)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		plt.legend()
-		plt.savefig('roman_g002_m_equalhlr.png')
+		plt.savefig('Hcoadd_selection_correction.png')
 
 
 	return None
