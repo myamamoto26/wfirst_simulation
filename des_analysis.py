@@ -84,10 +84,10 @@ def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
 	x_ = new[par]
 	hist_ = stat.histogram(x_, nperbin=50000, more=True)
 	bin_num = len(hist_['hist'])
-	g1_true = np.zeros(bin_num)
-	g1_obs = np.zeros(bin_num)
-	g2_true = np.zeros(bin_num)
-	g2_obs = np.zeros(bin_num)
+	g1_true = []
+	g1_obs = []
+	g2_true = []
+	g2_obs = []
 	print('nbin ', bin_num)
 	for i in range(bin_num):
 		bin_mask = ((x_ > hist_['low'][i]) & (x_ < hist_['high'][i]))
@@ -105,10 +105,10 @@ def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
 		R11_tot = R_g[0] + R11_s
 		R22_tot = R_g[1] + R22_s
 
-		g1_true = new['g1'][bin_mask]
-		g2_true = new['g2'][bin_mask]
-		g1_obs = new['coadd_e1'][bin_mask]/R11_tot
-		g2_obs = new['coadd_e2'][bin_mask]/R22_tot
+		g1_true.append(new['g1'][bin_mask])
+		g2_true.append(new['g2'][bin_mask])
+		g1_obs.append(new['coadd_e1'][bin_mask]/R11_tot)
+		g2_obs.append(new['coadd_e2'][bin_mask]/R22_tot)
 
 	return g1_true,g1_obs,g2_true,g2_obs,hist_['mean']
 
@@ -230,10 +230,10 @@ def main(argv):
 
 		elif sys.argv[1]=='selection':
 			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
-			g1_true.append(gamma1_t)
-			g1_obs.append(gamma1_o)
-			g2_true.append(gamma2_t)
-			g2_obs.append(gamma2_o)
+			g1_true.extend(gamma1_t)
+			g1_obs.extend(gamma1_o)
+			g2_true.extend(gamma2_t)
+			g2_obs.extend(gamma2_o)
 			bin_x.append(bin_hist)
 	
 	if combine_m:
@@ -309,7 +309,7 @@ def main(argv):
 		c22=np.zeros(len(bin_x))
 		c22_err=np.zeros(len(bin_x))
 		for p in range(len(bin_x)):
-			print(len(g1_obs[p]),len(g1_true[p]))
+			print(len(g1_obs[0][p]),len(g1_true[0][p]))
 			m11[p] = ((np.mean(g1_obs[0][p])-np.mean(g1_obs[1][p]))/0.04) - 1
 			m11_err[p] = bootstrap_cov_m(200,g1_obs[0][p],g1_obs[1][p])
 			c11[p] = (np.mean(g1_obs[0][p] - (1+m11[p])*g1_true[0][p]) + np.mean(g1_obs[1][p] - (1+m11[p])*g1_true[1][p]))/2
