@@ -64,7 +64,7 @@ for run in range(1):
 
     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
 
-fig,axs = plt.subplots(1,4,figsize=(12,4))
+fig,axs = plt.subplots(2,2,figsize=(16,10))
 
 d_x = [new['coadd_snr'], new['coadd_hlr']]
 x_label = ['SNR', 'hlr']
@@ -91,17 +91,17 @@ for q,ax in enumerate(axs.ravel()):
     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 
-axs[2].hlines(0.02, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
-axs[3].hlines(0.02, 0, bin_mean_hlr[len(bin_mean_hlr)-1],linestyles='dashed')
-axs[2].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none')
-axs[3].errorbar(bin_mean_hlr, g1_obs_hlr, yerr=g1err_obs_hlr, fmt='o', fillstyle='none')
-axs[2].set_xlabel('SNR')
-axs[3].set_xlabel('hlr')
-axs[2].set_xscale('log')
-axs[3].set_xscale('log')
-axs[2].set_ylabel('<e1>')
-axs[3].set_ylabel('<e1>')
-axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-axs[3].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[1,0].hlines(0.02, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
+axs[1,1].hlines(0.02, 0, bin_mean_hlr[len(bin_mean_hlr)-1],linestyles='dashed')
+axs[1,0].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none')
+axs[1,1].errorbar(bin_mean_hlr, g1_obs_hlr, yerr=g1err_obs_hlr, fmt='o', fillstyle='none')
+axs[1,0].set_xlabel('SNR')
+axs[1,1].set_xlabel('hlr')
+axs[1,0].set_xscale('log')
+axs[1,1].set_xscale('log')
+axs[1,0].set_ylabel('<e1>')
+axs[1,1].set_ylabel('<e1>')
+axs[1,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[1,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 plt.savefig(work_out+'mean_shear_snrhlr_perbin.png')
