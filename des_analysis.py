@@ -309,6 +309,7 @@ def main(argv):
 		c22=np.zeros(len(bin_x))
 		c22_err=np.zeros(len(bin_x))
 		for p in range(len(bin_x)):
+			print(p, g1_obs[0], g1_true[0])
 			print(len(g1_obs[0][p]),len(g1_true[0][p]))
 			m11[p] = ((np.mean(g1_obs[0][p])-np.mean(g1_obs[1][p]))/0.04) - 1
 			m11_err[p] = bootstrap_cov_m(200,g1_obs[0][p],g1_obs[1][p])
