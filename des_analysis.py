@@ -290,8 +290,6 @@ def main(argv):
 		c21 = (np.mean(g2_obs[0] - (1+m21)*g2_true[0]) + np.mean(g2_obs[1] - (1+m21)*g2_true[1]))/2
 		c21_err = bootstrap_cov_c(200,m21,g2_obs[0],g2_true[0],g2_obs[1],g2_true[1])
 
-		#print(m11,c11,m22,c22,m12,c12,m21,c21)
-
 		print('off-diagonal components: ')
 		print("m12="+str("%6.4f"% m12)+"+-"+str("%6.4f"% m12_err), "c12="+str("%6.6f"% c12)+"+-"+str("%6.6f"% c12_err))
 		print("m21="+str("%6.4f"% m21)+"+-"+str("%6.4f"% m21_err), "c21="+str("%6.6f"% c21)+"+-"+str("%6.6f"% c21_err))
@@ -302,15 +300,15 @@ def main(argv):
 	
 
 	elif sys.argv[1]=='selection':
-		m11=np.zeros(10)
-		m11_err=np.zeros(10)
-		m22=np.zeros(10)
-		m22_err=np.zeros(10)
-		c11=np.zeros(10)
-		c11_err=np.zeros(10)
-		c22=np.zeros(10)
-		c22_err=np.zeros(10)
-		for p in range(10):
+		m11=np.zeros(len(bin_x))
+		m11_err=np.zeros(len(bin_x))
+		m22=np.zeros(len(bin_x))
+		m22_err=np.zeros(len(bin_x))
+		c11=np.zeros(len(bin_x))
+		c11_err=np.zeros(len(bin_x))
+		c22=np.zeros(len(bin_x))
+		c22_err=np.zeros(len(bin_x))
+		for p in range(len(bin_x)):
 			print(len(g1_obs[0][p]),len(g1_true[0][p]))
 			m11[p] = ((np.mean(g1_obs[0][p])-np.mean(g1_obs[1][p]))/0.04) - 1
 			m11_err[p] = bootstrap_cov_m(200,g1_obs[0][p],g1_obs[1][p])
