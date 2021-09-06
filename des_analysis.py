@@ -96,14 +96,14 @@ def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
 		mask_2p = ((new2p[par] > hist_['low'][i]) & (new2p[par] < hist_['high'][i]))
 		mask_2m = ((new2m[par] > hist_['low'][i]) & (new2m[par] < hist_['high'][i]))
 	
-		R11_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
-		R22_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
+		R_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
+		R_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
 		R11_s = (np.mean(new['coadd_e1'][mask_1p]) - np.mean(new['coadd_e1'][mask_1m]))/(2*g)
 		R22_s = (np.mean(new['coadd_e2'][mask_2p]) - np.mean(new['coadd_e2'][mask_2m]))/(2*g)
 		# R12_s[i] = (np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)
 		# R21_s[i] = (np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)
-		R11_tot = R11_g + R11_s
-		R22_tot = R22_g + R22_s
+		R11_tot = R_g[0] + R11_s
+		R22_tot = R_g[1] + R22_s
 
 		g1_true = new['g1'][bin_mask]
 		g2_true = new['g2'][bin_mask]
