@@ -329,9 +329,7 @@ def main(argv):
 		print("m2="+str("%6.4f"% np.mean(m22))+"+-"+str("%6.4f"% np.mean(m22_err)), "b2="+str("%6.6f"% np.mean(c22))+"+-"+str("%6.6f"% np.mean(c22_err)))
 
 		fig,ax1=plt.subplots(figsize=(8,6))
-		ax1.plot(bin_x, m11, 'o',markerfacecolor='None', label='m1')
 		ax1.errorbar(bin_x, m11, yerr=m11_err,markerfacecolor='None', fmt='o')
-		ax1.plot(bin_x, m22, 'o',markerfacecolor='None', label='m2')
 		ax1.errorbar(bin_x, m22, yerr=m22_err,markerfacecolor='None', fmt='o')
 		ax1.set_xscale('log')
 		ax1.set_xlabel('log(SNR)', fontsize=15)
