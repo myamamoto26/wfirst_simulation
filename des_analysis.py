@@ -121,7 +121,7 @@ def main(argv):
 	filter_ = sys.argv[3]
 	coadd_ = True
 	combine_m = False
-	additional_mask = True
+	additional_mask = False
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
