@@ -229,7 +229,7 @@ def main(argv):
 			g2_noshear.append(noshear2)
 
 		elif sys.argv[1]=='selection':
-			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_hlr')
+			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'hlr')
 			g1_true.append(gamma1_t)
 			g1_obs.append(gamma1_o)
 			g2_true.append(gamma2_t)
@@ -336,7 +336,7 @@ def main(argv):
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		ax1.set_title('No T cuts')
 		plt.legend()
-		plt.savefig('Hsingle_08pixel_noTcuts_correction.png')
+		plt.savefig('Hsingle_noTcuts_correction.png')
 
 
 	return None
