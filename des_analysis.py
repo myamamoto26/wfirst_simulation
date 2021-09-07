@@ -121,7 +121,7 @@ def main(argv):
 	filter_ = sys.argv[3]
 	coadd_ = True
 	combine_m = False
-	additional_mask = True
+	additional_mask = False
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -334,9 +334,9 @@ def main(argv):
 		ax1.set_xscale('log')
 		ax1.set_xlabel('log(SNR)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
-		ax1.set_title('SNR cuts > 30')
+		ax1.set_title('No SNR cuts')
 		plt.legend()
-		plt.savefig('Hcoadd_snrcuts_correction.png')
+		plt.savefig('Hcoadd_nosnrcuts_correction.png')
 
 
 	return None
