@@ -121,7 +121,7 @@ def main(argv):
 	filter_ = sys.argv[3]
 	coadd_ = True
 	combine_m = False
-	additional_mask = False
+	additional_mask = True
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -329,11 +329,12 @@ def main(argv):
 		print("m2="+str("%6.4f"% np.mean(m22))+"+-"+str("%6.4f"% np.mean(m22_err)), "b2="+str("%6.6f"% np.mean(c22))+"+-"+str("%6.6f"% np.mean(c22_err)))
 
 		fig,ax1=plt.subplots(figsize=(8,6))
-		ax1.errorbar(bin_x, m11, yerr=m11_err,markerfacecolor='None', fmt='o')
-		ax1.errorbar(bin_x, m22, yerr=m22_err,markerfacecolor='None', fmt='o')
+		ax1.errorbar(bin_x, m11, yerr=m11_err,markerfacecolor='None', fmt='o', label='m1')
+		ax1.errorbar(bin_x, m22, yerr=m22_err,markerfacecolor='None', fmt='o', label='m2')
 		ax1.set_xscale('log')
 		ax1.set_xlabel('log(SNR)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
+		ax1.set_title('SNR cuts > 30')
 		plt.legend()
 		plt.savefig('Hcoadd_snrcuts_correction.png')
 
