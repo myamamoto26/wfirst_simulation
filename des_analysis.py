@@ -159,7 +159,7 @@ def main(argv):
 		new2m_ = fio.FITS(folder[j]+dirr+model+'_2m.fits')[-1].read()
 		print(j,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
 		if additional_mask:
-			mask = ((new_['flags']==0) & (new_['ind']!=0) & (new_['coadd_hlr'] > 0.08))
+			mask = ((new_['flags']==0) & (new_['ind']!=0) & (new_['coadd_snr'] > 30))
 		else:
 			mask = (new_['flags']==0) & (new_['ind']!=0) 
 
@@ -229,12 +229,11 @@ def main(argv):
 			g2_noshear.append(noshear2)
 
 		elif sys.argv[1]=='selection':
-			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_hlr')
+			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'coadd_snr')
 			g1_true.append(gamma1_t)
 			g1_obs.append(gamma1_o)
 			g2_true.append(gamma2_t)
 			g2_obs.append(gamma2_o)
-			print(bin_hist_mean)
 			if bin_x is None:
 				bin_x = bin_hist_mean
 	
@@ -335,10 +334,10 @@ def main(argv):
 		ax1.plot(bin_x, m22, 'o',markerfacecolor='None', label='m2')
 		ax1.errorbar(bin_x, m22, yerr=m22_err,markerfacecolor='None', fmt='o')
 		ax1.set_xscale('log')
-		ax1.set_xlabel('log(hlr)', fontsize=15)
+		ax1.set_xlabel('log(SNR)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		plt.legend()
-		plt.savefig('Hcoadd_hlrselection_correction.png')
+		plt.savefig('Hcoadd_snrcuts_correction.png')
 
 
 	return None
