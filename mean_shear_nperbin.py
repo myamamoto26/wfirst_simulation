@@ -67,7 +67,7 @@ for run in range(1):
 fig,axs = plt.subplots(2,2,figsize=(16,10))
 
 d_x = [new['coadd_snr'], new['coadd_hlr']]
-x_label = ['SNR', 'hlr']
+x_label = ['SNR', 'T']
 for q,ax in enumerate(axs.ravel()):
     if q==2 or q==3:
         continue
@@ -96,7 +96,7 @@ axs[1,1].hlines(0.02, 0, bin_mean_hlr[len(bin_mean_hlr)-1],linestyles='dashed')
 axs[1,0].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none')
 axs[1,1].errorbar(bin_mean_hlr, g1_obs_hlr, yerr=g1err_obs_hlr, fmt='o', fillstyle='none')
 axs[1,0].set_xlabel('SNR')
-axs[1,1].set_xlabel('hlr')
+axs[1,1].set_xlabel('T')
 axs[1,0].set_xscale('log')
 axs[1,1].set_xscale('log')
 axs[1,0].set_ylabel('<e1>')
