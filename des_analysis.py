@@ -121,7 +121,7 @@ def main(argv):
 	filter_ = sys.argv[3]
 	coadd_ = True
 	combine_m = False
-	additional_mask = True
+	additional_mask = False
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
 	if v2:
@@ -334,9 +334,9 @@ def main(argv):
 		ax1.set_xscale('log')
 		ax1.set_xlabel('log(T)', fontsize=15)
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
-		ax1.set_title('T cuts > 0.032')
+		ax1.set_title('No T cuts')
 		plt.legend()
-		plt.savefig('Hcoadd_Tcuts_correction.png')
+		plt.savefig('Hcoadd_noTcuts_correction.png')
 
 
 	return None
