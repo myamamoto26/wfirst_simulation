@@ -78,7 +78,7 @@ def shear_response(new,new1p,new1m,new2p,new2m):
 	
 	return np.mean(R11), np.mean(R22)
 
-def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
+def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par,coadd_=False):
 
 	g = 0.01
 	x_ = new[par]
@@ -98,17 +98,25 @@ def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par):
 	
 		R_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
 		R_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask])
-		R11_s = (np.mean(new['coadd_e1'][mask_1p]) - np.mean(new['coadd_e1'][mask_1m]))/(2*g)
-		R22_s = (np.mean(new['coadd_e2'][mask_2p]) - np.mean(new['coadd_e2'][mask_2m]))/(2*g)
-		# R12_s[i] = (np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)
-		# R21_s[i] = (np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)
+		if coadd_:
+			R11_s = (np.mean(new['coadd_e1'][mask_1p]) - np.mean(new['coadd_e1'][mask_1m]))/(2*g)
+			R22_s = (np.mean(new['coadd_e2'][mask_2p]) - np.mean(new['coadd_e2'][mask_2m]))/(2*g)
+			# R12_s[i] = (np.mean(new['e1'][mask_2p]) - np.mean(new['e1'][mask_2m]))/(2*g)
+			# R21_s[i] = (np.mean(new['e2'][mask_1p]) - np.mean(new['e2'][mask_1m]))/(2*g)
+		else:
+			R11_s = (np.mean(new['e1'][mask_1p]) - np.mean(new['e1'][mask_1m]))/(2*g)
+			R22_s = (np.mean(new['e2'][mask_2p]) - np.mean(new['e2'][mask_2m]))/(2*g)
 		R11_tot = R_g[0] + R11_s
 		R22_tot = R_g[1] + R22_s
 
 		g1_true.append(new['g1'][bin_mask])
 		g2_true.append(new['g2'][bin_mask])
-		g1_obs.append(new['coadd_e1'][bin_mask]/R11_tot)
-		g2_obs.append(new['coadd_e2'][bin_mask]/R22_tot)
+		if coadd_:
+			g1_obs.append(new['coadd_e1'][bin_mask]/R11_tot)
+			g2_obs.append(new['coadd_e2'][bin_mask]/R22_tot)
+		else:
+			g1_obs.append(new['e1'][bin_mask]/R11_tot)
+			g2_obs.append(new['e2'][bin_mask]/R22_tot)
 
 	return g1_true,g1_obs,g2_true,g2_obs,hist_['mean']
 
@@ -229,7 +237,7 @@ def main(argv):
 			g2_noshear.append(noshear2)
 
 		elif sys.argv[1]=='selection':
-			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'hlr')
+			gamma1_t,gamma1_o,gamma2_t,gamma2_o,bin_hist_mean = shear_response_selection_correction(new,new1p,new1m,new2p,new2m,'hlr',coadd_=coadd_)
 			g1_true.append(gamma1_t)
 			g1_obs.append(gamma1_o)
 			g2_true.append(gamma2_t)
