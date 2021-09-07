@@ -132,7 +132,7 @@ def main(argv):
 	old = None
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
-	coadd_ = False
+	coadd_ = True
 	combine_m = False
 	additional_mask = False
 	v2 = False
@@ -349,7 +349,7 @@ def main(argv):
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		ax1.set_title('No T cuts')
 		plt.legend()
-		plt.savefig('Hsingle_noTcuts_correction.png')
+		plt.savefig('Hcoadd_ogpixel_noTcuts_correction.png')
 
 
 	return None
