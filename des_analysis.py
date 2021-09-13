@@ -349,7 +349,7 @@ def main(argv):
 		ax1.set_ylabel('Multiplicative Bias, m', fontsize=15)
 		ax1.set_title('No T cuts')
 		plt.legend()
-		plt.savefig('Hcoadd_ogpixel_noTcuts_correction.png')
+		plt.savefig('Hcoadd_ogpixel_nopixel_noTcuts_correction.png')
 
 
 	return None
