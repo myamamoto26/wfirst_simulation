@@ -22,7 +22,9 @@ def main(argv):
     start = np.zeros(5)
     outlier = np.zeros(5)
     for j,pix in enumerate(medsn):
-        for i in range(1): #range(5):
+        for i in range(1):
+            if not os.path.exists(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits'):
+                continue
             new_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits')[-1].read()
             new1p_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_1p.fits')[-1].read()
             new1m_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_1m.fits')[-1].read()
