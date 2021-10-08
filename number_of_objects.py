@@ -13,8 +13,11 @@ def main(argv):
     dirr=sys.argv[1] # example: /hpc/group/cosmology/phy-lsst/my137/ngmix
     model=sys.argv[2] # example: mcal, mcal_coadd
     filter_=sys.argv[3]
-    f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
-    medsn = f.read().split('\n')
+    if sys.argv[4] == 'drizzle':
+        medsn = np.arange(0,500)
+    else:
+        f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
+        medsn = f.read().split('\n')
 
     obj_num = int(sys.argv[4])
     start = np.zeros(5)
