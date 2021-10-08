@@ -19,7 +19,6 @@ def main(argv):
         f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
         medsn = f.read().split('\n')
 
-    obj_num = int(sys.argv[4])
     start = np.zeros(5)
     outlier = np.zeros(5)
     for j,pix in enumerate(medsn):
