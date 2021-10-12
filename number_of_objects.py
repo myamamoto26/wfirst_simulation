@@ -14,7 +14,7 @@ def main(argv):
     model=sys.argv[2] # example: mcal, mcal_coadd
     filter_=sys.argv[3]
     if sys.argv[4] == 'drizzle':
-        medsn = np.arange(0,500)
+        medsn = np.arange(0,501)
     else:
         f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
         medsn = f.read().split('\n')
