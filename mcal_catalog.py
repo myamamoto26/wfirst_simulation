@@ -20,7 +20,7 @@ def main(argv):
         f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
         medsn = f.read().split('\n')
 
-    obj_num = int(sys.argv[4])
+    obj_num = int(sys.argv[5])
     start = 0
     for j,pix in enumerate(medsn):
         for i in range(1): #range(5):
