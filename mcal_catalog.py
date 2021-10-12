@@ -14,13 +14,18 @@ def main(argv):
     dirr=sys.argv[1] # example: /hpc/group/cosmology/phy-lsst/my137/ngmix
     model=sys.argv[2] # example: mcal, mcal_coadd
     filter_=sys.argv[3]
-    f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
-    medsn = f.read().split('\n')
+    if sys.argv[4] == 'drizzle':
+        medsn = np.arange(0,501)
+    else:
+        f = open('/hpc/group/cosmology/masaya/roman_imsim/meds_number.txt', 'r')
+        medsn = f.read().split('\n')
 
     obj_num = int(sys.argv[4])
     start = 0
     for j,pix in enumerate(medsn):
         for i in range(1): #range(5):
+            if not os.path.exists(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits'):
+                continue
             new_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_noshear.fits')[-1].read()
             new1p_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_1p.fits')[-1].read()
             new1m_ = fio.FITS(dirr+'/fiducial_'+filter_+'_'+str(pix)+'_'+str(i)+'_'+model+'_1m.fits')[-1].read()
