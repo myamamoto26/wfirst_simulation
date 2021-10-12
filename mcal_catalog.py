@@ -39,7 +39,7 @@ def main(argv):
             #new2p_ = new2p_[mask]
             #new2m_ = new2m_[mask]
             print(j,i,len(new_),len(new1p_),len(new1m_),len(new2p_),len(new2m_),start)
-            if (j==0)&(i==0):
+            if (start==0)&(i==0):
                 new   = np.zeros(obj_num,dtype=new_.dtype)
                 new1p = np.zeros(obj_num,dtype=new_.dtype)
                 new1m = np.zeros(obj_num,dtype=new_.dtype)
