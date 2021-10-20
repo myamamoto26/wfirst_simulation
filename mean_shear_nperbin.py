@@ -35,13 +35,13 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
 
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
-noshear = []
-shear1p = []
-shear1m = []
-shear2p = []
-shear2m = []
 fig,axs = plt.subplots(1,3,figsize=(20,6),dpi=100,sharey=True)
 for p,j in enumerate([coadd_path, single_path]):
+    noshear = []
+    shear1p = []
+    shear1m = []
+    shear2p = []
+    shear2m = []
     if p==0:
         xax = ['coadd_snr', 'coadd_hlr', 'coadd_psf_T']
         coadd=True
