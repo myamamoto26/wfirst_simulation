@@ -12,7 +12,7 @@ coadd_path = 'new_coadd_oversample'
 single_path = 'new_single'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
-def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
+def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd_):
 
     x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
@@ -22,7 +22,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
     print(len(hist['low']), len(hist['mean']))
     for i in range(bin_num):
         bin_mask = (x_ > hist['low'][i]) & (x_ < hist['high'][i])
-        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_=True)
+        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_=coadd_)
         g_obs[i] = np.mean(gamma1_o)
         gerr_obs[i] = np.std(gamma1_o)/np.sqrt(len(gamma1_o))
 
@@ -68,10 +68,10 @@ for p,j in enumerate([coadd_path, single_path]):
         new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
         new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-        bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0])
-        bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1])
-        bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2])
-        print(coadd_)
+        bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd_)
+        bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd_)
+        bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd_)
+
         gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
 
     # d_x = [new['coadd_snr'], new['coadd_hlr'], new['coadd_psf_T']]
