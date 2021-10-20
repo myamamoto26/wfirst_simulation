@@ -40,7 +40,7 @@ for p,j in enumerate([coadd_path, single_path]):
     if p==0:
         xax = ['coadd_snr', 'coadd_hlr', 'coadd_psf_T']
         coadd_=True
-    elif p==1:
+    if p==1:
         xax = ['snr', 'hlr', 'psf_T']
         coadd_=False
     for i in range(4): # four sets of sim. 
