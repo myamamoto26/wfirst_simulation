@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 work = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/'
 work_out = '/hpc/group/cosmology/masaya/wfirst_simulation/paper/'
-coadd_path = 'new_coadd_oversample_original_coadd_pscfix'
+coadd_path = 'new_coadd_oversample'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
 def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
@@ -60,48 +60,51 @@ for run in range(1):
     new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
     bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, 'coadd_snr')
-    bin_mean_hlr, g1_obs_hlr, g1err_obs_hlr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, 'coadd_hlr')
+    bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, 'coadd_hlr')
+    bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, 'coadd_psf_T')
 
     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
 
-fig,axs = plt.subplots(2,2,figsize=(16,10))
+fig,axs = plt.subplots(1,3,figsize=(16,10),dpi=100,sharey=True)
 
-d_x = [new['coadd_snr'], new['coadd_hlr']]
-x_label = ['SNR', 'T']
-for q,ax in enumerate(axs.ravel()):
-    if q==2 or q==3:
-        continue
+# d_x = [new['coadd_snr'], new['coadd_hlr'], new['coadd_psf_T']]
+# x_label = ['S/N', 'T', 'T_{psf}']
+# for q,ax in enumerate(axs.ravel()):
 
-    x_ = d_x[q]
-    hist = stat.histogram(x_, nperbin=50000, more=True)
-    bin_num = len(hist['hist'])
-    g_obs = np.zeros(bin_num)
-    gerr_obs = np.zeros(bin_num)
-    print(len(hist['low']), len(hist['mean']))
-    for i in range(bin_num):
-        bin_mask = (x_ > hist['low'][i]) & (x_ < hist['high'][i])
-        g_obs[i] = np.mean(gamma1_o[bin_mask])
-        gerr_obs[i] = np.std(gamma1_o[bin_mask])/np.sqrt(len(gamma1_o[bin_mask]))
+#     x_ = d_x[q]
+#     hist = stat.histogram(x_, nperbin=50000, more=True)
+#     bin_num = len(hist['hist'])
+#     g_obs = np.zeros(bin_num)
+#     gerr_obs = np.zeros(bin_num)
+#     print(len(hist['low']), len(hist['mean']))
+#     for i in range(bin_num):
+#         bin_mask = (x_ > hist['low'][i]) & (x_ < hist['high'][i])
+#         g_obs[i] = np.mean(gamma1_o[bin_mask])
+#         gerr_obs[i] = np.std(gamma1_o[bin_mask])/np.sqrt(len(gamma1_o[bin_mask]))
 
-    ax.hlines(0.02, 0, hist['mean'][len(hist['mean'])-1],linestyles='dashed')
-    ax.errorbar(hist['mean'], g_obs, yerr=gerr_obs, fmt='o', fillstyle='none')
-    ax.set_xlabel(x_label[q])
-    ax.set_xscale('log')
-    ax.set_ylabel('<e1>')
-    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+#     ax.hlines(0.02, 0, hist['mean'][len(hist['mean'])-1],linestyles='dashed')
+#     ax.errorbar(hist['mean'], g_obs, yerr=gerr_obs, fmt='o', fillstyle='none')
+#     ax.set_xlabel(x_label[q])
+#     ax.set_xscale('log')
+#     ax.set_ylabel('<e1>')
+#     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 
-axs[1,0].hlines(0.02, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
-axs[1,1].hlines(0.02, 0, bin_mean_hlr[len(bin_mean_hlr)-1],linestyles='dashed')
-axs[1,0].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none')
-axs[1,1].errorbar(bin_mean_hlr, g1_obs_hlr, yerr=g1err_obs_hlr, fmt='o', fillstyle='none')
-axs[1,0].set_xlabel('SNR')
-axs[1,1].set_xlabel('T')
-axs[1,0].set_xscale('log')
-axs[1,1].set_xscale('log')
-axs[1,0].set_ylabel('<e1>')
-axs[1,1].set_ylabel('<e1>')
-axs[1,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-axs[1,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[0,0].hlines(0.02, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
+axs[0,1].hlines(0.02, 0, bin_mean_T[len(bin_mean_T)-1],linestyles='dashed')
+axs[0,2].hlines(0.02, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
+axs[0,0].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none')
+axs[0,1].errorbar(bin_mean_T, g1_obs_T, yerr=g1err_obs_T, fmt='o', fillstyle='none')
+axs[0,2].errorbar(bin_mean_Tpsf, g1_obs_Tpsf, yerr=g1err_obs_Tpsf, fmt='o', fillstyle='none')
+axs[0,0].set_xlabel('S/N')
+axs[0,1].set_xlabel('T')
+axs[0,2].set_xlabel(r'$T_{psf}$')
+axs[0,0].set_xscale('log')
+axs[0,1].set_xscale('log')
+axs[0,2].set_xscale('log')
+axs[0,0].set_ylabel('<e1>')
+axs[0,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[0,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[0,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-plt.savefig(work_out+'mean_shear_snrhlr_perbin.png')
+plt.savefig(work_out+'meanshear_measured_properties_perbin.png')
