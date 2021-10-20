@@ -13,11 +13,7 @@ sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
 def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
 
-    if par=='coadd_psf_T':
-        d = new[par]
-        x_ = d[d!=-9999]
-    else:
-        x_ = new[par]
+    x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
     bin_num = len(hist['hist'])
     g_obs = np.zeros(bin_num)
