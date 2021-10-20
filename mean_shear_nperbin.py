@@ -71,7 +71,7 @@ for p,j in enumerate([coadd_path, single_path]):
         bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0])
         bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1])
         bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2])
-
+        print(coadd_)
         gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd_)
 
     # d_x = [new['coadd_snr'], new['coadd_hlr'], new['coadd_psf_T']]
