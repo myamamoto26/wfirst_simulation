@@ -12,8 +12,12 @@ coadd_path = 'new_coadd_oversample'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
 def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
-        
-    x_ = new[par]
+
+    if par=='coadd_psf_T':
+        d = new[par]
+        x_ = d[d!=-9999]
+    else:
+        x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
     bin_num = len(hist['hist'])
     g_obs = np.zeros(bin_num)
@@ -65,7 +69,7 @@ for run in range(1):
 
     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
 
-fig,axs = plt.subplots(1,3,figsize=(16,10),dpi=100,sharey=True)
+fig,axs = plt.subplots(1,3,figsize=(20,6),dpi=100,sharey=True)
 
 # d_x = [new['coadd_snr'], new['coadd_hlr'], new['coadd_psf_T']]
 # x_label = ['S/N', 'T', 'T_{psf}']
@@ -96,15 +100,18 @@ axs[2].hlines(0.02, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
 axs[0].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none')
 axs[1].errorbar(bin_mean_T, g1_obs_T, yerr=g1err_obs_T, fmt='o', fillstyle='none')
 axs[2].errorbar(bin_mean_Tpsf, g1_obs_Tpsf, yerr=g1err_obs_Tpsf, fmt='o', fillstyle='none')
-axs[0].set_xlabel('S/N')
-axs[1].set_xlabel('T')
-axs[2].set_xlabel(r'$T_{psf}$')
+axs[0].set_xlabel('S/N', fontsize=15)
+axs[1].set_xlabel('T', fontsize=15)
+axs[2].set_xlabel(r'$T_{psf}$', fontsize=15)
 axs[0].set_xscale('log')
 axs[1].set_xscale('log')
 axs[2].set_xscale('log')
-axs[0].set_ylabel('<e1>')
+axs[0].set_ylabel(r'$<e_{1}>$', fontsize=15)
 axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[0].tick_params(labelsize=13)
 axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[1].tick_params(labelsize=13)
 axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+axs[2].tick_params(labelsize=13)
 
-plt.savefig(work_out+'meanshear_measured_properties_perbin.pdf')
+plt.savefig(work_out+'H158_meanshear_measured_properties_perbin.pdf')
