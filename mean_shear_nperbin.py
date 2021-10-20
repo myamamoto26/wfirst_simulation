@@ -110,4 +110,5 @@ axs[1].tick_params(labelsize=13)
 axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 axs[2].tick_params(labelsize=13)
 
+plt.subplots_adjust(hspace=0.1,wspace=0.1)
 plt.savefig(work_out+'H158_meanshear_measured_properties_perbin.pdf')
