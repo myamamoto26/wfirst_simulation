@@ -17,6 +17,7 @@ from skimage.measure import block_reduce
 from past.utils import old_div
 import pandas as pd
 from des_analysis import analyze_gamma_obs
+from esutil import stat
 
 def get_flux(obs_list):
     flux = 0.
@@ -408,7 +409,7 @@ def roman_psf_rotation():
 
 def mcal_catalog_properties(filter_, coadd_, out_fname):
 
-    folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", filter_)
+    folder = os.path.join("/hpc/group/cosmology/phy-lsst/my137", 'roman_'+filter_)
 
     ## g1 positive sim. (get SNR and magnitude from this. )
     # mcal_noshear = fio.FITS(os.path.join(folder, "g1002/ngmix/coadd_multiband/fiducial_H158_mcal_noshear.fits"))[-1].read()
@@ -444,11 +445,11 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
     shear2p = []
     shear2m = []
     for i in range(4): # four sets of sim. 
-        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
-        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_1p.fits"))[-1].read()
-        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_1m.fits"))[-1].read()
-        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_2p.fits"))[-1].read()
-        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_H158_mcal_2m.fits"))[-1].read()
+        mcal_noshear = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_"+filter_+"_mcal_noshear.fits"))[-1].read()
+        mcal_1p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_"+filter_+"_mcal_1p.fits"))[-1].read()
+        mcal_1m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_"+filter_+"_mcal_1m.fits"))[-1].read()
+        mcal_2p = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_"+filter_+"_mcal_2p.fits"))[-1].read()
+        mcal_2m = fio.FITS(os.path.join(folder, sets[i]+"/ngmix/"+coadd_+"/fiducial_"+filter_+"_mcal_2m.fits"))[-1].read()
 
         mask = (mcal_noshear['flags']==0) & (mcal_noshear['ind']!=0)
         noshear.append(mcal_noshear[mask])
