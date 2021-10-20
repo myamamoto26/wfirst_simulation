@@ -72,6 +72,7 @@ for p,j in enumerate([coadd_path, single_path]):
         new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
         new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
+        print(new, new1p, new1m)
         bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0])
         bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1])
         bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2])
