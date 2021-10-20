@@ -19,13 +19,13 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
     else:
         coadd=False
     x_ = new[par]
+    print(par, len(x_), x_)
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
     bin_num = len(hist['hist'])
     g_obs = np.zeros(bin_num)
     gerr_obs = np.zeros(bin_num)
     print(len(hist['low']), len(hist['mean']))
     for i in range(bin_num):
-        print(hist['low'][i], hist['high'][i], hist['mean'][i])
         bin_mask = (x_ > hist['low'][i]) & (x_ < hist['high'][i])
         gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_=coadd)
         g_obs[i] = np.mean(gamma1_o)
@@ -73,7 +73,6 @@ for p,j in enumerate([coadd_path, single_path]):
         new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
         new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-        print(new, new1p, new1m)
         bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0])
         bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1])
         bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2])
