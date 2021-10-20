@@ -33,24 +33,8 @@ def bootstrap_cov_c(N,m,data1,data2,data3,data4):
 	return cov
 
 def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False):
-	if not coadd_:
-		g=0.01
-		R11 = (new1p["e1"] - new1m["e1"])/(2*g)
-		R22 = (new2p["e2"] - new2m["e2"])/(2*g)
-		R12 = (new2p["e1"] - new2m["e1"])/(2*g)
-		R21 = (new1p["e2"] - new1m["e2"])/(2*g)
 
-		avg_R11 = np.mean(R11)
-		avg_R22 = np.mean(R22)
-		avg_R12 = np.mean(R12)
-		avg_R21 = np.mean(R21)
-
-		gamma1_obs = new['e1']/avg_R11
-		gamma2_obs = new['e2']/avg_R22
-
-		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['e1'], new['e2']
-
-	else:
+	if coadd_:
 		g=0.01
 		R11 = (new1p["coadd_e1"] - new1m["coadd_e1"])/(2*g)
 		R22 = (new2p["coadd_e2"] - new2m["coadd_e2"])/(2*g)
@@ -67,6 +51,22 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False):
 		print('R', avg_R11, avg_R22)
 
 		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['coadd_e1'], new['coadd_e2']
+	else:
+		g=0.01
+		R11 = (new1p["e1"] - new1m["e1"])/(2*g)
+		R22 = (new2p["e2"] - new2m["e2"])/(2*g)
+		R12 = (new2p["e1"] - new2m["e1"])/(2*g)
+		R21 = (new1p["e2"] - new1m["e2"])/(2*g)
+
+		avg_R11 = np.mean(R11)
+		avg_R22 = np.mean(R22)
+		avg_R12 = np.mean(R12)
+		avg_R21 = np.mean(R21)
+
+		gamma1_obs = new['e1']/avg_R11
+		gamma2_obs = new['e2']/avg_R22
+
+		return new['g1'], new['g2'], gamma1_obs, gamma2_obs, new['e1'], new['e2']
 
 
 def shear_response(new,new1p,new1m,new2p,new2m,coadd_):
