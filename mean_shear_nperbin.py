@@ -35,7 +35,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
 fig,axs = plt.subplots(1,4,figsize=(28,6),dpi=100,sharey=True)
-for p in enumerate(['coadd', 'single']):
+for p in ['coadd', 'single']:
     noshear = []
     shear1p = []
     shear1m = []
@@ -49,7 +49,7 @@ for p in enumerate(['coadd', 'single']):
         xax = ['snr', 'hlr', 'size', 'psf_T']
         coadd=False
         j = 'new_single'
-    print(p, j)
+    
     for i in range(4): # four sets of sim. 
         mcal_noshear = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
         mcal_1p = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_1p.fits"))[-1].read()
