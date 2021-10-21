@@ -12,9 +12,16 @@ coadd_path = 'new_coadd_oversample'
 single_path = 'new_single'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
+def hlr_to_T(d):
+    # assuming galaxy profile is gaussian.
+    return 2*(2*d/(2.3548200450309493))**2
+
 def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
     
-    x_ = new[par]
+    if 'hlr' in par:
+        x_ = hlr_to_T(new[par])
+    else:
+        x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
     bin_num = len(hist['hist'])
     g_obs = np.zeros(bin_num)
