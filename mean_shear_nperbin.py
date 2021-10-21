@@ -12,21 +12,17 @@ coadd_path = 'new_coadd_oversample'
 single_path = 'new_single'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
-def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par):
+def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
     
-    if 'coadd' in par:
-        coadd=True
-    else:
-        coadd=False
     x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
     bin_num = len(hist['hist'])
     g_obs = np.zeros(bin_num)
     gerr_obs = np.zeros(bin_num)
-    print(len(hist['low']), len(hist['mean']))
+    print(len(hist['low']), hist['mean'])
     for i in range(bin_num):
         bin_mask = (x_ > hist['low'][i]) & (x_ < hist['high'][i])
-        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_=coadd)
+        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd)
         g_obs[i] = np.mean(gamma1_o)
         gerr_obs[i] = np.std(gamma1_o)/np.sqrt(len(gamma1_o))
 
@@ -75,12 +71,12 @@ for p in ['coadd', 'single']:
         new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
         new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-        bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0])
-        bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1])
-        bin_mean_size, g1_obs_size, g1err_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2])
-        bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3])
+        bin_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
+        bin_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
+        bin_mean_size, g1_obs_size, g1err_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
+        bin_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
 
-        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=coadd)
+        gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd)
 
     # d_x = [new['coadd_snr'], new['coadd_hlr'], new['coadd_psf_T']]
     # x_label = ['S/N', 'T', 'T_{psf}']
