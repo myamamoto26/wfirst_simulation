@@ -49,6 +49,7 @@ for p in enumerate(['coadd', 'single']):
         xax = ['snr', 'hlr', 'size', 'psf_T']
         coadd=False
         j = 'new_single'
+    print(p, j)
     for i in range(4): # four sets of sim. 
         mcal_noshear = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
         mcal_1p = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_1p.fits"))[-1].read()
