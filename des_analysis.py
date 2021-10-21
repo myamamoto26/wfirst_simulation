@@ -32,7 +32,7 @@ def bootstrap_cov_c(N,m,data1,data2,data3,data4):
 	cov = np.sqrt(np.sum((fi-f_mean)**2)/(N-1))
 	return cov
 
-def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False):
+def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_):
 
 	if coadd_:
 		g=0.01
