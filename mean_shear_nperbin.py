@@ -44,11 +44,11 @@ for p in enumerate(['coadd', 'single']):
     if p=='coadd':
         xax = ['coadd_snr', 'coadd_hlr', 'size', 'coadd_psf_T']
         coadd=True
-        j = coadd_path
-    if p=='single':
+        j = 'new_coadd_oversample'
+    elif p=='single':
         xax = ['snr', 'hlr', 'size', 'psf_T']
         coadd=False
-        j = single_path
+        j = 'new_single'
     for i in range(4): # four sets of sim. 
         mcal_noshear = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
         mcal_1p = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_1p.fits"))[-1].read()
