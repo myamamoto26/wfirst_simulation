@@ -5,11 +5,10 @@ import pandas as pd
 from des_analysis import analyze_gamma_obs
 from esutil import stat
 from matplotlib import pyplot as plt
+import matplotlib
 
 work = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/'
 work_out = '/hpc/group/cosmology/masaya/wfirst_simulation/paper/'
-coadd_path = 'new_coadd_oversample'
-single_path = 'new_single'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
 
 def hlr_to_T(d):
@@ -38,7 +37,8 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
 fig,axs = plt.subplots(1,4,figsize=(28,6),dpi=100,sharey=True)
-for p in ['coadd', 'single']:
+matplotlib.rcParams.update({'font.size': 21})
+for p in ['coadd', 'single', 'multiband']:
     noshear = []
     shear1p = []
     shear1m = []
@@ -52,6 +52,10 @@ for p in ['coadd', 'single']:
         xax = ['snr', 'hlr', 'size', 'psf_T']
         coadd=False
         j = 'new_single'
+    elif p=='multiband':
+        xax = ['coadd_snr', 'coadd_hlr', 'size', 'coadd_psf_T']
+        coadd=True
+        j = 'coadd_multiband_3filter_final'
     
     for i in range(4): # four sets of sim. 
         mcal_noshear = fio.FITS(os.path.join(work, sets[i]+"/ngmix/"+j+"/fiducial_H158_mcal_noshear.fits"))[-1].read()
@@ -109,28 +113,31 @@ for p in ['coadd', 'single']:
 
 
     axs[0].hlines(0.02, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
-    axs[1].hlines(0.02, 0, bin_mean_T[len(bin_mean_T)-1],linestyles='dashed')
-    axs[2].hlines(0.02, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed')
-    axs[3].hlines(0.02, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
     axs[0].errorbar(bin_mean_snr, g1_obs_snr, yerr=g1err_obs_snr, fmt='o', fillstyle='none', label=p)
-    axs[1].errorbar(bin_mean_T, g1_obs_T, yerr=g1err_obs_T, fmt='o', fillstyle='none', label=p)
-    axs[2].errorbar(bin_mean_size, g1_obs_size, yerr=g1err_obs_size, fmt='o', fillstyle='none', label=p)
-    axs[3].errorbar(bin_mean_Tpsf, g1_obs_Tpsf, yerr=g1err_obs_Tpsf, fmt='o', fillstyle='none', label=p)
-    axs[0].set_xlabel('S/N', fontsize=15)
-    axs[1].set_xlabel('Measured T', fontsize=15)
-    axs[2].set_xlabel('Truth T', fontsize=15)
-    axs[3].set_xlabel(r'$T_{psf}$', fontsize=15)
+    axs[0].set_xlabel('S/N')
     axs[0].set_xscale('log')
-    axs[1].set_xscale('log')
-    axs[2].set_xscale('log')
-    axs[3].set_xscale('log')
-    axs[0].set_ylabel(r'$<e_{1}>$', fontsize=15)
+    axs[0].set_ylabel(r'$<e_{1}>$')
     axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[0].tick_params(labelsize=13)
+
+    axs[1].hlines(0.02, 0, bin_mean_T[len(bin_mean_T)-1],linestyles='dashed')
+    axs[1].errorbar(bin_mean_T, g1_obs_T, yerr=g1err_obs_T, fmt='o', fillstyle='none', label=p)
+    axs[1].set_xlabel(r'Measured T $(arcsec^{2})$')
+    axs[1].set_xscale('log')
     axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[1].tick_params(labelsize=13)
+
+    axs[2].hlines(0.02, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed')
+    axs[2].errorbar(bin_mean_size, g1_obs_size, yerr=g1err_obs_size, fmt='o', fillstyle='none', label=p)
+    axs[2].set_xlabel(r'Input T $(arcsec^{2})$')
+    axs[2].set_xscale('log')
     axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[2].tick_params(labelsize=13)
+
+    axs[3].hlines(0.02, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
+    axs[3].errorbar(bin_mean_Tpsf, g1_obs_Tpsf, yerr=g1err_obs_Tpsf, fmt='o', fillstyle='none', label=p)
+    axs[3].set_xlabel(r'$T_{psf} (arcsec^{2})$')
+    axs[3].set_xscale('log')
     axs[3].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[3].tick_params(labelsize=13)
     axs[3].legend(fontsize='large')
