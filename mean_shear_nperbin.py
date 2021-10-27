@@ -38,7 +38,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
 
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
-fig,axs = plt.subplots(2,4,figsize=(28,12),dpi=100,sharey=True)
+fig,axs = plt.subplots(2,3,figsize=(28,12),dpi=100,sharey=True)
 matplotlib.rcParams.update({'font.size': 25})
 for p in ['coadd', 'single', 'multiband']:
     noshear = []
@@ -47,15 +47,15 @@ for p in ['coadd', 'single', 'multiband']:
     shear2p = []
     shear2m = []
     if p=='coadd':
-        xax = ['coadd_snr', 'coadd_hlr', 'size', 'coadd_psf_T']
+        xax = ['coadd_snr', 'coadd_hlr', 'size', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
         coadd=True
         j = 'new_coadd_oversample'
     elif p=='single':
-        xax = ['snr', 'hlr', 'size', 'psf_T']
+        xax = ['snr', 'hlr', 'size', 'psf_e1', 'psf_e2', 'psf_T']
         coadd=False
         j = 'new_single'
     elif p=='multiband':
-        xax = ['coadd_snr', 'coadd_hlr', 'size', 'coadd_psf_T']
+        xax = ['coadd_snr', 'coadd_hlr', 'size', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
         coadd=True
         j = 'coadd_multiband_3filter_final'
     
@@ -86,77 +86,72 @@ for p in ['coadd', 'single', 'multiband']:
     new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
     new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-    bin1_mean_snr, g1_obs_snr, g1err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
-    bin1_mean_T, g1_obs_T, g1err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
-    bin1_mean_size, g1_obs_size, g1err_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
-    bin1_mean_Tpsf, g1_obs_Tpsf, g1err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
+    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
+    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
+    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
+    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
+    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
+    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
 
     # g2=+0.02 run
-    run = 2
-    new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-    new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-    new1m = shear1m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-    new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
-    new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+    # run = 2
+    # new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+    # new1p = shear1p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+    # new1m = shear1m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+    # new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
+    # new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-    bin2_mean_snr, g2_obs_snr, g2err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
-    bin2_mean_T, g2_obs_T, g2err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
-    bin2_mean_size, g2_obs_size, g2err_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
-    bin2_mean_Tpsf, g2_obs_Tpsf, g2err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
+    # bin2_mean_snr, g2_obs_snr, g2err_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
+    # bin2_mean_T, g2_obs_T, g2err_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
+    # bin2_mean_size, g2_obs_size, g2err_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
+    # bin2_mean_Tpsf, g2_obs_Tpsf, g2err_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
 
     # gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd)
 
-    axs[0].hlines(0.00, 0, bin1_mean_snr[len(bin1_mean_snr)-1],linestyles='dashed')
-    axs[0].errorbar(bin1_mean_snr, g1_obs_snr[0,:]-0.02, yerr=g1err_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
-    axs[0].set_xlabel('S/N')
-    axs[0].set_xscale('log')
-    axs[0].set_ylabel(r'$<\Delta e_{1}>$')
-    axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[0].tick_params(labelsize=13)
+    axs[0,0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
+    axs[0,0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
+    axs[0,0].set_xlabel('S/N')
+    axs[0,0].set_xscale('log')
+    axs[0,0].set_ylabel(r'$<\Delta e_{1}>$')
+    axs[0,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[0,0].tick_params(labelsize=13)
 
-    axs[1].hlines(0.00, 0, bin1_mean_T[len(bin1_mean_T)-1],linestyles='dashed')
-    axs[1].errorbar(bin1_mean_T, g1_obs_T[0,:]-0.02, yerr=g1err_obs_T[0,:], fmt='o', fillstyle='none', label=p)
-    axs[1].set_xlabel(r'Measured T $(arcsec^{2})$')
-    axs[1].set_xscale('log')
-    axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[1].tick_params(labelsize=13)
+    axs[0,1].hlines(0.00, 0, bin_mean_T[len(bin_mean_T)-1],linestyles='dashed')
+    axs[0,1].errorbar(bin_mean_T, g_obs_T[0,:]-0.02, yerr=gerr_obs_T[0,:], fmt='o', fillstyle='none', label=p)
+    axs[0,1].set_xlabel(r'Measured T $(arcsec^{2})$')
+    axs[0,1].set_xscale('log')
+    axs[0,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[0,1].tick_params(labelsize=13)
 
-    axs[2].hlines(0.00, 0, bin1_mean_size[len(bin1_mean_size)-1],linestyles='dashed')
-    axs[2].errorbar(bin1_mean_size, g1_obs_size[0,:]-0.02, yerr=g1err_obs_size[0,:], fmt='o', fillstyle='none', label=p)
-    axs[2].set_xlabel(r'Input T $(arcsec^{2})$')
-    axs[2].set_xscale('log')
-    axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[2].tick_params(labelsize=13)
+    axs[0,2].hlines(0.00, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed')
+    axs[0,2].errorbar(bin_mean_size, g_obs_size[0,:]-0.02, yerr=gerr_obs_size[0,:], fmt='o', fillstyle='none', label=p)
+    axs[0,2].set_xlabel(r'Input T $(arcsec^{2})$')
+    axs[0,2].set_xscale('log')
+    axs[0,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[0,2].tick_params(labelsize=13)
 
-    axs[3].hlines(0.00, 0, bin1_mean_Tpsf[len(bin1_mean_Tpsf)-1],linestyles='dashed')
-    axs[3].errorbar(bin1_mean_Tpsf, g1_obs_Tpsf[0,:]-0.02, yerr=g1err_obs_Tpsf[0,:], fmt='o', fillstyle='none', label=p)
-    axs[3].set_xlabel(r'$T_{psf} (arcsec^{2})$')
-    axs[3].set_xscale('log')
-    axs[3].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[3].tick_params(labelsize=13)
-    axs[3].legend(fontsize='large')
-
-    # axs[1,0].hlines(0.00, 0, bin2_mean_snr[len(bin2_mean_snr)-1],linestyles='dashed')
-    # axs[1,0].errorbar(bin2_mean_snr, g2_obs_snr[1,:]-0.02, yerr=g2err_obs_snr[1,:], fmt='o', fillstyle='none', label=p)
-    # axs[1,0].set_xlabel('S/N')
+    axs[1,0].hlines(0.00, 0, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
+    axs[1,0].errorbar(bin_mean_e1psf, g_obs_e1psf[1,:]-0.02, yerr=gerr_obs_e1psf[1,:], fmt='o', fillstyle='none', label=p)
+    axs[1,0].set_xlabel(r'$e_{1,PSF}$')
     # axs[1,0].set_xscale('log')
-    # axs[1,0].set_ylabel(r'$<\Delta e_{2}>$')
-    # axs[1,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    # axs[1,0].tick_params(labelsize=13)
+    axs[1,0].set_ylabel(r'$<\Delta e_{1}>$')
+    axs[1,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[1,0].tick_params(labelsize=13)
 
-    # axs[1,1].hlines(0.00, 0, bin2_mean_T[len(bin2_mean_T)-1],linestyles='dashed')
-    # axs[1,1].errorbar(bin2_mean_T, g2_obs_T[1,:]-0.02, yerr=g2err_obs_T[1,:], fmt='o', fillstyle='none', label=p)
-    # axs[1,1].set_xlabel(r'Measured T $(arcsec^{2})$')
+    axs[1,1].hlines(0.00, 0, bin_mean_e2psf[len(bin_mean_e2psf)-1],linestyles='dashed')
+    axs[1,1].errorbar(bin_mean_e2psf, g_obs_e2psf[1,:]-0.02, yerr=gerr_obs_e2psf[1,:], fmt='o', fillstyle='none', label=p)
+    axs[1,1].set_xlabel(r'$e_{2,PSF}$')
     # axs[1,1].set_xscale('log')
-    # axs[1,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    # axs[1,1].tick_params(labelsize=13)
+    axs[1,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[1,1].tick_params(labelsize=13)
 
-    # axs[1,2].hlines(0.00, 0, bin2_mean_size[len(bin2_mean_size)-1],linestyles='dashed')
-    # axs[1,2].errorbar(bin2_mean_size, g2_obs_size[1,:]-0.02, yerr=g2err_obs_size[1,:], fmt='o', fillstyle='none', label=p)
-    # axs[1,2].set_xlabel(r'Input T $(arcsec^{2})$')
-    # axs[1,2].set_xscale('log')
-    # axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    # axs[1,2].tick_params(labelsize=13)
+    axs[1,2].hlines(0.00, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
+    axs[1,2].errorbar(bin_mean_Tpsf, g_obs_Tpsf[0,:]-0.02, yerr=gerr_obs_Tpsf[0,:], fmt='o', fillstyle='none', label=p)
+    axs[1,2].set_xlabel(r'$T_{psf} (arcsec^{2})$')
+    axs[1,2].set_xscale('log')
+    axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[1,2].tick_params(labelsize=13)
+    axs[1,2].legend(fontsize='large')
 
     # axs[1,3].hlines(0.00, 0, bin2_mean_Tpsf[len(bin2_mean_Tpsf)-1],linestyles='dashed')
     # axs[1,3].errorbar(bin2_mean_Tpsf, g2_obs_Tpsf[1,:]-0.02, yerr=g2err_obs_Tpsf[1,:], fmt='o', fillstyle='none', label=p)
