@@ -19,6 +19,10 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
     
     if par=='size':
         x_ = hlr_to_T(new[par])
+    elif ('psf_e1' in par) or ('psf_e2' in par) or ('psf_T' in par):
+        x_ = new[par]
+        mask = (x_ != -9999.0)
+        x_ = x_[mask]
     else:
         x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
