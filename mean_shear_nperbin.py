@@ -23,6 +23,11 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
         x_ = new[par]
         mask = (x_ != -9999.0)
         x_ = x_[mask]
+        new = new[mask]
+        new1p = new1p[mask]
+        new1m = new1m[mask]
+        new2p = new2p[mask]
+        new2m = new2m[mask]
     else:
         x_ = new[par]
     hist = stat.histogram(x_, nperbin=nperbin, more=True)
