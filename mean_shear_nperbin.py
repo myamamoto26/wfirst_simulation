@@ -60,7 +60,7 @@ for p in ['coadd', 'single', 'multiband']:
         coadd=True
         j = 'new_coadd_oversample'
     elif p=='single':
-        xax = ['snr', 'hlr', 'size', 'psf_e1', 'psf_e2', 'psf_T']
+        xax = ['snr', 'T', 'size', 'psf_e1', 'psf_e2', 'psf_T']
         coadd=False
         j = 'new_single'
     elif p=='multiband':
