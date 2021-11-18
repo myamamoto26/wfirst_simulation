@@ -134,7 +134,7 @@ def main(argv):
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
 	coadd_ = True
-	combine_m = False
+	combine_m = True
 	additional_mask = False
 	v2 = False
 	f_coadd = sys.argv[4] # example, coadd_multiband
