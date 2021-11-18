@@ -64,7 +64,7 @@ for p in ['coadd', 'single', 'multiband']:
         coadd=False
         j = 'new_single'
     elif p=='multiband':
-        xax = ['coadd_T', 'coadd_hlr', 'size', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
+        xax = ['coadd_snr', 'coadd_T', 'size', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T']
         coadd=True
         j = 'multiband_coadd_3filter_final'
     
