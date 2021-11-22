@@ -161,7 +161,7 @@ for p in ['coadd', 'single', 'multiband']:
     axs[1,2].set_xscale('log')
     axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[1,2].tick_params(labelsize=17)
-    axs[1,2].legend(fontsize='medium', loc=1)
+    axs[1,2].legend(fontsize='large', loc=1)
 
     # axs[1,3].hlines(0.00, 0, bin2_mean_Tpsf[len(bin2_mean_Tpsf)-1],linestyles='dashed')
     # axs[1,3].errorbar(bin2_mean_Tpsf, g2_obs_Tpsf[1,:]-0.02, yerr=g2err_obs_Tpsf[1,:], fmt='o', fillstyle='none', label=p)
