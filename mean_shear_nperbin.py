@@ -174,4 +174,5 @@ for p in ['coadd', 'single', 'multiband']:
 
 
 plt.subplots_adjust(hspace=0.3,wspace=0.06)
-plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v2.pdf')
+plt.tight_layout()
+plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v2.pdf', bbox_inches='tight')
