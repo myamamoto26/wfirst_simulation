@@ -424,7 +424,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
     # properties = np.zeros((len(mcal_noshear),5))
     single_filter = False
     if not single_filter:
-        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_hlr', 'mag', 'size']
+        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_T', 'mag', 'size']
     else:
         columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'snr', 'hlr', 'mag'] # 'psf_e1', 'psf_e2', 'psf_T']
 
@@ -495,7 +495,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 5] = new['coadd_psf_e2']
             properties[start:start+total_obj, 6] = new['coadd_psf_T']
             properties[start:start+total_obj, 7] = new['coadd_snr']
-            properties[start:start+total_obj, 8] = new['coadd_hlr']
+            properties[start:start+total_obj, 8] = new['coadd_T']
             properties[start:start+total_obj, 9] = new['mag_'+filter_]
             properties[start:start+total_obj, 10] = new['size']
 
