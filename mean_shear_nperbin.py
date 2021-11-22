@@ -48,7 +48,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
 fig,axs = plt.subplots(2,3,figsize=(28,12),dpi=100)
-matplotlib.rcParams.update({'font.size': 35})
+# matplotlib.rcParams.update({'font.size': 35})
 for p in ['coadd', 'single', 'multiband']:
     noshear = []
     shear1p = []
@@ -119,15 +119,15 @@ for p in ['coadd', 'single', 'multiband']:
 
     axs[0,0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
     axs[0,0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
-    axs[0,0].set_xlabel('S/N')
+    axs[0,0].set_xlabel('S/N', fontsize=24)
     axs[0,0].set_xscale('log')
-    axs[0,0].set_ylabel(r'$<\Delta e_{1}>$')
+    axs[0,0].set_ylabel(r'$<\Delta e_{1}>$', fontsize=24)
     axs[0,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[0,0].tick_params(labelsize=17)
 
     axs[0,1].hlines(0.00, 0, 1,linestyles='dashed') #bin_mean_T[len(bin_mean_T)-1]
     axs[0,1].errorbar(bin_mean_T, g_obs_T[0,:]-0.02, yerr=gerr_obs_T[0,:], fmt='o', fillstyle='none', label=p)
-    axs[0,1].set_xlabel(r'$T_{gal,measured}$ $(arcsec^{2})$')
+    axs[0,1].set_xlabel(r'$T_{gal,measured}$ $(arcsec^{2})$', fontsize=24)
     axs[0,1].set_xscale('log')
     axs[0,1].set_xlim(2e-2, 4e-1)
     axs[0,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -135,14 +135,14 @@ for p in ['coadd', 'single', 'multiband']:
 
     axs[0,2].hlines(0.00, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed')
     axs[0,2].errorbar(bin_mean_size, g_obs_size[0,:]-0.02, yerr=gerr_obs_size[0,:], fmt='o', fillstyle='none', label=p)
-    axs[0,2].set_xlabel(r'$T_{gal,input}$ $(arcsec^{2})$')
+    axs[0,2].set_xlabel(r'$T_{gal,input}$ $(arcsec^{2})$', fontsize=24)
     axs[0,2].set_xscale('log')
     axs[0,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[0,2].tick_params(labelsize=17)
 
     axs[1,0].hlines(0.00, -0.005, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
     axs[1,0].errorbar(bin_mean_e1psf, g_obs_e1psf[0,:]-0.02, yerr=gerr_obs_e1psf[0,:], fmt='o', fillstyle='none', label=p)
-    axs[1,0].set_xlabel(r'$e_{1,PSF}$')
+    axs[1,0].set_xlabel(r'$e_{1,PSF}$', fontsize=24)
     # axs[1,0].set_xscale('log')
     axs[1,0].set_ylabel(r'$<\Delta e_{1}>$')
     axs[1,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -150,18 +150,18 @@ for p in ['coadd', 'single', 'multiband']:
 
     axs[1,1].hlines(0.00, 0.00, bin_mean_e2psf[len(bin_mean_e2psf)-1],linestyles='dashed')
     axs[1,1].errorbar(bin_mean_e2psf, g_obs_e2psf[0,:]-0.02, yerr=gerr_obs_e2psf[0,:], fmt='o', fillstyle='none', label=p)
-    axs[1,1].set_xlabel(r'$e_{2,PSF}$')
+    axs[1,1].set_xlabel(r'$e_{2,PSF}$', fontsize=24)
     # axs[1,1].set_xscale('log')
     axs[1,1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[1,1].tick_params(labelsize=17)
 
     axs[1,2].hlines(0.00, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
     axs[1,2].errorbar(bin_mean_Tpsf, g_obs_Tpsf[0,:]-0.02, yerr=gerr_obs_Tpsf[0,:], fmt='o', fillstyle='none', label=p)
-    axs[1,2].set_xlabel(r'$T_{psf} (arcsec^{2})$')
+    axs[1,2].set_xlabel(r'$T_{psf} (arcsec^{2})$', fontsize=24)
     axs[1,2].set_xscale('log')
     axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[1,2].tick_params(labelsize=17)
-    axs[1,2].legend(fontsize='x-small', loc=1)
+    axs[1,2].legend(fontsize='small', loc=1)
 
     # axs[1,3].hlines(0.00, 0, bin2_mean_Tpsf[len(bin2_mean_Tpsf)-1],linestyles='dashed')
     # axs[1,3].errorbar(bin2_mean_Tpsf, g2_obs_Tpsf[1,:]-0.02, yerr=g2err_obs_Tpsf[1,:], fmt='o', fillstyle='none', label=p)
