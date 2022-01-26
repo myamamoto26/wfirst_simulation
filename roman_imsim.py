@@ -710,19 +710,15 @@ def main(argv):
 
     ## variable arguments
     gal_num = int(sys.argv[1])
-    #PA1 = int(sys.argv[2])
-    #PA2 = int(sys.argv[3])
     gal_prof = sys.argv[2]
     psf_prof = sys.argv[3]
     shape = sys.argv[4]
     basis = sys.argv[5]
     output_name = sys.argv[6]
 
-    #PA_list, D_list = find_pa(dither_file)
-    #position_angless = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
-    #selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
-    position_angles = [20, 50]
-    selected_dithers = [22535, 22535]
+    PA_list, D_list = find_pa(dither_file)
+    position_angles = np.array(PA_list)[np.random.choice(len(PA_list), 6)]
+    selected_dithers = np.array(D_list)[np.random.choice(len(D_list), 6)]
 
     # when using more galaxies than the length of truth file. 
     res_noshear = np.zeros(gal_num, dtype=[('ind', int), ('flux', float), ('g1', float), ('g2', float), ('e1', float), ('e2', float), ('snr', float), ('hlr', float), ('flags', int)])
@@ -761,9 +757,9 @@ def main(argv):
             gal_stamp=None
             psf_stamp=None
 
-            if psf_prof == 'wfirst':
+            if psf_prof == 'roman':
                 psf_wcs, sk = Pointing(selected_dithers[exp], SCA, filter_, stamp_size, position_angles[exp], random_angle=False).get_wcs()
-                psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, pupil_bin=4, wavelength=bpass.effective_wavelength)
+                psf = wfirst.getPSF(SCA, filter_, wcs=psf_wcs, SCA_pos=None, pupil_bin=4, n_waves=10, wavelength=bpass.effective_wavelength)
             
             profile = Model(cat, gal_prof, psf, SCA, filter_, bpass, hlr, i_gal)
             gal_model, g1, g2 = profile.draw_galaxy(basis)
@@ -781,15 +777,11 @@ def main(argv):
             if psf_stamp.wcs != galsim.PixelScale(0.11):
                 gal_stamp, psf_stamp = image.wcs_approx(gal_stamp, psf_stamp)
 
-            gal_stamp.write('gal_rotation_'+str(exp)+'.fits')
-            psf_stamp.write('psf_rotation_'+str(exp)+'.fits')
-
             offsets.append(offset)
             gals.append(gal_stamp)
             psfs.append(psf_stamp)
             skys.append(sky_stamp)
         res_tot = shape_measurement(cat, gals, psfs, skys, offsets, i_gal, g1, g2, hlr, shape, res_tot).get_coadd_shape()
-    sys.exit()
 
     ## send and receive objects from one processor to others
     if rank!=0:
