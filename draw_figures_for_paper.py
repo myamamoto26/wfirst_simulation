@@ -160,10 +160,11 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
         j = galsim.JacobianWCS(dudx, dudy, dvdx, dvdy)
         return j.withOrigin(galsim.PositionD(x,y))
 
-    #def psf_offset(i,j,star_):
     m3=[0]
-    #relative_offset=[0]
-    for jj,psf_ in enumerate(m2): # m2 has psfs for each observation. 
+    for jj,psf_model in enumerate(m2): 
+        # m2 contains 18 psfs that are centered at each SCA. Created at line 117. 
+        # These PSFs are in image coordinates and have not rotated according to the wcs. These are merely templates. 
+        # We want to rotate the PSF template according to the wcs, and oversample it.
         if jj==0:
             continue
         gal_stamp_center_row=m['orig_start_row'][i][jj] + m['box_size'][i]/2 - 0.5 # m['box_size'] is the galaxy stamp size. 
@@ -175,25 +176,30 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
                             xmax=(m['orig_start_col'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*oversample,
                             ymin=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2. - 1)*oversample+1,
                             ymax=(m['orig_start_row'][i][jj]+(m['box_size'][i]-32)/2.+psf_stamp_size-1)*oversample)
-        
+
         # Make wcs for oversampled psf. 
         wcs_ = make_jacobian(m.get_jacobian(i,jj)['dudcol']/oversample,
-                            m.get_jacobian(i,jj)['dudrow']/oversample,
-                            m.get_jacobian(i,jj)['dvdcol']/oversample,
-                            m.get_jacobian(i,jj)['dvdrow']/oversample,
-                            m['orig_col'][i][jj]*oversample,
-                            m['orig_row'][i][jj]*oversample) 
+                             m.get_jacobian(i,jj)['dudrow']/oversample,
+                             m.get_jacobian(i,jj)['dvdcol']/oversample,
+                             m.get_jacobian(i,jj)['dvdrow']/oversample,
+                             m['orig_col'][i][jj]*oversample,
+                             m['orig_row'][i][jj]*oversample) 
         # Taken from galsim/roman_psfs.py line 266. Update each psf to an object-specific psf using the wcs. 
+        # Apply WCS.
+        # The PSF is in arcsec units, but oriented parallel to the image coordinates.
+        # So to apply the right WCS, project to pixels using the Roman mean pixel_scale, then
+        # project back to world coordinates with the provided wcs.
         scale = galsim.PixelScale(wfirst.pixel_scale/oversample)
-        psf_ = wcs_.toWorld(scale.toImage(psf_), image_pos=galsim.PositionD(wfirst.n_pix/2, wfirst.n_pix/2))
-        psf_ = galsim.Convolve(psf_, galsim.Pixel(wfirst.pixel_scale))
+        # Image coordinates to world coordinates. PSF models were drawn at the center of the SCA. 
+        psf_ = wcs_.toWorld(scale.toImage(psf_model), image_pos=galsim.PositionD(wfirst.n_pix/2, wfirst.n_pix/2))
+        # Convolve the psf with oversampled pixel scale. Note that we should convolve with galsim.Pixel(self.params['oversample']), not galsim.Pixel(1.0)
+        psf_ = wcs_.toWorld(galsim.Convolve(wcs_.toImage(psf_), galsim.Pixel(oversample)))
         psf_stamp = galsim.Image(b, wcs=wcs_) 
 
         # Galaxy is being drawn with some subpixel offsets, so we apply the offsets when drawing the psf too. 
         offset_x = m['orig_col'][i][jj] - gal_stamp_center_col 
         offset_y = m['orig_row'][i][jj] - gal_stamp_center_row 
         offset = galsim.PositionD(offset_x, offset_y)
-
         psf_.drawImage(image=psf_stamp, offset=offset, method='no_pixel') 
         m3.append(psf_stamp.array)
 
@@ -300,12 +306,12 @@ def search_se_snr():
     print(max(snr['snr']), snr['ind'][snr['snr'].index(max(snr['snr']))])
 
 def single_vs_coadd_images():
-    local_Hmeds = './fiducial_F184_2285117.fits'
+    local_Hmeds = './fiducial_H158_2285117.fits'
     truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_F184/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
     m_H158  = meds.MEDS(local_Hmeds)
     indices_H = np.arange(len(m_H158['number'][:]))
-    roman_H158_psfs = get_psf_SCA('F184')
-    oversample = 4
+    roman_H158_psfs = get_psf_SCA('H158')
+    oversample = 1
     metacal_keys=['noshear', '1p', '1m', '2p', '2m']
     res_noshear=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
     res_1p=np.zeros(len(m_H158['number'][:]),dtype=[('ind',int), ('ra',float), ('dec',float), ('flags',int),('int_e1',float), ('int_e2',float),('coadd_px',float), ('coadd_py',float), ('coadd_flux',float), ('coadd_snr',float), ('coadd_e1',float), ('coadd_e2',float), ('coadd_hlr',float),('coadd_psf_e1',float), ('coadd_psf_e2',float), ('coadd_psf_T',float)])
@@ -326,12 +332,9 @@ def single_vs_coadd_images():
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
         s2n_test = get_snr(obs_Hlist)
-        # if i in [1,600]: #in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
-        #     for l in range(len(obs_Hlist)):
-        #         #print(i, obs_Hlist[l].jacobian, obs_Hlist[l].psf.jacobian)
-        #         print(i, obs_Hlist[l].weight)
-                # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_oversample4_08scaling_'+str(i)+'_'+str(l)+'.txt', obs_Hlist[l].image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_oversample4_08scaling_'+str(i)+'.txt', obs_Hlist[0].psf.image)
+        if i in [1,1546]: #in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_no_oversample_'+str(i)+'.txt', obs_Hlist[0].image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_no_oversample_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
@@ -349,11 +352,9 @@ def single_vs_coadd_images():
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
         s2n_coadd = get_snr(obs_list)
-        # if i in [1,600]:
-        #     print(i, coadd_H.weight)
-            #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_oversample4_08scaling_'+str(i)+'.txt', coadd_H.image)
-            # np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_weight_oversample4_08scaling_'+str(i)+'.txt', coadd_H.weight)
-            #np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_over-downsample4_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
+        if i in [1,1546]:
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_no_oversample_08scaling_'+str(i)+'.txt', coadd_H.image)
+            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_no_oversample_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
 
         iteration=0
         for key in metacal_keys:
@@ -366,7 +367,8 @@ def single_vs_coadd_images():
             iteration+=1
         
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
-        print('signal to noise test', i, s2n_test, s2n_coadd, res_['noshear']['s2n_r'])
+        if i in [1,1546]:
+            print('signal to noise test', i, res_['noshear']['s2n_r'])
         # if res_[key]['s2n'] > 1e7:
         #     print('coadd snr', res_[key]['s2n'])
         #     np.savetxt('large_coadd_snr_image.txt', coadd_H.image)
@@ -629,8 +631,8 @@ def make_multiband_coadd_stamp():
         # print('ngmix measurement', res_['noshear']['s2n_r'])
 
 def main(argv):
-    # single_vs_coadd_images()
-    mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
+    single_vs_coadd_images()
+    # mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
     # make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
