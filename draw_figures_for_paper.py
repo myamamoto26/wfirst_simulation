@@ -634,8 +634,8 @@ def make_multiband_coadd_stamp():
         # print('ngmix measurement', res_['noshear']['s2n_r'])
 
 def main(argv):
-    single_vs_coadd_images()
-    # mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
+    # single_vs_coadd_images()
+    mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
     # make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
