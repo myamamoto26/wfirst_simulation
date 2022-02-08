@@ -422,8 +422,8 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
     # mcal_noshear = mcal_noshear[mask]
 
     # properties = np.zeros((len(mcal_noshear),5))
-    single_filter = False
-    if not single_filter:
+    single_band = False
+    if not single_band:
         columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_T', 'mag', 'size']
     else:
         columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'snr', 'hlr', 'mag'] # 'psf_e1', 'psf_e2', 'psf_T']
@@ -473,7 +473,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
         total_obj = len(new)
         print('object number', total_obj)
 
-        if single_filter:
+        if single_band:
             gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False)
             properties[start:start+total_obj, 0] = gamma1_t
             properties[start:start+total_obj, 1] = gamma2_t
@@ -502,7 +502,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
         start += total_obj
 
     df = pd.DataFrame(data=properties, columns=columns)
-    if not single_filter:
+    if not single_band:
         df.to_csv(filter_ + out_fname, columns=columns)
     else:
         df.to_csv(filter_+'_single_properties.csv', columns=columns)
@@ -630,8 +630,8 @@ def make_multiband_coadd_stamp():
 
 def main(argv):
     # single_vs_coadd_images()
-    # mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
-    make_multiband_coadd_stamp()
+    mcal_catalog_properties(sys.argv[1], sys.argv[2], sys.argv[3])
+    # make_multiband_coadd_stamp()
 
 if __name__ == "__main__":
     main(sys.argv)
