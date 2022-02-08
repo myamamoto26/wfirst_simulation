@@ -332,10 +332,12 @@ def single_vs_coadd_images():
 
         obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
         s2n_test = get_snr(obs_Hlist)
-        if i in [1,1546]: #in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_no_oversample_'+str(i)+'.txt', obs_Hlist[0].image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_no_oversample_'+str(i)+'.txt', obs_Hlist[0].psf.image)
+        # if i in [1,1546]: #in [ 309,  444,  622,  644,  854, 1070, 1282, 1529]:
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_image_no_oversample_'+str(i)+'.txt', obs_Hlist[0].image)
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/single_psf_no_oversample_'+str(i)+'.txt', obs_Hlist[0].psf.image)
         coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+        if np.any(coadd_H.psf.image<0):
+            print(i)
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
@@ -352,9 +354,9 @@ def single_vs_coadd_images():
             coadd_H.psf = coadd_psf_obs
         obs_list.append(coadd_H)
         s2n_coadd = get_snr(obs_list)
-        if i in [1,1546]:
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_no_oversample_08scaling_'+str(i)+'.txt', coadd_H.image)
-            np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_no_oversample_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
+        # if i in [1,1546]:
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_image_no_oversample_08scaling_'+str(i)+'.txt', coadd_H.image)
+        #     np.savetxt('/hpc/group/cosmology/masaya/wfirst_simulation/paper/coadd_psf_no_oversample_08scaling_'+str(i)+'.txt', coadd_H.psf.image)
 
         iteration=0
         for key in metacal_keys:
@@ -367,6 +369,7 @@ def single_vs_coadd_images():
             iteration+=1
         
         res_ = measure_shape_metacal(obs_list, t['size'], method='bootstrap', fracdev=t['bflux'],use_e=[t['int_e1'],t['int_e2']])
+        print('signal to noise test', i, res_['noshear']['s2n_r'])
         if i in [1,1546]:
             print('signal to noise test', i, res_['noshear']['s2n_r'])
         # if res_[key]['s2n'] > 1e7:
