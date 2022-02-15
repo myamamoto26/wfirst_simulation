@@ -140,7 +140,7 @@ for p in ['coadd', 'single', 'multiband']:
     axs[0,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[0,2].tick_params(labelsize=20)
 
-    axs[1,0].hlines(0.00, -0.005, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
+    axs[1,0].hlines(0.00, -0.05, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
     axs[1,0].errorbar(bin_mean_e1psf, g_obs_e1psf[0,:]-0.02, yerr=gerr_obs_e1psf[0,:], fmt='o', fillstyle='none', label=p)
     axs[1,0].set_xlabel(r'$e_{1,PSF}$', fontsize=24)
     # axs[1,0].set_xscale('log')
@@ -148,7 +148,7 @@ for p in ['coadd', 'single', 'multiband']:
     axs[1,0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[1,0].tick_params(labelsize=20)
 
-    axs[1,1].hlines(0.00, 0.00, bin_mean_e2psf[len(bin_mean_e2psf)-1],linestyles='dashed')
+    axs[1,1].hlines(0.00, -0.075, bin_mean_e2psf[len(bin_mean_e2psf)-1],linestyles='dashed')
     axs[1,1].errorbar(bin_mean_e2psf, g_obs_e2psf[0,:]-0.02, yerr=gerr_obs_e2psf[0,:], fmt='o', fillstyle='none', label=p)
     axs[1,1].set_xlabel(r'$e_{2,PSF}$', fontsize=24)
     # axs[1,1].set_xscale('log')
@@ -157,7 +157,7 @@ for p in ['coadd', 'single', 'multiband']:
 
     axs[1,2].hlines(0.00, 0, bin_mean_Tpsf[len(bin_mean_Tpsf)-1],linestyles='dashed')
     axs[1,2].errorbar(bin_mean_Tpsf, g_obs_Tpsf[0,:]-0.02, yerr=gerr_obs_Tpsf[0,:], fmt='o', fillstyle='none', label=p)
-    axs[1,2].set_xlabel(r'$T_{psf} (arcsec^{2})$', fontsize=24)
+    axs[1,2].set_xlabel(r'$T_{psf}$ $(arcsec^{2})$', fontsize=24)
     axs[1,2].set_xscale('log')
     axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[1,2].tick_params(labelsize=20)
