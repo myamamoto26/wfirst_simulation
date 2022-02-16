@@ -144,7 +144,8 @@ for p in ['coadd', 'single', 'multiband']:
     
     ax[1].scatter(total_shape, coadd_Hdata['coadd_T'][:obj_H], s=0.1, marker='o')
     ax[1].set_xlabel(r'$\sqrt{e_{1}^2+e_{2}^2}$', fontsize=24)
-    ax[1].set_ylabel(r'measured $T_{gal}$', fontsize=24)
+    ax[1].set_ylabel(r'Measured $T_{gal}$', fontsize=24)
+    ax[1].set_yscale('log')
     ax[1].set_ylim(0.01, 1)
     ax[1].tick_params(labelsize=20)
     plt.savefig(work_out+'H158_coadd_shape_size.pdf', bbox_inches='tight')
