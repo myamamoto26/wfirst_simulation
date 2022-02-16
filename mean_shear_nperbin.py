@@ -141,12 +141,11 @@ for p in ['coadd', 'single', 'multiband']:
         shape2.append(s.g2)
     total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
     
-    print(len(total_shape), coadd_Hdata['coadd_T'][:obj_H])
     ax[1].scatter(total_shape, coadd_Hdata['coadd_T'][:obj_H], s=0.1, marker='o')
     ax[1].set_xlabel('total shape', fontsize=24)
     ax[1].set_ylabel('measured T', fontsize=24)
     ax[1].tick_params(labelsize=20)
-    ax[1].savefig(work+'H158_coadd_shape_size.pdf', bbox_inches='tight')
+    plt.savefig(work+'H158_coadd_shape_size.pdf', bbox_inches='tight')
     sys.exit()
 
     # g2=+0.02 run
