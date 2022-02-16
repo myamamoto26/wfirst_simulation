@@ -116,22 +116,14 @@ for p in ['coadd', 'single', 'multiband']:
             size = new[msk][p[j]]
             T_obs[j,i] = np.mean(size)
             Terr_obs[j,i] = np.std(size)/np.sqrt(len(size))
-    fig,ax = plt.subplots(1,2,figsize=(12,8),dpi=100)
-    ax[0].errorbar(hist['mean'], T_obs[0,:], yerr=Terr_obs[0,:], fmt='o', fillstyle='none', label=p)
+    fig,ax = plt.subplots(1,2,figsize=(14,6),dpi=100)
+
+    ax[0].errorbar(hist['mean'], T_obs[1,:], yerr=Terr_obs[1,:], fmt='o', fillstyle='none', label=p)
     ax[0].set_xlabel(r'$<e_{1}>$', fontsize=24)
     ax[0].set_xscale('log')
-    ax[0].set_ylabel(r'Input $T_{gal}$', fontsize=24)
+    ax[0].set_ylabel(r'Measured $T_{gal}$', fontsize=24)
     # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     ax[0].tick_params(labelsize=20)
-
-    ax[1].errorbar(hist['mean'], T_obs[1,:], yerr=Terr_obs[1,:], fmt='o', fillstyle='none', label=p)
-    ax[1].set_xlabel(r'$<e_{1}>$', fontsize=24)
-    ax[1].set_xscale('log')
-    ax[1].set_ylabel(r'Measured $T_{gal}$', fontsize=24)
-    # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    ax[1].tick_params(labelsize=20)
-    plt.savefig(work_out+'H158_coadd_shape_size.pdf', bbox_inches='tight')
-    plt.clf()
 
     # size vs shape
     import pandas as pd
@@ -147,12 +139,14 @@ for p in ['coadd', 'single', 'multiband']:
         s=s1+s2
         shape1.append(s.g1)
         shape2.append(s.g2)
-    total_shape = np.sqrt(np.array(shape1)**2 + np.array(shape2)**2)
-    plt.scatter(total_shape, coadd_Hdata['coadd_T'], s=0.1, marker='o')
-    plt.xlabel('total shape', fontsize=24)
-    plt.ylabel('measured T', fontsize=24)
-    plt.tick_params(labelsize=20)
-    plt.savefig(work+'H158_coadd_totalshape_size.pdf', bbox_inches='tight')
+    total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
+    
+    print(len(total_shape), coadd_Hdata['coadd_T'][:obj_H])
+    ax[1].scatter(total_shape, coadd_Hdata['coadd_T'][:obj_H], s=0.1, marker='o')
+    ax[1].set_xlabel('total shape', fontsize=24)
+    ax[1].set_ylabel('measured T', fontsize=24)
+    ax[1].tick_params(labelsize=20)
+    ax[1].savefig(work+'H158_coadd_shape_size.pdf', bbox_inches='tight')
     sys.exit()
 
     # g2=+0.02 run
