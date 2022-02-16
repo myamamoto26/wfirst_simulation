@@ -120,7 +120,7 @@ for p in ['coadd', 'single', 'multiband']:
     ax.set_ylabel(r'$T_{gal}$', fontsize=24)
     # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     ax.tick_params(labelsize=20)
-    plt.savefig('H158_coadd_shape_size.pdf', bbox_inches='tight')
+    plt.savefig(work_out+'H158_coadd_shape_size.pdf', bbox_inches='tight')
     sys.exit()
 
     # g2=+0.02 run
