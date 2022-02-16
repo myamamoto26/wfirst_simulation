@@ -132,6 +132,7 @@ for p in ['coadd', 'single', 'multiband']:
     ax[1].tick_params(labelsize=20)
     plt.savefig(work_out+'H158_coadd_shape_size.pdf', bbox_inches='tight')
     plt.clf()
+
     # size vs shape
     import pandas as pd
     import galsim
@@ -147,7 +148,7 @@ for p in ['coadd', 'single', 'multiband']:
         shape1.append(s.g1)
         shape2.append(s.g2)
     total_shape = np.sqrt(np.array(shape1)**2 + np.array(shape2)**2)
-    plt.scatter(total_shape, coadd_Hdata['T'], s=0.1, marker='o')
+    plt.scatter(total_shape, coadd_Hdata['coadd_T'], s=0.1, marker='o')
     plt.xlabel('total shape', fontsize=24)
     plt.ylabel('measured T', fontsize=24)
     plt.tick_params(labelsize=20)
