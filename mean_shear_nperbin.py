@@ -116,6 +116,7 @@ for p in ['coadd', 'single', 'multiband']:
             size = new[msk][p[j]]
             T_obs[j,i] = np.mean(size)
             Terr_obs[j,i] = np.std(size)/np.sqrt(len(size))
+    plt.clf()
     fig,ax = plt.subplots(1,2,figsize=(14,6),dpi=100)
 
     ax[0].errorbar(hist['mean'], T_obs[1,:], yerr=Terr_obs[1,:], fmt='o', fillstyle='none', label=p)
@@ -142,8 +143,8 @@ for p in ['coadd', 'single', 'multiband']:
     total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
     
     ax[1].scatter(total_shape, coadd_Hdata['coadd_T'][:obj_H], s=0.1, marker='o')
-    ax[1].set_xlabel('total shape', fontsize=24)
-    ax[1].set_ylabel('measured T', fontsize=24)
+    ax[1].set_xlabel(r'$\sqrt{e_{1}^2+e_{2}^2}$', fontsize=24)
+    ax[1].set_ylabel(r'measured $T_{gal}$', fontsize=24)
     ax[1].tick_params(labelsize=20)
     plt.savefig(work+'H158_coadd_shape_size.pdf', bbox_inches='tight')
     sys.exit()
