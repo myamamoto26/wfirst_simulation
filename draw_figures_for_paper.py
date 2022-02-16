@@ -429,9 +429,9 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
     # properties = np.zeros((len(mcal_noshear),5))
     single_band = False
     if not single_band:
-        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_T', 'mag', 'size']
+        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_T', 'mag', 'size',  'int_g1', 'int_g2']
     else:
-        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'snr', 'hlr', 'mag'] # 'psf_e1', 'psf_e2', 'psf_T']
+        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'snr', 'hlr', 'mag', 'int_g1', 'int_g2'] # 'psf_e1', 'psf_e2', 'psf_T']
 
     # properties[:,0] = mcal_noshear['coadd_snr']
     # properties[:,1] = mcal_noshear['coadd_hlr']
@@ -490,6 +490,8 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 4] = new['snr']
             properties[start:start+total_obj, 5] = new['hlr']
             properties[start:start+total_obj, 6] = new['mag_'+filter_]
+            properties[start:start+total_obj, 7] = new['int_g1']
+            properties[start:start+total_obj, 8] = new['int_g2']
         else:
             gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
             properties[start:start+total_obj, 0] = gamma1_t
@@ -503,6 +505,8 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 8] = new['coadd_T']
             properties[start:start+total_obj, 9] = new['mag_'+filter_]
             properties[start:start+total_obj, 10] = new['size']
+            properties[start:start+total_obj, 11] = new['int_g1']
+            properties[start:start+total_obj, 12] = new['int_g2']
 
         start += total_obj
 
