@@ -102,6 +102,26 @@ for p in ['coadd', 'single', 'multiband']:
     bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
     bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
 
+    gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new, new1p, new1m, new2p, new2m, coadd)
+    hist = stat.histogram(gamma1_o, nperbin=50000, more=True)
+    bin_num = len(hist['hist'])
+    T_obs = np.zeros(bin_num)
+    Terr_obs = np.zeros(bin_num)
+    print(len(hist['low']), hist['mean'])
+    for i in range(bin_num):
+        msk = ((gamma1_o > hist['low'][i]) & (gamma1_o < hist['high'][i]))
+        size = new[msk]['size']
+        T_obs[i] = np.mean(size)
+        Terr_obs[i] = np.std(size)/np.sqrt(len(size))
+    fig,ax = plt.subplots(figsize=(10,8),dpi=100)
+    ax.errorbar(hist['mean'], T_obs, yerr=Terr_obs, fmt='o', fillstyle='none', label=p)
+    ax.set_xlabel(r'$<e_{1}>$', fontsize=24)
+    ax.set_xscale('log')
+    ax.set_ylabel(r'$T_{gal}$', fontsize=24)
+    # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    ax.tick_params(labelsize=20)
+    sys.exit()
+
     # g2=+0.02 run
     # run = 2
     # new = noshear[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
@@ -160,7 +180,7 @@ for p in ['coadd', 'single', 'multiband']:
     axs[1,2].set_xlabel(r'$T_{psf}$ $(arcsec^{2})$', fontsize=24)
     axs[1,2].set_xscale('log')
     axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[1,2].tick_params(labelsize=20)
+    axs[1,2].tick_params(labelsize=23)
     axs[1,2].legend(fontsize='x-large', loc=1)
 
     # axs[1,3].hlines(0.00, 0, bin2_mean_Tpsf[len(bin2_mean_Tpsf)-1],linestyles='dashed')
@@ -171,8 +191,6 @@ for p in ['coadd', 'single', 'multiband']:
     # axs[1,3].tick_params(labelsize=13)
     # axs[1,3].legend(loc=4)
 
-
-
-plt.subplots_adjust(hspace=0.3,wspace=0.06)
-plt.tight_layout()
-plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v3.pdf', bbox_inches='tight')
+# plt.subplots_adjust(hspace=0.3,wspace=0.06)
+# plt.tight_layout()
+# plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v3.pdf', bbox_inches='tight')
