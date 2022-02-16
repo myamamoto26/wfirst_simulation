@@ -95,32 +95,63 @@ for p in ['coadd', 'single', 'multiband']:
     new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
     new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
-    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
-    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
-    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
-    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
-    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
+    # bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
+    # bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
+    # bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
+    # bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
+    # bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
+    # bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
 
     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new, new1p, new1m, new2p, new2m, coadd)
-    hist = stat.histogram(gamma1_o, nperbin=50000, more=True)
+    print(len(gamma1_o), len(new))
+    hist = stat.histogram(gamma1_o, nperbin=10000, more=True)
     bin_num = len(hist['hist'])
-    T_obs = np.zeros(bin_num)
-    Terr_obs = np.zeros(bin_num)
+    T_obs = np.zeros((2,bin_num))
+    Terr_obs = np.zeros((2,bin_num))
+    p = ['size', 'T']
     print(len(hist['low']), hist['mean'])
-    for i in range(bin_num):
-        msk = ((gamma1_o > hist['low'][i]) & (gamma1_o < hist['high'][i]))
-        size = new[msk]['size']
-        T_obs[i] = np.mean(size)
-        Terr_obs[i] = np.std(size)/np.sqrt(len(size))
-    fig,ax = plt.subplots(figsize=(10,8),dpi=100)
-    ax.errorbar(hist['mean'], T_obs, yerr=Terr_obs, fmt='o', fillstyle='none', label=p)
-    ax.set_xlabel(r'$<e_{1}>$', fontsize=24)
-    ax.set_xscale('log')
-    ax.set_ylabel(r'$T_{gal}$', fontsize=24)
+    for j in range(2):
+        for i in range(bin_num):
+            msk = ((gamma1_o > hist['low'][i]) & (gamma1_o < hist['high'][i]))
+            size = new[msk][p[j]]
+            T_obs[j,i] = np.mean(size)
+            Terr_obs[j,i] = np.std(size)/np.sqrt(len(size))
+    fig,ax = plt.subplots(1,2,figsize=(12,8),dpi=100)
+    ax[0].errorbar(hist['mean'], T_obs[0,:], yerr=Terr_obs[0,:], fmt='o', fillstyle='none', label=p)
+    ax[0].set_xlabel(r'$<e_{1}>$', fontsize=24)
+    ax[0].set_xscale('log')
+    ax[0].set_ylabel(r'Input $T_{gal}$', fontsize=24)
     # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    ax.tick_params(labelsize=20)
+    ax[0].tick_params(labelsize=20)
+
+    ax[1].errorbar(hist['mean'], T_obs[1,:], yerr=Terr_obs[1,:], fmt='o', fillstyle='none', label=p)
+    ax[1].set_xlabel(r'$<e_{1}>$', fontsize=24)
+    ax[1].set_xscale('log')
+    ax[1].set_ylabel(r'Measured $T_{gal}$', fontsize=24)
+    # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    ax[1].tick_params(labelsize=20)
     plt.savefig(work_out+'H158_coadd_shape_size.pdf', bbox_inches='tight')
+    plt.clf()
+    # size vs shape
+    import pandas as pd
+    import galsim
+    coadd_Hdata = pd.read_csv("./H158_coadd_no_oversample_psf.csv")
+    obj_H = len(coadd_Hdata['size'])//4
+
+    shape1=[]
+    shape2=[]
+    for i in range(obj_H):
+        s1 = galsim.Shear(e1=coadd_Hdata['int_e1'][i],e2=coadd_Hdata['int_e2'][i])
+        s2 = galsim.Shear(g1=coadd_Hdata['g1_true'][i],g2=coadd_Hdata['g2_true'][i])
+        s=s1+s2
+        shape1.append(s.g1)
+        shape2.append(s.g2)
+    total_shape = np.sqrt(np.array(shape1)**2 + np.array(shape2)**2)
+    plt.scatter(total_shape, coadd_Hdata['T'], s=0.1, marker='o')
+    plt.xlabel('total shape', fontsize=24)
+    plt.ylabel('measured T', fontsize=24)
+    plt.tick_params(labelsize=20)
+    plt.savefig(work+'H158_coadd_totalshape_size.pdf', bbox_inches='tight')
     sys.exit()
 
     # g2=+0.02 run
@@ -195,3 +226,4 @@ for p in ['coadd', 'single', 'multiband']:
 # plt.subplots_adjust(hspace=0.3,wspace=0.06)
 # plt.tight_layout()
 # plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v3.pdf', bbox_inches='tight')
+
