@@ -104,11 +104,11 @@ for p in ['coadd', 'single', 'multiband']:
 
     gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new, new1p, new1m, new2p, new2m, coadd)
     print(len(gamma1_o), len(new))
-    hist = stat.histogram(gamma1_o, nperbin=10000, more=True)
+    hist = stat.histogram(gamma1_o, nperbin=25000, more=True)
     bin_num = len(hist['hist'])
     T_obs = np.zeros((2,bin_num))
     Terr_obs = np.zeros((2,bin_num))
-    p = ['size', 'T']
+    p = ['size', 'coadd_T']
     print(len(hist['low']), hist['mean'])
     for j in range(2):
         for i in range(bin_num):
