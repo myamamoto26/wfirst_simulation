@@ -118,10 +118,10 @@ for p in ['coadd', 'single', 'multiband']:
             Terr_obs[j,i] = np.std(size)/np.sqrt(len(size))
     plt.clf()
     fig,ax = plt.subplots(1,2,figsize=(14,6),dpi=100)
-
+    print(hist['mean'])
     ax[0].errorbar(hist['mean'], T_obs[1,:], yerr=Terr_obs[1,:], fmt='o', fillstyle='none', label=p)
     ax[0].set_xlabel(r'$<e_{1}>$', fontsize=24)
-    ax[0].set_xscale('log')
+    # ax[0].set_xscale('log')
     ax[0].set_ylabel(r'Measured $T_{gal}$', fontsize=24)
     # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     ax[0].tick_params(labelsize=20)
