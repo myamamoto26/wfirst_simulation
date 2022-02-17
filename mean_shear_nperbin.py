@@ -47,7 +47,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
 
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
-fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
+fig,axs = plt.subplots(2,3,figsize=(28,12),dpi=100)
 # matplotlib.rcParams.update({'font.size': 35})
 for p in ['coadd', 'single', 'multiband']:
     noshear = []
