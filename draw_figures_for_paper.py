@@ -482,7 +482,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
         shape2=[]
         for i in range(total_obj):
             s1 = galsim.Shear(e1=new['int_e1'][i],e2=new['int_e2'][i])
-            s2 = galsim.Shear(g1=new['g1_true'][i],g2=new['g2_true'][i])
+            s2 = galsim.Shear(g1=new['g1'][i],g2=new['g2'][i])
             s=s1+s2
             shape1.append(s.g1)
             shape2.append(s.g2)
