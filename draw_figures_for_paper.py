@@ -429,9 +429,9 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
     # properties = np.zeros((len(mcal_noshear),5))
     single_band = False
     if not single_band:
-        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_T', 'mag', 'size',  'int_e1', 'int_e2']
+        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'coadd_psf_e1', 'coadd_psf_e2', 'coadd_psf_T', 'coadd_snr', 'coadd_T', 'mag', 'size',  'int_e1', 'int_e2', 'e']
     else:
-        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'snr', 'hlr', 'mag', 'int_e1', 'int_e2'] # 'psf_e1', 'psf_e2', 'psf_T']
+        columns = ['g1_true', 'g2_true', 'g1_obs', 'g2_obs', 'snr', 'hlr', 'mag', 'int_e1', 'int_e2', 'e'] # 'psf_e1', 'psf_e2', 'psf_T']
 
     # properties[:,0] = mcal_noshear['coadd_snr']
     # properties[:,1] = mcal_noshear['coadd_hlr']
@@ -478,6 +478,16 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
         total_obj = len(new)
         print('object number', total_obj)
 
+        shape1=[]
+        shape2=[]
+        for i in range(total_obj):
+            s1 = galsim.Shear(e1=new['int_e1'][i],e2=new['int_e2'][i])
+            s2 = galsim.Shear(g1=new['g1_true'][i],g2=new['g2_true'][i])
+            s=s1+s2
+            shape1.append(s.g1)
+            shape2.append(s.g2)
+        total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
+
         if single_band:
             gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=False)
             properties[start:start+total_obj, 0] = gamma1_t
@@ -492,6 +502,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 6] = new['mag_'+filter_]
             properties[start:start+total_obj, 7] = new['int_e1']
             properties[start:start+total_obj, 8] = new['int_e2']
+            properties[start:start+total_obj, 9] = new['e']
         else:
             gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
             properties[start:start+total_obj, 0] = gamma1_t
@@ -507,6 +518,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 10] = new['size']
             properties[start:start+total_obj, 11] = new['int_e1']
             properties[start:start+total_obj, 12] = new['int_e2']
+            properties[start:start+total_obj, 13] = new['e']
 
         start += total_obj
 
