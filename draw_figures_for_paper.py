@@ -502,7 +502,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 6] = new['mag_'+filter_]
             properties[start:start+total_obj, 7] = new['int_e1']
             properties[start:start+total_obj, 8] = new['int_e2']
-            properties[start:start+total_obj, 9] = new['e']
+            properties[start:start+total_obj, 9] = total_shape
         else:
             gamma1_t,gamma2_t,gamma1_o,gamma2_o,noshear1,noshear2 = analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_=True)
             properties[start:start+total_obj, 0] = gamma1_t
@@ -518,7 +518,7 @@ def mcal_catalog_properties(filter_, coadd_, out_fname):
             properties[start:start+total_obj, 10] = new['size']
             properties[start:start+total_obj, 11] = new['int_e1']
             properties[start:start+total_obj, 12] = new['int_e2']
-            properties[start:start+total_obj, 13] = new['e']
+            properties[start:start+total_obj, 13] = total_shape
 
         start += total_obj
 
