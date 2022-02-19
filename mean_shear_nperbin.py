@@ -126,28 +126,28 @@ for p in ['coadd', 'single', 'multiband']:
     # # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     # ax[0].tick_params(labelsize=20)
 
-    axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed')
+    axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
     axs[0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
-    axs[0].set_xlabel('log(S/N)', fontsize=24)
+    axs[0].set_xlabel('log(S/N)', fontsize=25)
     axs[0].set_xscale('log')
-    axs[0].set_ylabel(r'$<\Delta e_{1}>$', fontsize=24)
-    axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[0].tick_params(labelsize=20)
+    axs[0].set_ylabel(r'$<\Delta e_{1}>$', fontsize=25)
+    # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[0].tick_params(labelsize=22)
 
-    axs[1].hlines(0.00, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed')
+    axs[1].hlines(0.00, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed', color='grey', alpha=0.3)
     axs[1].errorbar(bin_mean_size, g_obs_size[0,:]-0.02, yerr=gerr_obs_size[0,:], fmt='o', fillstyle='none', label=p)
-    axs[1].set_xlabel(r'log($T_{gal,input}$) $(arcsec^{2})$', fontsize=24)
+    axs[1].set_xlabel(r'log($T_{gal,input}$) $(arcsec^{2})$', fontsize=25)
     axs[1].set_xscale('log')
-    axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[1].tick_params(labelsize=20)
+    # axs[1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[1].tick_params(labelsize=22)
 
-    axs[2].hlines(0.00, 0, 1,linestyles='dashed') #bin_mean_T[len(bin_mean_T)-1]
+    axs[2].hlines(0.00, 0, 1,linestyles='dashed', color='grey', alpha=0.3) #bin_mean_T[len(bin_mean_T)-1]
     axs[2].errorbar(bin_mean_T, g_obs_T[0,:]-0.02, yerr=gerr_obs_T[0,:], fmt='o', fillstyle='none', label=p)
-    axs[2].set_xlabel(r'log($T_{gal,measured}$) $(arcsec^{2})$', fontsize=24)
+    axs[2].set_xlabel(r'log($T_{gal,measured}$) $(arcsec^{2})$', fontsize=25)
     axs[2].set_xscale('log')
     axs[2].set_xlim(2e-2, 4e-1)
-    axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    axs[2].tick_params(labelsize=20)
+    # axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[2].tick_params(labelsize=22)
 
     # PSF correlations
     # axs[1,0].hlines(0.00, -0.05, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
