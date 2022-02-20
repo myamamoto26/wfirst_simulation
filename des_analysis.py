@@ -133,7 +133,7 @@ def main(argv):
 	old = None
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
-	coadd_ = True
+	coadd_ = False
 	combine_m = False
 	additional_mask = False
 	v2 = False
@@ -143,7 +143,7 @@ def main(argv):
 		f_coadd_v2 = sys.argv[5]
 
 	if not coadd_:
-		folder = [f+'/g1002/ngmix/new_single/', f+'/g1n002/ngmix/new_single/', f+'/g2002/ngmix/new_single/', f+'/g2n002/ngmix/new_single/']
+		folder = [f+'/g1002/ngmix/new_single_v2/', f+'/g1n002/ngmix/new_single_v2/', f+'/g2002/ngmix/new_single_v2/', f+'/g2n002/ngmix/new_single_v2/']
 	else:
 		folder = [f+'/g1002/ngmix/'+f_coadd+'/', f+'/g1n002/ngmix/'+f_coadd+'/', f+'/g2002/ngmix/'+f_coadd+'/', f+'/g2n002/ngmix/'+f_coadd+'/']
 		if v2:
