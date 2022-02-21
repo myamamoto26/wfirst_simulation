@@ -148,7 +148,7 @@ for p in ['coadd', 'single', 'multiband']:
     axs[2].set_xlim(2e-2, 4e-1)
     # axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     axs[2].tick_params(labelsize=22)
-    axs[2].legend(fontsize='medium', loc='lower right')
+    axs[2].legend(fontsize='x-large', loc='lower right')
 
     # PSF correlations
     # axs[1,0].hlines(0.00, -0.05, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
