@@ -97,12 +97,12 @@ for p in ['coadd', 'single', 'multiband']:
     new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
     new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
-    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
-    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
-    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
-    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
-    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
+    # bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
+    # bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
+    # bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
+    # bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
+    # bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
+    # bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
 
     if which_figure == 'figure8':
         import galsim
@@ -126,7 +126,7 @@ for p in ['coadd', 'single', 'multiband']:
             e1err = np.zeros(bin_num)
             print(len(hist['low']), hist['mean'])
             for j in range(bin_num):
-                msk = ((new[p] > hist['low'][i]) & (new[p] < hist['high'][i]))
+                msk = ((new[p] > hist['low'][j]) & (new[p] < hist['high'][j]))
                 if i == 0:
                     y = shape1[msk]
                     e1[j] = np.mean(y)
@@ -138,15 +138,17 @@ for p in ['coadd', 'single', 'multiband']:
         
             ax2[i].errorbar(hist['mean'], e1, yerr=e1err, fmt='o', fillstyle='none', label=p)
             if i == 0:
-                ax2[i].set_xlabel(r'$T_{gal,measured}$ $(arcsec^{2})$', fontsize=22)
-                ax2[i].set_ylabel(r'$e_{1,true}$', fontsize=22)
+                ax2[i].set_xlabel(r'$T_{gal,measured}$ $(arcsec^{2})$', fontsize=20)
+                ax2[i].set_ylabel(r'$e_{1,true}$', fontsize=20)
+                ax2[i].tick_params(labelsize=20)
             else:
                 ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
-                ax2[1].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=22)
-                ax2[1].set_ylabel(r'$e_{1,obs}$', fontsize=22)
+                ax2[1].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=20)
+                ax2[1].set_ylabel(r'$e_{1,obs}$', fontsize=20)
+                ax2[i].tick_params(labelsize=23)
             ax2[i].set_xscale('log')
             # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-            ax2[i].tick_params(labelsize=23)
+            
         plt.subplots_adjust(hspace=0.3,wspace=0.06)
         plt.tight_layout()
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
