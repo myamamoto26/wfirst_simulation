@@ -11,7 +11,7 @@ import matplotlib
 work = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/'
 work_out = '/hpc/group/cosmology/masaya/wfirst_simulation/paper/'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
-which_figure = 'figure7'
+which_figure = 'figure8'
 
 def hlr_to_T(d):
     # assuming galaxy profile is gaussian.
@@ -120,7 +120,7 @@ for p in ['coadd', 'single', 'multiband']:
 
         fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
         for i,p in enumerate(['coadd_T', 'size']):
-            hist = stat.histogram(new[p], nperbin=25000, more=True)
+            hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
             e1 = np.zeros(bin_num)
             e1err = np.zeros(bin_num)
@@ -143,9 +143,10 @@ for p in ['coadd', 'single', 'multiband']:
                 ax2[i].tick_params(labelsize=20)
             else:
                 ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
-                ax2[1].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=20)
-                ax2[1].set_ylabel(r'$e_{1,obs}$', fontsize=20)
-                ax2[i].tick_params(labelsize=23)
+                ax2[i].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=20)
+                ax2[i].set_ylabel(r'$e_{1,obs}$', fontsize=20)
+                ax2[i].tick_params(axis='x', labelsize=25)
+                ax2[i].tick_params(axis='y', labelsize=20)
             ax2[i].set_xscale('log')
             # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
             
