@@ -118,7 +118,7 @@ for p in ['coadd', 'single', 'multiband']:
         shape2 = np.array(shape2)
         # total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
 
-        fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
+        fig,ax2 = plt.subplots(1,3,figsize=(16,6),dpi=100)
         for i,p in enumerate(['coadd_T', 'size']):
             hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
@@ -144,14 +144,28 @@ for p in ['coadd', 'single', 'multiband']:
                 ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
                 ax2[i].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=20)
                 ax2[i].set_ylabel(r'$e_{1,obs}$', fontsize=20)
-                ax2[i].set_xticklabels(labels=np.array([r'2 x $10^{-1}$', '', '4 x $10^{-1}$', '', '6x $10^{-1}$']), fontsize=20)
             ax2[i].tick_params(labelsize=20)
             ax2[i].set_xscale('log')
-            # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        
+        hist = stat.histogram(new['coadd_psf_T'], nperbin=50000, more=True)
+        bin_num = len(hist['hist'])
+        T = np.zeros(bin_num)
+        Terr = np.zeros(bin_num)
+        print(len(hist['low']), hist['mean'])
+        for j in range(bin_num):
+            msk = ((new['coadd_psf_T'] > hist['low'][j]) & (new['coadd_psf_T'] < hist['high'][j]))
+            y = new['coadd_T'][msk]
+            T[j] = np.mean(y)
+            Terr[j] = np.std(y)/np.sqrt(len(y))
+        ax2[2].errorbar(hist['mean'], T, yerr=Terr, fmt='o', fillstyle='none')
+        ax2[2].set_xlabel(r'$T_{psf,measured}$ $(arcsec^{2})$', fontsize=20)
+        ax2[2].set_ylabel(r'$T_{gal,measured}$ $(arcsec^{2})$', fontsize=20)
+        ax2[2].tick_params(labelsize=20)
+        # ax2[2].set_xscale('log')
             
         plt.subplots_adjust(hspace=0.3,wspace=0.06)
         plt.tight_layout()
-        plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
+        plt.savefig(work_out+'H158_true_obs_e1_size_v2.pdf', bbox_inches='tight')
         sys.exit()
     elif which_figure=='figure7':
         axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
