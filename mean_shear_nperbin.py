@@ -11,7 +11,7 @@ import matplotlib
 work = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/'
 work_out = '/hpc/group/cosmology/masaya/wfirst_simulation/paper/'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
-which_figure = 'figure8'
+which_figure = 'figure7'
 
 def hlr_to_T(d):
     # assuming galaxy profile is gaussian.
@@ -97,12 +97,12 @@ for p in ['coadd', 'single', 'multiband']:
     new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
     new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-    # bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[0], coadd)
-    # bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[1], coadd)
-    # bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[2], coadd)
-    # bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[3], coadd)
-    # bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[4], coadd)
-    # bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 50000, xax[5], coadd)
+    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[0], coadd)
+    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[1], coadd)
+    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[2], coadd)
+    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[3], coadd)
+    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[4], coadd)
+    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[5], coadd)
 
     if which_figure == 'figure8':
         import galsim
@@ -152,9 +152,8 @@ for p in ['coadd', 'single', 'multiband']:
         plt.subplots_adjust(hspace=0.3,wspace=0.06)
         plt.tight_layout()
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
-    sys.exit()
-
-    if which_figure=='figure7':
+        sys.exit()
+    elif which_figure=='figure7':
         axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
         axs[0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
         axs[0].set_xlabel('log(S/N)', fontsize=25)
@@ -237,9 +236,9 @@ for p in ['coadd', 'single', 'multiband']:
         # axs[1,2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
         # axs[1,2].tick_params(labelsize=20)
 
-    plt.subplots_adjust(hspace=0.3,wspace=0.06)
-    plt.tight_layout()
-    plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v4.pdf', bbox_inches='tight')
+plt.subplots_adjust(hspace=0.3,wspace=0.06)
+plt.tight_layout()
+plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v5.pdf', bbox_inches='tight')
 
 
 
