@@ -118,7 +118,7 @@ for p in ['coadd', 'single', 'multiband']:
         shape2 = np.array(shape2)
         # total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
 
-        fig,ax2 = plt.subplots(1,3,figsize=(16,6),dpi=100)
+        fig,ax2 = plt.subplots(1,3,figsize=(24,6),dpi=100)
         for i,p in enumerate(['coadd_T', 'size']):
             hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
@@ -147,7 +147,7 @@ for p in ['coadd', 'single', 'multiband']:
             ax2[i].tick_params(labelsize=20)
             ax2[i].set_xscale('log')
         
-        hist = stat.histogram(new['coadd_psf_T'], nperbin=50000, more=True)
+        hist = stat.histogram(new[new['coadd_T_psf'] != -9999.]['coadd_psf_T'], nperbin=50000, more=True)
         bin_num = len(hist['hist'])
         T = np.zeros(bin_num)
         Terr = np.zeros(bin_num)
