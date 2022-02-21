@@ -152,7 +152,7 @@ for p in ['coadd', 'single', 'multiband']:
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
     sys.exit()
 
-    elif which_figure=='figure7':
+    if which_figure=='figure7':
         axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
         axs[0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
         axs[0].set_xlabel('log(S/N)', fontsize=25)
