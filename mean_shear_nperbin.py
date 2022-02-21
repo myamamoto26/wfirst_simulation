@@ -147,7 +147,8 @@ for p in ['coadd', 'single', 'multiband']:
             ax2[i].tick_params(labelsize=20)
             ax2[i].set_xscale('log')
         
-        def_mask = (new['coadd_T_psf'] != -9999.)
+        def_mask = (new['coadd_psf_T'] != -9999.)
+        print(len(new['coadd_T']), len(new[def_mask]['coadd_T']))
         hist = stat.histogram(new[def_mask]['coadd_psf_T'], nperbin=50000, more=True)
         bin_num = len(hist['hist'])
         T = np.zeros(bin_num)
