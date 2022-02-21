@@ -147,14 +147,15 @@ for p in ['coadd', 'single', 'multiband']:
             ax2[i].tick_params(labelsize=20)
             ax2[i].set_xscale('log')
         
-        hist = stat.histogram(new[new['coadd_T_psf'] != -9999.]['coadd_psf_T'], nperbin=50000, more=True)
+        def_mask = (new['coadd_T_psf'] != -9999.)
+        hist = stat.histogram(new[def_mask]['coadd_psf_T'], nperbin=50000, more=True)
         bin_num = len(hist['hist'])
         T = np.zeros(bin_num)
         Terr = np.zeros(bin_num)
         print(len(hist['low']), hist['mean'])
         for j in range(bin_num):
-            msk = ((new['coadd_psf_T'] > hist['low'][j]) & (new['coadd_psf_T'] < hist['high'][j]))
-            y = new['coadd_T'][msk]
+            msk = ((new[def_mask]['coadd_psf_T'] > hist['low'][j]) & (new[def_mask]['coadd_psf_T'] < hist['high'][j]))
+            y = new[def_mask]['coadd_T'][msk]
             T[j] = np.mean(y)
             Terr[j] = np.std(y)/np.sqrt(len(y))
         ax2[2].errorbar(hist['mean'], T, yerr=Terr, fmt='o', fillstyle='none')
