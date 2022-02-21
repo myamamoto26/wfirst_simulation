@@ -136,17 +136,17 @@ for p in ['coadd', 'single', 'multiband']:
                     e1[j] = np.mean(gamma1_o)
                     e1err[j] = np.std(gamma1_o)/np.sqrt(len(gamma1_o))
         
-            ax2[i].hlines(0.00, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
+            ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
             ax2[i].errorbar(hist['mean'], e1, yerr=e1err, fmt='o', fillstyle='none', label=p)
             if i == 0:
-                ax2[i].set_xlabel(r'log($T_{gal,measured}$) $(arcsec^{2})$', fontsize=25)
-                ax2[i].set_ylabel(r'$e_{1,true}$', fontsize=25)
+                ax2[i].set_xlabel(r'log($T_{gal,measured}$) $(arcsec^{2})$', fontsize=22)
+                ax2[i].set_ylabel(r'$e_{1,true}$', fontsize=22)
             else:
-                ax2[1].set_xlabel(r'log($Half-light radius$) $(arcsec)$', fontsize=25)
-                ax2[1].set_ylabel(r'$e_{1,obs}$', fontsize=25)
+                ax2[1].set_xlabel(r'log($Half-light radius$) $(arcsec)$', fontsize=22)
+                ax2[1].set_ylabel(r'$e_{1,obs}$', fontsize=22)
             ax2[i].set_xscale('log')
             # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-            ax2[i].tick_params(labelsize=22)
+            ax2[i].tick_params(labelsize=23)
         plt.subplots_adjust(hspace=0.3,wspace=0.06)
         plt.tight_layout()
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
