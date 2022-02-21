@@ -144,12 +144,13 @@ for p in ['coadd', 'single', 'multiband']:
                 ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
                 ax2[i].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=20)
                 ax2[i].set_ylabel(r'$e_{1,obs}$', fontsize=20)
-            ax2[i].tick_params(labelsize=25)
+                ax2[i].set_xticklabels(labels=np.array([r'2 x $10^{-1}$', '', '4 x $10^{-1}$', '', '6x $10^{-1}$']), fontsize=20)
+            ax2[i].tick_params(labelsize=20)
             ax2[i].set_xscale('log')
             # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
             
         plt.subplots_adjust(hspace=0.3,wspace=0.06)
-        # plt.tight_layout()
+        plt.tight_layout()
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
         sys.exit()
     elif which_figure=='figure7':
