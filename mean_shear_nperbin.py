@@ -119,7 +119,7 @@ for p in ['coadd', 'single', 'multiband']:
         # total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
 
         fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
-        matplotlib.rcParams['xtick.labelsize'] = 20
+        # matplotlib.rcParams['xtick.labelsize'] = 20
         for i,p in enumerate(['coadd_T', 'size']):
             hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
@@ -145,7 +145,7 @@ for p in ['coadd', 'single', 'multiband']:
                 ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
                 ax2[i].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=20)
                 ax2[i].set_ylabel(r'$e_{1,obs}$', fontsize=20)
-            # ax2[i].tick_params(labelsize=20)
+            ax2[i].tick_params(fontsize=20)
             ax2[i].set_xscale('log')
         
         # def_mask = (new['coadd_psf_T'] != -9999.)
@@ -167,7 +167,7 @@ for p in ['coadd', 'single', 'multiband']:
         # ax2[2].set_xscale('log')
             
         plt.subplots_adjust(hspace=0.4,wspace=0.06)
-        # plt.tight_layout()
+        plt.tight_layout()
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
         sys.exit()
     elif which_figure=='figure7':
