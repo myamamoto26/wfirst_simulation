@@ -119,7 +119,7 @@ for p in ['coadd', 'single', 'multiband']:
         # total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
 
         fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
-        # matplotlib.rcParams['xtick.labelsize'] = 20
+        matplotlib.rcParams.update({'font.size':20})
         for i,p in enumerate(['coadd_T', 'size']):
             hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
@@ -139,15 +139,14 @@ for p in ['coadd', 'single', 'multiband']:
         
             ax2[i].errorbar(hist['mean'], e1, yerr=e1err, fmt='o', fillstyle='none', label=p)
             if i == 0:
-                ax2[i].set_xlabel(r'$T_{gal,measured}$ $(arcsec^{2})$', fontsize=22)
-                ax2[i].set_ylabel(r'$e_{1,true}$', fontsize=22)
+                ax2[i].set_xlabel(r'$T_{gal,measured}$ $(arcsec^{2})$')
+                ax2[i].set_ylabel(r'$e_{1,true}$')
             else:
                 ax2[i].hlines(0.02, 0, hist['mean'][bin_num-1],linestyles='dashed', color='grey', alpha=0.3)
-                ax2[i].set_xlabel(r'Half-light radius $(arcsec)$', fontsize=22)
-                ax2[i].set_ylabel(r'$e_{1,obs}$', fontsize=22)
-            ax2[i].tick_params(labelsize=20)
+                ax2[i].set_xlabel(r'Half-light radius $(arcsec)$')
+                ax2[i].set_ylabel(r'$e_{1,obs}$')
+            # ax2[i].tick_params(labelsize=20)
             ax2[i].set_xscale('log')
-        ax2[1].set_xticklabels(hist['mean'], fontsize=20)
         
         # def_mask = (new['coadd_psf_T'] != -9999.)
         # print(len(new['coadd_T']), len(new[def_mask]['coadd_T']))
