@@ -49,7 +49,7 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
 
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
-fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
+# fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
 # matplotlib.rcParams.update({'font.size': 35})
 for p in ['coadd', 'single', 'multiband']:
     noshear = []
@@ -118,8 +118,8 @@ for p in ['coadd', 'single', 'multiband']:
         shape2 = np.array(shape2)
         # total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
 
-        fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
         matplotlib.rcParams.update({'font.size':28})
+        fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
         for i,p in enumerate(['coadd_T', 'size']):
             hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
