@@ -119,7 +119,7 @@ for p in ['coadd', 'single', 'multiband']:
         # total_shape = np.sqrt(np.sum([np.array(shape1)**2, np.array(shape2)**2], axis=0))
 
         fig,ax2 = plt.subplots(1,2,figsize=(16,6),dpi=100)
-        matplotlib.rcParams.update({'font.size':20})
+        matplotlib.rcParams.update({'font.size':28})
         for i,p in enumerate(['coadd_T', 'size']):
             hist = stat.histogram(new[p], nperbin=50000, more=True)
             bin_num = len(hist['hist'])
