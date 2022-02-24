@@ -203,6 +203,7 @@ for p in ['coadd', 'single', 'multiband']:
         axs[0].set_ylabel(r'$<\Delta e_{1}>$', fontsize=25)
         # axs[0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
         axs[0].tick_params(labelsize=22)
+        axs[0].legend(loc='upper right')
 
         axs[1].hlines(0.00, 0, bin_mean_size[len(bin_mean_size)-1],linestyles='dashed', color='grey', alpha=0.3)
         axs[1].errorbar(bin_mean_size, g_obs_size[0,:]-0.02, yerr=gerr_obs_size[0,:], fmt='o', fillstyle='none', label=p)
@@ -218,7 +219,6 @@ for p in ['coadd', 'single', 'multiband']:
         axs[2].set_xlim(2e-2, 4e-1)
         # axs[2].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
         axs[2].tick_params(labelsize=22)
-        axs[2].legend(fontsize='xx-large', loc='lower right')
 
         # PSF correlations
         # axs[1,0].hlines(0.00, -0.05, bin_mean_e1psf[len(bin_mean_e1psf)-1],linestyles='dashed')
