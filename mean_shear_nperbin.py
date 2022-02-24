@@ -3,7 +3,7 @@ import numpy as np
 import sys, os
 import fitsio as fio
 import pandas as pd
-from des_analysis import analyze_gamma_obs
+from des_analysis import analyze_gamma_obs, shear_response_selection_correction
 from esutil import stat
 from matplotlib import pyplot as plt
 import matplotlib
@@ -11,7 +11,7 @@ import matplotlib
 work = '/hpc/group/cosmology/phy-lsst/my137/roman_H158/'
 work_out = '/hpc/group/cosmology/masaya/wfirst_simulation/paper/'
 sims = ['g1002', 'g1n002', 'g2002', 'g2n002']
-which_figure = 'figure8'
+which_figure = 'figure7'
 
 def hlr_to_T(d):
     # assuming galaxy profile is gaussian.
@@ -47,10 +47,23 @@ def mean_shear_nperbin(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
 
     return hist['mean'], g_obs, gerr_obs
 
+def mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, nperbin, par, coadd):
+
+    gamma1_t,gamma1_o,gamma2_t,gamma2_o, bin_mean = shear_response_selection_correction(new, new1p, new1m, new2p, new2m, par, nperbin, coadd)
+    bin_num = len(bin_mean)
+
+    g_obs = np.zeros((2,bin_num))
+    gerr_obs = np.zeros((2,bin_num))
+    for i in range(bin_num):
+        g_obs[0,i] = np.mean(gamma1_o[i])
+        g_obs[1,i] = np.mean(gamma2_o[i])
+        gerr_obs[0,i] = np.std(gamma1_o[i])/np.sqrt(len(gamma1_o[i]))
+        gerr_obs[1,i] = np.std(gamma2_o[i])/np.sqrt(len(gamma2_o[i]))
+
+    return bin_mean, g_obs, gerr_obs
+
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
-# fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
-# matplotlib.rcParams.update({'font.size': 35})
 for p in ['coadd', 'single', 'multiband']:
     noshear = []
     shear1p = []
@@ -97,12 +110,21 @@ for p in ['coadd', 'single', 'multiband']:
     new2p = shear2p[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
     new2m = shear2m[run][np.isin(noshear[run]['ind'] ,tmp_ind)]
 
-    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[0], coadd)
-    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[1], coadd)
-    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[2], coadd)
-    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[3], coadd)
-    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[4], coadd)
-    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[5], coadd)
+    # No selection response
+    # bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[0], coadd)
+    # bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[1], coadd)
+    # bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[2], coadd)
+    # bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[3], coadd)
+    # bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[4], coadd)
+    # bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[5], coadd)
+
+    # With selection response
+    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 25000, xax[0], coadd)
+    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 25000, xax[1], coadd)
+    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 25000, xax[2], coadd)
+    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 25000, xax[3], coadd)
+    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 25000, xax[4], coadd)
+    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 25000, xax[5], coadd)
 
     if which_figure == 'figure8':
         import galsim
@@ -171,6 +193,9 @@ for p in ['coadd', 'single', 'multiband']:
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
         sys.exit()
     elif which_figure=='figure7':
+        matplotlib.rcParams.update({'font.size': 25})
+        fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
+
         axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
         axs[0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
         axs[0].set_xlabel('log(S/N)', fontsize=25)
@@ -255,7 +280,7 @@ for p in ['coadd', 'single', 'multiband']:
 
 plt.subplots_adjust(hspace=0.3,wspace=0.06)
 plt.tight_layout()
-plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v5.pdf', bbox_inches='tight')
+plt.savefig(work_out+'H158_meanshear_measured_properties_perbin_e1_v6.pdf', bbox_inches='tight')
 
 
 
