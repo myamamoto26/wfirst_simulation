@@ -64,6 +64,8 @@ def mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, nperbin, par, 
 
 start = 0
 sets = ['g1002', 'g1n002', 'g2002', 'g2n002']
+# matplotlib.rcParams.update({'font.size': 25})
+fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
 for p in ['coadd', 'single', 'multiband']:
     noshear = []
     shear1p = []
@@ -193,8 +195,6 @@ for p in ['coadd', 'single', 'multiband']:
         plt.savefig(work_out+'H158_true_obs_e1_size.pdf', bbox_inches='tight')
         sys.exit()
     elif which_figure=='figure7':
-        matplotlib.rcParams.update({'font.size': 25})
-        fig,axs = plt.subplots(1,3,figsize=(28,6),dpi=100)
 
         axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
         axs[0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
