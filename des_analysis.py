@@ -84,11 +84,11 @@ def shear_response(new,new1p,new1m,new2p,new2m,coadd_):
 	
 	return np.mean(R11), np.mean(R22)
 
-def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par,coadd_=False):
+def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par,nperbin,coadd_=False):
 
 	g = 0.01
 	x_ = new[par]
-	hist_ = stat.histogram(x_, nperbin=50000, more=True)
+	hist_ = stat.histogram(x_, nperbin=nperbin, more=True)
 	bin_num = len(hist_['hist'])
 	g1_true = []
 	g1_obs = []
@@ -102,7 +102,6 @@ def shear_response_selection_correction(new,new1p,new1m,new2p,new2m,par,coadd_=F
 		mask_2p = ((new2p[par] > hist_['low'][i]) & (new2p[par] < hist_['high'][i]))
 		mask_2m = ((new2m[par] > hist_['low'][i]) & (new2m[par] < hist_['high'][i]))
 	
-		R_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_)
 		R_g = shear_response(new[bin_mask], new1p[bin_mask], new1m[bin_mask], new2p[bin_mask], new2m[bin_mask], coadd_)
 		if coadd_:
 			R11_s = (np.mean(new['coadd_e1'][mask_1p]) - np.mean(new['coadd_e1'][mask_1m]))/(2*g)
