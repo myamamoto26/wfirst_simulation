@@ -200,9 +200,9 @@ for p in ['coadd', 'single', 'multiband']:
         res = {'snr': {'bin_mean': bin_mean_snr, 'g_obs': g_obs_snr, 'gerr_obs': gerr_obs_snr}, 
                 'input_size': {'bin_mean': bin_mean_size, 'g_obs': g_obs_size, 'gerr_obs': gerr_obs_size}, 
                 'T': {'bin_mean': bin_mean_T, 'g_obs': g_obs_T, 'gerr_obs': gerr_obs_T}}
-        with open(work_out+'H158_meanshear_measured_properties_perbin_e1.pickle', 'wb') as raw:
+        with open(work_out+'H158_meanshear_measured_properties_perbin_e1_'+p+'.pickle', 'wb') as raw:
             pickle.dump(res, raw, protocol=pickle.HIGHEST_PROTOCOL)
-            
+
         axs[0].hlines(0.00, 0, bin_mean_snr[len(bin_mean_snr)-1],linestyles='dashed', color='grey', alpha=0.3)
         axs[0].errorbar(bin_mean_snr, g_obs_snr[0,:]-0.02, yerr=gerr_obs_snr[0,:], fmt='o', fillstyle='none', label=p)
         axs[0].set_xlabel('log(S/N)', fontsize=25)
