@@ -132,7 +132,7 @@ def main(argv):
 	old = None
 	f = sys.argv[2] # example, /hpc/group/cosmology/phy-lsst/my137/roman_H158
 	filter_ = sys.argv[3]
-	coadd_ = True
+	coadd_ = False
 	combine_m = False
 	additional_mask = False
 	v2 = False
@@ -284,8 +284,8 @@ def main(argv):
 		## m1,c1 calculation
 		m11 = ((np.mean(g1_obs[0])-np.mean(g1_obs[1]))/0.04) - 1
 		m11_obj = (g1_obs[0]-g1_obs[1])/0.04 - 1
-		np.save('/hpc/group/cosmology/masaya/wfirst_simulation/paper/m_coadd_id.npy', new['ind'])
-		np.save('/hpc/group/cosmology/masaya/wfirst_simulation/paper/m_coadd_bias.npy', m11_obj)
+		np.save('/hpc/group/cosmology/masaya/wfirst_simulation/paper/m_single_id.npy', new['ind'])
+		np.save('/hpc/group/cosmology/masaya/wfirst_simulation/paper/m_single_bias.npy', m11_obj)
 		sys.exit()
 		m11_err = bootstrap_cov_m(200,g1_obs[0],g1_obs[1])
 		c11 = (np.mean(g1_obs[0] - (1+m11)*g1_true[0]) + np.mean(g1_obs[1] - (1+m11)*g1_true[1]))/2
