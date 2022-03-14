@@ -267,6 +267,10 @@ def main(argv):
 	if sys.argv[1]=='shear':
 		## m1,c1 calculation before metacalibration correction. 
 		m1 = ((np.mean(g1_noshear[0])-np.mean(g1_noshear[1]))/0.04) - 1
+		m1_obj = (g1_noshear[0]-g1_noshear[1])/0.04 - 1
+		np.save('/hpc/group/cosmology/masaya/wfirst_simulation/paper/m_single_id.npy', new['ind'])
+		np.save('/hpc/group/cosmology/masaya/wfirst_simulation/paper/m_single_bias.npy', m1_obj)
+		sys.exit()
 		m1_err = bootstrap_cov_m(200,g1_noshear[0],g1_noshear[1])
 		c1 = (np.mean(g1_noshear[0] - (1+m1)*g1_true[0]) + np.mean(g1_noshear[1] - (1+m1)*g1_true[1]))/2
 		c1_err = bootstrap_cov_c(200,m1,g1_noshear[0],g1_true[0],g1_noshear[1],g1_true[1])
