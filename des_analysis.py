@@ -142,7 +142,7 @@ def main(argv):
 		f_coadd_v2 = sys.argv[5]
 
 	if not coadd_:
-		folder = [f+'/g1002/ngmix/new_single_v2/', f+'/g1n002/ngmix/new_single_v2/', f+'/g2002/ngmix/new_single_v2/', f+'/g2n002/ngmix/new_single_v2/']
+		folder = [f+'/g1002/ngmix/new_single/', f+'/g1n002/ngmix/new_single/', f+'/g2002/ngmix/new_single/', f+'/g2n002/ngmix/new_single/']
 	else:
 		folder = [f+'/g1002/ngmix/'+f_coadd+'/', f+'/g1n002/ngmix/'+f_coadd+'/', f+'/g2002/ngmix/'+f_coadd+'/', f+'/g2n002/ngmix/'+f_coadd+'/']
 		if v2:
