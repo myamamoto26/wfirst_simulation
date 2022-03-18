@@ -171,8 +171,6 @@ oversample = 1
 # randomly select 50 objects for each meds file. -> This will end up in 24,000 objects in total for 480 meds files. -> a rate of 1 PSF per 1 arcmin x 1 arcmin. 
 rand_obj_list = np.random.choice(indices_H, size=1, replace=False)
 for i,ii in enumerate(rand_obj_list): 
-    if i%100==0:
-        print('object number ',i)
 
     ind = m_H158['number'][ii]
     t   = truth[ind]
@@ -191,6 +189,6 @@ for i,ii in enumerate(rand_obj_list):
     coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
     fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/test_'+str(ii)+'.fits','rw')
-    fits[0].write(coadd_H.psf.image)
-    fits[1].write(res)
+    fits[1].write(coadd_H.psf.image)
+    fits[2].write(res)
     fits.close()
