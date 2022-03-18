@@ -189,6 +189,6 @@ for i,ii in enumerate(rand_obj_list):
     coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
     fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/test_'+str(ii)+'.fits','rw')
-    fits[1].write(coadd_H.psf.image)
-    fits[2].write(res)
+    fits.write(coadd_H.psf.image, header=1)
+    fits.write(res, header=2)
     fits.close()
