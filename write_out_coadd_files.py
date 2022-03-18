@@ -2,6 +2,7 @@
 from warnings import resetwarnings
 import fitsio as fio
 import numpy as np
+import time
 import psc 
 import sys, os, io
 import galsim as galsim
@@ -169,7 +170,8 @@ oversample = 1
 
 # make coadds and save object data. 
 # randomly select 50 objects for each meds file. -> This will end up in 24,000 objects in total for 480 meds files. -> a rate of 1 PSF per 1 arcmin x 1 arcmin. 
-rand_obj_list = np.random.choice(indices_H, size=1, replace=False)
+rand_obj_list = np.random.choice(indices_H, size=50, replace=False)
+t0=time.time()
 for i,ii in enumerate(rand_obj_list): 
 
     ind = m_H158['number'][ii]
@@ -179,9 +181,10 @@ for i,ii in enumerate(rand_obj_list):
 
     obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
     res = np.zeros(1, dtype=[('ra', float), ('dec', float), ('mag', float), ('nexp_tot', int)])
-    res['ra'][i]                        = t['ra']
-    res['dec'][i]                       = t['dec']
-    res['nexp_tot'][i]                  = m_H158['ncutout'][ii]-1
+    res['ra']                        = t['ra']
+    res['dec']                       = t['dec']
+    res['mag']                       = t['H158']
+    res['nexp_tot']                  = m_H158['ncutout'][ii]-1
 
     # coadd images
     coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
@@ -192,3 +195,4 @@ for i,ii in enumerate(rand_obj_list):
     fits.write(coadd_H.psf.image)
     fits.write(res)
     fits.close()
+print(time.time()-t0)
