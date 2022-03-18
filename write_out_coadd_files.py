@@ -188,7 +188,7 @@ for i,ii in enumerate(rand_obj_list):
     coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
     coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
-    fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/test_'+str(ii)+'.fits','w')
+    fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/test_'+str(ii)+'.fits','rw')
     fits.write(coadd_H.psf.image)
     fits.write(res)
     fits.close()
