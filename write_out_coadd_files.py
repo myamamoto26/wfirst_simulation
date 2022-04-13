@@ -16,6 +16,7 @@ from astropy.time import Time
 from mpi4py import MPI
 import cProfile, pstats, psutil
 import glob
+from tqdm import tqdm
 import meds
 from ngmix.jacobian import Jacobian
 from ngmix.observation import Observation, ObsList, MultiBandObsList,make_kobs
@@ -161,38 +162,47 @@ def get_exp_list_coadd(m,i,oversample,m2=None):
     return obs_list,psf_list,np.array(included)-1,np.array(w)
 
 # import meds file. 
-local_Hmeds = './fiducial_H158_2285117.fits'
+meds_files = glob.glob('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/meds/fiducial_H158_*.fits.gz')
+# local_Hmeds = './fiducial_H158_2285117.fits'
 truth = fio.FITS('/hpc/group/cosmology/phy-lsst/my137/roman_H158/g1002/truth/fiducial_lensing_galaxia_g1002_truth_gal.fits')[-1]
-m_H158  = meds.MEDS(local_Hmeds)
-indices_H = np.arange(len(m_H158['number'][:]))
 roman_H158_psfs = get_psf_SCA('H158')
 oversample = 1
 
-# make coadds and save object data. 
-# randomly select 50 objects for each meds file. -> This will end up in 24,000 objects in total for 480 meds files. -> a rate of 1 PSF per 1 arcmin x 1 arcmin. 
-rand_obj_list = np.random.choice(indices_H, size=50, replace=False)
+# make coadds and save object data.
 t0=time.time()
-for i,ii in enumerate(rand_obj_list): 
+for meds_num, meds_file in tqdm(enumerate(meds_files)):
 
-    ind = m_H158['number'][ii]
-    t   = truth[ind]
-    sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
-    m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][ii]]]
+    m_H158  = meds.MEDS(meds_file)
+    indices_H = np.arange(len(m_H158['number'][:]))
+    # randomly select 50 objects for each meds file. -> This will end up in 24,000 objects in total for 480 meds files. -> a rate of 1 PSF per 1 arcmin x 1 arcmin. 
+    rand_obj_list = np.random.choice(indices_H, size=50, replace=False)
 
-    obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
-    res = np.zeros(1, dtype=[('ra', float), ('dec', float), ('mag', float), ('nexp_tot', int)])
-    res['ra']                        = t['ra']
-    res['dec']                       = t['dec']
-    res['mag']                       = t['H158']
-    res['nexp_tot']                  = m_H158['ncutout'][ii]-1
+    for i,ii in enumerate(rand_obj_list):
 
-    # coadd images
-    coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
-    coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
-    coadd_H.set_meta({'offset_pixels':None,'file_id':None})
+        ind = m_H158['number'][ii]
+        t   = truth[ind]
+        sca_Hlist = m_H158[ii]['sca'] # List of SCAs for the same object in multiple observations. 
+        m2_H158_coadd = [roman_H158_psfs[j-1] for j in sca_Hlist[:m_H158['ncutout'][ii]]]
 
-    fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/fiducial_H158_2285117_oversampled/test_'+str(ii)+'.fits','rw')
-    fits.write(coadd_H.psf.image)
-    fits.write(res)
-    fits.close()
+        obs_Hlist,psf_Hlist,included_H,w_H = get_exp_list_coadd(m_H158,ii,oversample,m2=m2_H158_coadd)
+        res = np.zeros(1, dtype=[('ra', float), ('dec', float), ('mag', float), ('nexp_tot', int)])
+        res['ra']                        = t['ra']
+        res['dec']                       = t['dec']
+        res['mag']                       = t['H158']
+        res['nexp_tot']                  = m_H158['ncutout'][ii]-1
+
+        # coadd images
+        coadd_H            = psc.Coadder(obs_Hlist,flat_wcs=True).coadd_obs
+        coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
+        coadd_H.set_meta({'offset_pixels':None,'file_id':None})
+
+        fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/fiducial_H158_'+str(meds_num)+'_oversampled/test_'+str(ii)+'.fits','rw')
+        # save coadd PSF
+        fits.write(coadd_H.psf.image)
+        # save single exposure PSF
+        for exp in range(len(obs_Hlist)):
+            fits.write(obs_Hlist[exp].psf.image)
+        # save object info
+        fits.write(res)
+        fits.close()
 print(time.time()-t0)
