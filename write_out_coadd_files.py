@@ -196,7 +196,7 @@ for meds_num, meds_file in tqdm(enumerate(meds_files)):
         coadd_H.psf.image[coadd_H.psf.image<0] = 0 # set negative pixels to zero. 
         coadd_H.set_meta({'offset_pixels':None,'file_id':None})
 
-        fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/fiducial_H158_'+str(meds_num)+'_oversampled/test_'+str(ii)+'.fits','rw')
+        fits = fio.FITS('/hpc/group/cosmology/phy-lsst/public/psc_coadd_psf/fiducial_H158_oversampled/fiducial_H158_'+str(meds_num)+'_oversampled/test_'+str(ii)+'.fits','rw')
         # save coadd PSF
         fits.write(coadd_H.psf.image)
         # save single exposure PSF
