@@ -45,6 +45,7 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_):
 		avg_R22 = np.mean(R22)
 		avg_R12 = np.mean(R12)
 		avg_R21 = np.mean(R21)
+		print('R12, R21', avg_R12, avg_R21)
 
 		gamma1_obs = new['coadd_e1']/avg_R11
 		gamma2_obs = new['coadd_e2']/avg_R22
@@ -62,6 +63,7 @@ def analyze_gamma_obs(new,new1p,new1m,new2p,new2m,coadd_):
 		avg_R22 = np.mean(R22)
 		avg_R12 = np.mean(R12)
 		avg_R21 = np.mean(R21)
+		print('R12, R21', avg_R12, avg_R21)
 
 		gamma1_obs = new['e1']/avg_R11
 		gamma2_obs = new['e2']/avg_R22
