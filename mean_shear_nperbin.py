@@ -122,12 +122,12 @@ for p in ['coadd', 'single', 'multiband']:
     # bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin(new, new1p, new1m, new2p, new2m, 25000, xax[5], coadd)
 
     # With selection response
-    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 100000, xax[0], coadd)
-    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 100000, xax[1], coadd)
-    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 100000, xax[2], coadd)
-    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 100000, xax[3], coadd)
-    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 100000, xax[4], coadd)
-    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 100000, xax[5], coadd)
+    bin_mean_snr, g_obs_snr, gerr_obs_snr = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 80000, xax[0], coadd)
+    bin_mean_T, g_obs_T, gerr_obs_T = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 80000, xax[1], coadd)
+    bin_mean_size, g_obs_size, gerr_obs_size = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 80000, xax[2], coadd)
+    bin_mean_e1psf, g_obs_e1psf, gerr_obs_e1psf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 80000, xax[3], coadd)
+    bin_mean_e2psf, g_obs_e2psf, gerr_obs_e2psf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 80000, xax[4], coadd)
+    bin_mean_Tpsf, g_obs_Tpsf, gerr_obs_Tpsf = mean_shear_nperbin_selection(new, new1p, new1m, new2p, new2m, 80000, xax[5], coadd)
 
     if which_figure == 'figure8':
         import galsim
