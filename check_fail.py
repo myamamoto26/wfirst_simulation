@@ -8,6 +8,6 @@ total = 0
 for f in fs:
     d = fio.read(f)
     total += len(d)
-    nonzero_flag = d[d['flags']!=0]
+    nonzero_flag = d[d['coadd_e1']==0]
     flag_fail += len(nonzero_flag)
 print(flag_fail, total)
