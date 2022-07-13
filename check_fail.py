@@ -10,8 +10,9 @@ for k in mcal_keys:
     for f in fs:
         d = fio.read(f)
         total += len(d)
-        mask = ((d['flags']!=0)) # & (d['ind']!=0))
+        mask = ((d['ind']==0))
         nonzero_flag = d[mask]
-        print(nonzero_flag['flags'])
+        print(nonzero_flag)
         flag_fail += len(nonzero_flag)
     print(flag_fail, total)
+    break
